@@ -30,6 +30,25 @@ func bubble_sort(_ array: inout [Int]) {
 var arrays: [Int] = [3, 6, 4, 2, 9, 8, 5]
 bubble_sort(&arrays)
 ```
-
+### 代码优化：
+在某些情况下，循环还未终止，整个数组已经排好序，此时应及时终止循环。（冒泡每次都会比较相邻两个数并交换次数不对的组，若一次循环后，都没进行交换，则判断为已完成排序）
+### 优化代码实现：
+```
+func bubble_sort(_ array: inout [Int]) {
+    var isChanged = false
+    for i in 0..<array.count - 1 {
+        isChanged = false
+        for j in 0..<array.count - i - 1 {
+            if array[j] > array[j + 1] {
+                array.swapAt(j, j + 1)
+                isChanged = true
+            }
+        }
+        if (!isChanged) {
+            break
+        }
+    }
+}
+```
 ## 时间复杂度
 - 冒泡排序的时间复杂度为O(n^2)
