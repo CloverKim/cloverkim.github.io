@@ -20,7 +20,7 @@ copyright: ture
 # Swift 实现
 ```
 func shellSort(_ array: inout [Int]) {
-    var gap = array.count / 2 + 1
+    var gap = array.count / 2
     var j = 0
     while gap > 0 {
         for i in gap..<array.count {
