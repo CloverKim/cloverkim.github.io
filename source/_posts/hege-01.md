@@ -1,9 +1,8 @@
 ---
 title: 田野上秋夜的冷露与寂静——天智天皇
-categories: 日本和歌
+categories: 小仓百人一首
 tags:
 - 和歌
-- 小仓百人一首
 top: 100
 copyright: ture
 ---
