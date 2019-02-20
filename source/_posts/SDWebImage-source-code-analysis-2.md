@@ -204,7 +204,7 @@ copyright: ture
 ```
 
 ### UIWebImageManager
-&emsp;&emsp;UIWebImageManager类是SDWebImage中的核心类，主要负责调用SDWebImageDownloader进行图片下载，以及在下载完之后利用SDImageCache进行图片的缓存。UIImageView等各种试图都是通过UIView+WebCache分类的`sd_internalSetImageWithURL`方法来调用SDWebImageManager类的如下方法来实现图片加载：
+&emsp;&emsp;UIWebImageManager类是SDWebImage中的核心类，主要负责调用SDWebImageDownloader进行图片下载，以及在下载完之后利用SDImageCache进行图片的缓存。UIImageView等各种视图都是通过UIView+WebCache分类的`sd_internalSetImageWithURL`方法来调用SDWebImageManager类的如下方法来实现图片加载：
 ```
 /// 这个方法为核心方法，UIImageView等分类都默认通过调用这个方法来获取数据
 - (nullable id <SDWebImageOperation>)loadImageWithURL:(nullable NSURL *)url
