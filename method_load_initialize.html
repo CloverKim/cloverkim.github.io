@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/uploads/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="iOS,Swift,Objective-C," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="概述&amp;emsp;&amp;emsp;Objective-C作为一门面向对象的开发语言，有类和对象的概念。编译后，类相关的数据结构会保留在目标文件中，在运行时得到解析和使用。在应用程序运行起来的时候，类的信息会有加载和初始化的过程。&amp;emsp;&amp;emsp;就像Application有生命周期回调方法一样，在Objective-C的类被加载和初始化的时候，也可以收到方法回到，可以在适当的情况下做一些定制处理。">
+<meta name="keywords" content="iOS,Swift,Objective-C">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS开发 - +load 和 +initialize 方法">
+<meta property="og:url" content="http://cloverkim.com/method_load_initialize.html">
+<meta property="og:site_name" content="幸运四叶草">
+<meta property="og:description" content="概述&amp;emsp;&amp;emsp;Objective-C作为一门面向对象的开发语言，有类和对象的概念。编译后，类相关的数据结构会保留在目标文件中，在运行时得到解析和使用。在应用程序运行起来的时候，类的信息会有加载和初始化的过程。&amp;emsp;&amp;emsp;就像Application有生命周期回调方法一样，在Objective-C的类被加载和初始化的时候，也可以收到方法回到，可以在适当的情况下做一些定制处理。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fwdp9n7oruj20gm04675h.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fwgtelwx4zj20fu02jaab.jpg">
+<meta property="og:updated_time" content="2019-10-15T02:26:22.950Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS开发 - +load 和 +initialize 方法">
+<meta name="twitter:description" content="概述&amp;emsp;&amp;emsp;Objective-C作为一门面向对象的开发语言，有类和对象的概念。编译后，类相关的数据结构会保留在目标文件中，在运行时得到解析和使用。在应用程序运行起来的时候，类的信息会有加载和初始化的过程。&amp;emsp;&amp;emsp;就像Application有生命周期回调方法一样，在Objective-C的类被加载和初始化的时候，也可以收到方法回到，可以在适当的情况下做一些定制处理。">
+<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fwdp9n7oruj20gm04675h.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://cloverkim.com/method_load_initialize.html"/>
+
+
+
+
+
+  <title>iOS开发 - +load 和 +initialize 方法 | 幸运四叶草</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">幸运四叶草</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">相思形色露，欲掩不从心。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav" id="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-首页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-标签">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-分类">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-关于">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cloverkim.com/method_load_initialize.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kim逸云">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="幸运四叶草">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">iOS开发 - +load 和 +initialize 方法</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-10-15T10:26:22+08:00">
+                2019-10-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOSDevelopment/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS开发</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/method_load_initialize.html" class="leancloud_visitors" data-flag-title="iOS开发 - +load 和 +initialize 方法">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  8
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>&emsp;&emsp;Objective-C作为一门面向对象的开发语言，有类和对象的概念。编译后，类相关的数据结构会保留在目标文件中，在运行时得到解析和使用。在应用程序运行起来的时候，类的信息会有加载和初始化的过程。<br>&emsp;&emsp;就像Application有生命周期回调方法一样，在Objective-C的类被加载和初始化的时候，也可以收到方法回到，可以在适当的情况下做一些定制处理。而这正是load和initialize方法可以帮我们做到的。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">+ (void)load;</span><br><span class="line">+ (void)initialize;</span><br></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>&emsp;&emsp;可以看到这两个方法都是以“+”开头的类方法，返回值为空。通常情况下，我们在开发过程中可能不必关注这两个方法。如果有需要定制，我们可以在自定义的NSObject子类中给出这两个方法的实现，这样在类的加载和初始化过程中，自定义的方法可以得到调用。</p>
+<h1 id="load方法"><a href="#load方法" class="headerlink" title="+load方法"></a>+load方法</h1><p>&emsp;&emsp;顾名思义，+load方法是在这个文件被程序装载时调用。只要是在Compile Sources中出现的文件总是会被装载，这与这个类是否被用到无关，因此+load方法总在main函数之前调用。<br>&emsp;&emsp;下面是Apple文档的相关描述：</p>
+<blockquote>
+<p>Invoked whenever a class or category is added to the Objective-C runtime; implement this method to perform class-specific behavior upon loading.<br>Discussion<br>The load message is sent to classes and categories that are both dynamically loaded and statically linked, but only if the newly loaded class or category implements a method that can respond.<br>The order of initialization is as follows:</p>
+<ol>
+<li>All initializers in any framework you link to.</li>
+<li>All +load methods in your image.</li>
+<li>All C++ static initializers and C/C++ <strong>attribute</strong>(constructor) functions in your image.</li>
+<li>All initializers in frameworks that link to you.<br>In addition:</li>
+<li>A class’s +load method is called after all of its superclasses’ +load methods.</li>
+<li>A category +load method is called after the class’s own +load method.<br>In a custom implementation of load you can therefore safely message other unrelated classes from the same image, but any load methods implemented by those classes may not have run yet.</li>
+</ol>
+</blockquote>
+<h2 id="load函数调用特点如下："><a href="#load函数调用特点如下：" class="headerlink" title="load函数调用特点如下："></a>load函数调用特点如下：</h2><p>&emsp;&emsp;当类被引用进项目的时候就会执行+load方法（在main函数开始执行之前），与这个类是否被用到无关，每个类的+load方法<strong>只会自动调用一次</strong>。由于+load方法是系统自动加载的，因此不需要调用父类的+load方法，否则父类的+load方法会执行多次。</p>
+<ul>
+<li>当父类和子类都实现+load方法时，父类的+load方法执行顺序要优先于子类。</li>
+<li>当子类未实现+load方法时，不会调用父类的+load方法。</li>
+<li>类中的+load方法执行顺序要优先于类别(Category)</li>
+<li>当有多个类别(Category)都实现了+load方法，这几个+load方法都会执行，但执行的顺序不确定，其执行的顺序与类别在Compile Sources中出现的顺序一致。</li>
+<li>当然当有多个不同的类的时候，每个类的+load方法执行的顺序与其在Compile Sources出现的顺序一致。</li>
+</ul>
+<h2 id="下面通过🌰来验证"><a href="#下面通过🌰来验证" class="headerlink" title="下面通过🌰来验证"></a>下面通过🌰来验证</h2><p>&emsp;&emsp;新建3个类：Animal继承NSObject，Cat和Dog均继承Animal，并且新建3个Animal的分类，分别命名为Animal (Category1)、Animal (Category2)、Animal (Category3)<br>在Animal、Cat、Animal (Category1)、Animal (Category2)、Animal (Category3)均实现+load方法，并且打印对应的信息（Dog类除外）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">+ (void)load &#123;</span><br><span class="line">    NSLog(@&quot;%s&quot;, __func__);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>运行结果如下图所示：<br><img src="https://ws1.sinaimg.cn/large/749c46aagy1fwdp9n7oruj20gm04675h.jpg" alt="" title="+load"><br>由上图的运行结果可知：</p>
+<ul>
+<li>首先执行的父类Animal的load方法，再执行子类Cat的load方法，说明父类的load方法执行顺序要优先于子类。</li>
+<li>子类Dog中没有实现load方法，没有打印对应的信息，说明子类没有实现load方法时，并不会调用父类的load方法。</li>
+<li>然后执行的是3个分类的load方法，并且没有顺序，说明分类中的load方法的执行要晚于类的load方法，在多个分类中，只要实现了load方法，都会执行，但执行的顺序不确定。</li>
+<li>最后执行的是main函数，说明在没有对类进行任何操作的情况下，load方法会被默认执行，并且是在main函数之前。</li>
+</ul>
+<h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><p>&emsp;&emsp;从上面的分析中，main函数是整个应用程序的入口，而+load方法是在main函数之前执行的，并且只执行一次，所以使用时需要注意。</p>
+<ul>
+<li>不要做耗时操作<br>&emsp;&emsp;因为在执行main函数之前，所有实现的load方法执行完才会启动应用，因此在load方法中执行耗时操作时，必然会影响程序的启动时间。</li>
+<li>不要做对象的初始化操作<br>&emsp;&emsp;因为在main函数之前自动调用，load方法调用的时候使用者根本就不能确定自己要使用的对象是否已经加载进来了，所以千万不能再这里初始化对象。</li>
+<li>常用场景是在load方法中实现Method Swizzle<br>&emsp;&emsp;Method Swizzing是发生在运行时，主要用户在运行时将两个Method进行交换。</li>
+</ul>
+<h1 id="initialize方法"><a href="#initialize方法" class="headerlink" title="+initialize方法"></a>+initialize方法</h1><p>&emsp;&emsp;下面是Apple文档的相关描述：</p>
+<blockquote>
+<p>Initializes the class before it receives its first message.<br>Discussion<br>The runtime sends initialize to each class in a program just before the class, or any class that inherits from it, is sent its first message from within the program. Superclasses receive this message before their subclasses.</p>
+</blockquote>
+<blockquote>
+<p>The runtime sends the initialize message to classes in a thread-safe manner. That is, initialize is run by the first thread to send a message to a class, and any other thread that tries to send a message to that class will block until initialize completes.<br>…</p>
+</blockquote>
+<h2 id="initialize函数调用特点如下："><a href="#initialize函数调用特点如下：" class="headerlink" title="initialize函数调用特点如下："></a>initialize函数调用特点如下：</h2><p>&emsp;&emsp;initialize在类或者其子类的第一个方法被调用前调用。即使类文件被引用进项目，但是没有使用，initialize不会被调用。由于是系统自动调用，也不需要再调用[super initialize]，否则父类的initialize方法会被多次执行。</p>
+<ul>
+<li>父类的initialize方法会比子类先执行</li>
+<li>当子类未实现initialize方法时，会调用父类的initialize方法。</li>
+<li>当有多个Category都实现了initialize方法，会覆盖类中的方法，只执行一个（会执行Compile Sources列表中最后一个Category的initialize方法）</li>
+</ul>
+<h2 id="下面通过🌰来验证-1"><a href="#下面通过🌰来验证-1" class="headerlink" title="下面通过🌰来验证"></a>下面通过🌰来验证</h2><p>&emsp;&emsp;依旧使用上面创建的3个类：Animal、Cat和Dog。<br>我们在Animal类中实现+initialize方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">+ (void)initialize &#123;</span><br><span class="line">    NSLog(@&quot;%s&quot;, __func__);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>运行结果如下图所示：<br><img src="https://ws1.sinaimg.cn/large/749c46aagy1fwgtelwx4zj20fu02jaab.jpg" alt=""><br>由运行结果发现，Animal类的+initialie方法被调用了2次，这是因为在创建子类对象时，首先要创建父类对象，所以会调用一次父类的initialize方法，然后创建子类时，尽管该类没有实现initialize方法，但还是会调用父类的方法。虽然initialize方法对一个类而言会调用一次，但这里由于出现了两个类，所以调用两次符合规则，但不符合我们的需求。正确使用initialize方法的方式如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+ (void)initialize &#123;</span><br><span class="line">    if (self == [Animal class]) &#123;</span><br><span class="line">        NSLog(@&quot;%s&quot;, __func__);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>加上判断后，就不会因为子类而调用到自己的initialize方法了。</p>
+<h2 id="应用场景-1"><a href="#应用场景-1" class="headerlink" title="应用场景"></a>应用场景</h2><p>&emsp;&emsp;initialize方法主要用来对一些不方便在编译期初始化的对象进行赋值。比如NSMutableArray这种类型的实例化依赖于Runtime的消息发送，所以无法再编译期初始化。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ul>
+<li>load和initialize方法都会在实例化对象之前调用，以main函数为分水岭。load方法是在main函数之前调用，而initi方法是在main函数之后调用。这两个方法都会被自动调用，无需手动调用。</li>
+<li>load和initialize方法都不用调用父类的方法，即使子类没有initialize方法也会调用父类的方法，而load方法则不会调用父类的load方法。</li>
+<li>load方法通常用来进行Method Swizzle，initialize方法一般用于初始化全局变量或静态变量。</li>
+<li>load和initialize方法内部都使用了锁，因此它们是线程安全的。实现时要尽可能保持简单，避免阻塞线程，不要再使用锁。</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    <div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/method_load_initialize.html">iOS开发 - +load 和 +initialize 方法</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 kim逸云 的个人博客">kim逸云</a></p>
+  <p><span>发布时间:</span>2019年10月15日 - 10:10</p>
+  <p><span>最后更新:</span>2019年10月15日 - 10:10</p>
+  <p><span>原始链接:</span><a href="/method_load_initialize.html" title="iOS开发 - +load 和 +initialize 方法">http://cloverkim.com/method_load_initialize.html</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://cloverkim.com/method_load_initialize.html"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+	});
+    });  
+</script>
+
+
+      
+    </div>
+
+    <div>
+      
+        <div>
+    <br>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">------本文结束<i class="fa fa-paw"></i>感谢阅读------</div>
+    
+</div>
+
+      
+    </div>
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag"><i class="fa fa-tag"></i> iOS</a>
+          
+            <a href="/tags/Swift/" rel="tag"><i class="fa fa-tag"></i> Swift</a>
+          
+            <a href="/tags/Objective-C/" rel="tag"><i class="fa fa-tag"></i> Objective-C</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/kvo_extension.html" rel="next" title="iOS开发 - 分享一个关于KVO的扩展">
+                <i class="fa fa-chevron-left"></i> iOS开发 - 分享一个关于KVO的扩展
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/reading_The-Murder-of-Roger-Ackroyd.html" rel="prev" title="《罗杰疑案》阿加莎·克里斯蒂">
+                《罗杰疑案》阿加莎·克里斯蒂 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/uploads/avatar.png"
+                alt="kim逸云" />
+            
+              <p class="site-author-name" itemprop="name">kim逸云</p>
+              <p class="site-description motion-element" itemprop="description">笑而不语是一种豁达，痛而不言是一种修养。</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">46</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/CloverKim" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:jiang.shunjin@icloud.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#load方法"><span class="nav-number">2.</span> <span class="nav-text">+load方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#load函数调用特点如下："><span class="nav-number">2.1.</span> <span class="nav-text">load函数调用特点如下：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#下面通过🌰来验证"><span class="nav-number">2.2.</span> <span class="nav-text">下面通过🌰来验证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用场景"><span class="nav-number">2.3.</span> <span class="nav-text">应用场景</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#initialize方法"><span class="nav-number">3.</span> <span class="nav-text">+initialize方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#initialize函数调用特点如下："><span class="nav-number">3.1.</span> <span class="nav-text">initialize函数调用特点如下：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#下面通过🌰来验证-1"><span class="nav-number">3.2.</span> <span class="nav-text">下面通过🌰来验证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用场景-1"><span class="nav-number">3.3.</span> <span class="nav-text">应用场景</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart" aria-hidden="true"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kim逸云</span>
+
+<!--
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">72.6k</span>
+  
+-->
+</div>
+
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数：<span id="busuanzi_value_site_uv"></span>
+</span>
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共72.6k字</span>
+</div>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("G2qCMJW5Y7Vdp7p7AjogwjJp-gzGzoHsz", "khenv4NT1LkNeUV3t853rJJU");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  <!-- 背景动画 -->
+  <script type="text/javascript" src="/js/src/particle.js"></script>
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/love.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/z16.model.json"},"display":{"position":"right","width":100,"height":200},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
