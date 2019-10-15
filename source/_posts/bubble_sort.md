@@ -13,7 +13,7 @@ copyright: ture
  <!-- more -->
 3. 针对所有的元素重复以后的步骤，除了最后一个。
 4. 持续每次对越来越少的元素重复上面的步骤，直到满意任何一对数字需要比较，则序列最终有序。
-![](https://ws1.sinaimg.cn/large/749c46aagy1fvrm3x9pj5j20iu08xq4b.jpg '步骤图')
+![](http://pz1livcqe.bkt.clouddn.com/749c46aagy1fvrm3x9pj5j20iu08xq4b.jpg '步骤图')
 
 ## Swift实现
 ```

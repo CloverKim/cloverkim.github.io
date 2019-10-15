@@ -198,7 +198,7 @@ struct weak_entry_t {
 
 5. 初始化弱引用对象流程一览
 &emsp;&emsp;弱引用初始化，从上文的分析中可以看出，主要的操作部分就在弱引用表的取键、查询散列、创建弱引用表等操作，可以总结出如下的流程图：
-![](https://ws1.sinaimg.cn/large/749c46aagy1fxljq6knw6j20sg0sgwh5.jpg) 
+![](http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxljq6knw6j20sg0sgwh5.jpg)
 
 ## (三)、释放
 &emsp;&emsp;释放时，调用clearDeallocating函数。clearDeallocating函数首先根据对象地址获取所有weak指针地址的数组，然后遍历这个数组把其中的数据设为nil，最后把这个entry从weak表中删除，最后清理对象的记录。

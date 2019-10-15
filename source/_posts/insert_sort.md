@@ -16,7 +16,7 @@ copyright: ture
 3. 在数组中进行搜索，搜索中将j个记录后移，直到r[0]的值大于或等于r[j]的值为止。
 4. 将r[0]插入到r[j+1]的位置上。
 <!-- more -->
-![](https://ws1.sinaimg.cn/large/749c46aagy1fw0m1eh8vjj20dw06xaaz.jpg '插入排序')
+![](http://pz1livcqe.bkt.clouddn.com/749c46aagy1fw0m1eh8vjj20dw06xaaz.jpg '插入排序') 
 
 # Swift 实现
 ```

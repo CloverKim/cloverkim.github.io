@@ -91,13 +91,14 @@ typedef struct Obs {
 - 首先外层有一个Table，以通知名称为key。其value同样是一个Table。
 - 为了实现可以传入一个参数object用于只监听指定该对象发出的通知，及一个通知可以添加多个观察者。则内Table以传入的object为key，用链表来保存所有的观察者，并且以这个链表为value。
 
-![](https://ws1.sinaimg.cn/large/006tNc79gy1fznkn31w7nj30p60h40tx.jpg 'Named Table')
+![](http://pz1livcqe.bkt.clouddn.com/Named Table.jpg 'Named Table')
+
 
 &emsp;&emsp;特别说明：在实际开发中，我们经常将object参数传nil，这个时候系统会根据nil自动产生一个key。相当于这个key对应的value（链表）保存的就是对于当前NotificationName没有传入object的所有观察者。当NotificationName被发送时，在链表中的观察者都会收到通知。
 
 ### UnNamed Table
 &emsp;&emsp;UNamed Table结构比Named Table简单得多。因为没有NotificationName作为key。这里直接就以object为key，比Named Table少了一层Table嵌套。
-![](https://ws4.sinaimg.cn/large/006tNc79gy1fznl4kaw76j30er0bngmb.jpg 'UnNamed Table')
+![](http://pz1livcqe.bkt.clouddn.com/UnNamed Table.jpg 'UnNamed Table')
 
 &emsp;&emsp;如果在注册观察者时没有传入NotificationName，同时没有传入object，所有的系统通知都会发送到注册的对象里。
 
@@ -135,7 +136,7 @@ typedef struct Obs {
 
 # 总结
 &emsp;&emsp;总的来说，NSNotification的三个相关类的作用，可以用下图进行归纳总结。
-![](https://ws4.sinaimg.cn/large/006tNc79gy1fzofd69nb8j30nt0bpwfu.jpg '总结')
+![](http://pz1livcqe.bkt.clouddn.com/总结.jpg '总结')
 
 # 参考
 - [Apple官方文档](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Notifications/Articles/Notifications.html)

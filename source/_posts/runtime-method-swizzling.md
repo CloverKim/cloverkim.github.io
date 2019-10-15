@@ -18,7 +18,7 @@ copyright: ture
 
 # Method Swizzling原理
 &emsp;&emsp;Method Swizzling是发生在运行时的，主要用于在运行时将两个Method进行交换，Method Swizzling配合类别可以实现在不干扰其他工程代码的情况下与系统的方法进行交换。
-![](https://ws1.sinaimg.cn/large/749c46aagy1fxmqwtqlguj20ft0b9aas.jpg)
+![](http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxmqwtqlguj20ft0b9aas.jpg)
 &emsp;&emsp;在上图中，我们添加了selector3和IMP3，并让selector2指向了IMP3，而selector3则指向了IMP2，这样就实现了“方法交换”。
 &emsp;&emsp;在Objective-C的runtime特性中，调用一个对象的方法就是给这个对象发送消息。是通过查找接收消息对象的方法列表，从方法列表中查找对应的SEL，这个SEL对应着一个IMP（一个IMP可以对应多个SEL），通过这个IMP找到对应的方法调用。
 &emsp;&emsp;每个类中都有一个Dispatch Table，这个Dispatch Table本质是将类中的SEL和IMP进行对应。而我们的Method Swizzling就是对这个table进行了操作，让SEL对应另一个IMP。

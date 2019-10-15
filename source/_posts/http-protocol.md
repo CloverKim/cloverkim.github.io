@@ -22,7 +22,7 @@ copyright: ture
 
 # HTTP协议请求消息结构
 &emsp;&emsp;客户端发送一个HTTP请求到服务器的请求消息包括以下格式：请求行（request line）、请求头部（header）、空行和请求数据四个部分组成，下图给出了请求报文的一般格式。
-![](https://ws4.sinaimg.cn/large/006tNc79gy1fzptbfyjlhj30l3096mxy.jpg 'HTTP请求消息体结构')
+![](http://pz1livcqe.bkt.clouddn.com/HTTP请求消息体结构.jpg 'HTTP请求消息体结构')
 
 &emsp;&emsp;HTTP消息体主要包含以下实质内容（空格和换行也必不可少）：
 - 请求方法
@@ -56,7 +56,7 @@ protocol :// hostname[:port] / path / [;parameters][?query]#fragment
 - parameters：id=1603848351636567407&wfr=spider&for=pc （使用&分割参数）
 
 &emsp;&emsp;总结如下图所示：
-![](https://ws2.sinaimg.cn/large/006tNc79gy1fzpv8f6l12j30oj05qaam.jpg '解析图')
+![](http://pz1livcqe.bkt.clouddn.com/解析图.jpg '解析图')
 
 ## 请求头
 &emsp;&emsp;请求头中主要包含本次请求的附加信息，其中常用的字段如：

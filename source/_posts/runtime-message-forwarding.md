@@ -71,7 +71,7 @@ objc_msgSend(array, @selector(insertObject:atIndex:), message, 3);
 - (void)doesNotRecognizeSelector:(SEL)aSelector;
 ```
 &emsp;&emsp;对于完整的消息转发流程图如下图所示：
-![](https://ws1.sinaimg.cn/large/749c46aagy1fxuwcyy5n3j20qs0cht9t.jpg '消息转发流程图')
+![](http://pz1livcqe.bkt.clouddn.com/消息转发流程图.jpg '消息转发流程图')
 
 # 消息转发实例&验证
 &emsp;&emsp;在新建的Project中，添加Cat、Dog、Rabbit三个类，并在每个类的.h文件中声明jump方法。
@@ -91,7 +91,7 @@ void jump(id self, SEL cmd) {
 }
 ```
 &emsp;&emsp;然后在ViewController中创建Cat对象，并调用jump方法，如果Cat类中没有实现jump方法，正常的情况下，是会crash，但我们在resolveInstanceMethod: 方法中动态添加了方法的实现，则会跳转到新的方法实现中，因此才不会导致crash。控制台的打印如下：
-![](https://ws1.sinaimg.cn/large/749c46aagy1fxvojlgbk7j20hg02kmxn.jpg '动态方法解析')
+![](http://pz1livcqe.bkt.clouddn.com/动态方法解析.jpg '动态方法解析')
 
 2. 我们用Dog类来验证消息转发的第二步过程，根据上面所述的流程图中，为了能让运行时系统能够运行到forwardingTargetForSelector: 方法，我们需要在resolveInstanceMethod: 方法中返回NO，并且在forwardingTargetForSelector: 方法中返回Cat类的实例对象，让Cat类的实例对象去处理Dog的jump方法。
 
@@ -108,7 +108,7 @@ void jump(id self, SEL cmd) {
 }
 ```
 &emsp;&emsp;在ViewController中创建Dog对象，并调用jump方法。由于我们在forwardingTargetForSelector: 方法中，返回了Cat的实例对象，因此Dog的jump方法转发给了能处理Dog jump方法的Cat对象，并跳转到Cat对象的jump方法中，因此也不会导致crash。控制台的打印如下：
-![](https://ws1.sinaimg.cn/large/749c46aagy1fxvojlinn5j20ha02zt9e.jpg '备援接收者')
+![](http://pz1livcqe.bkt.clouddn.com/备援接收者.jpg '备援接收者')
 
 3. 最后用Rabbit类来验证消息转发的第三个步骤的过程。为了能触发完整的消息转发，我们需要将resolveInstanceMethod: 方法返回NO，并且在forwardingTargetForSelector: 方法中返回nil。另外，在实现forwardInvocation: 方法时，还需要实现methodSignatureForSelector: 方法，并将相应的选择子的描述返回。
 
@@ -133,7 +133,8 @@ void jump(id self, SEL cmd) {
 }
 ```
 &emsp;&emsp;最后在ViewController中创建Rabbit的实例，并调用jump方法，由于我们通过完整的消息转发，将方法的实现跳转到了Cat实例中，因此不但不会crash，还会执行Cat的jump方法，控制台的打印如下：
-![](https://ws1.sinaimg.cn/large/749c46aagy1fxvojll726j20he03fdgr.jpg '完整的消息转发')
+![](http://pz1livcqe.bkt.clouddn.com/完整的消息转发.jpg '完整的消息转发')
+
 
 # 引申 - 向一个nil对象发送消息会怎样？
 &emsp;&emsp;结论：OC中向为nil的对象发送消息，程序是不会crash的。

@@ -27,7 +27,7 @@ copyright: ture
 ```
 
 &emsp;&emsp;控制台的打印结果如下图所示：
-![](https://ws1.sinaimg.cn/large/006tNc79gy1fzoh957aghj30fi03ldgz.jpg)
+![](http://pz1livcqe.bkt.clouddn.com/006tNc79gy1fzoh957aghj30fi03ldgz.jpg)
 &emsp;&emsp;看到执行结果的打印，我们就能大致理解Notification的线程同步的特性了。在主线程中发出通知，然后接收方在主线程处理逻辑，并接收方处理完毕时，发送方才能继续执行剩下的逻辑。
 &emsp;&emsp;那么，Notification和线程同步之间到底是什么关系呢?
 &emsp;&emsp;官方文档说明如下：
@@ -115,7 +115,7 @@ copyright: ture
 ```
 
 &emsp;&emsp;运行后的输出结果如下：
-![](https://ws2.sinaimg.cn/large/006tNc79gy1fzop4fxlmwj30ip03sjsk.jpg)
+![](http://pz1livcqe.bkt.clouddn.com/006tNc79gy1fzop4fxlmwj30ip03sjsk.jpg)
 
 &emsp;&emsp;由上图的运行结果可以看出，我们在全局dispatch队列中抛出的Notification，如愿的在主线程中接收到了。
 &emsp;&emsp;这种实现方式的具体解析以及其局限性大家可以参考官方文档[Delivering Notifications To Particular Threads](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Notifications/Articles/Threading.html#//apple_ref/doc/uid/20001289-CEGJFDFG)。当然，更好的方法可能是我们自己去子类化一个NSNotificationCenter，或者单独写一个类来处理这种转发。
