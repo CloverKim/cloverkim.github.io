@@ -87,12 +87,12 @@
 <meta property="og:site_name" content="幸运四叶草">
 <meta property="og:description" content="基本思想&amp;emsp;&amp;emsp;先将整个待排序的序列按照以增量gap=count/2的方式分割成为若干个子序列，再分别进行直接插入排序，待整个序列基本有序，即增量gap=1时，再对全体记录进行依次直接插入排序。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fw9ag5gflvj20m50f2myh.jpg">
-<meta property="og:updated_time" content="2019-10-15T02:26:22.953Z">
+<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/shell_sort.jpg">
+<meta property="og:updated_time" content="2019-10-15T03:51:35.200Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="算法学习 - 希尔排序">
 <meta name="twitter:description" content="基本思想&amp;emsp;&amp;emsp;先将整个待排序的序列按照以增量gap=count/2的方式分割成为若干个子序列，再分别进行直接插入排序，待整个序列基本有序，即增量gap=1时，再对全体记录进行依次直接插入排序。">
-<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fw9ag5gflvj20m50f2myh.jpg">
+<meta name="twitter:image" content="http://pz1livcqe.bkt.clouddn.com/shell_sort.jpg">
 
 
 
@@ -396,7 +396,7 @@
       
 
       
-        <h1 id="基本思想"><a href="#基本思想" class="headerlink" title="基本思想"></a>基本思想</h1><p>&emsp;&emsp;先将整个待排序的序列按照以增量gap=count/2的方式分割成为若干个子序列，再分别进行直接插入排序，待整个序列基本有序，即增量gap=1时，再对全体记录进行依次直接插入排序。<br><a id="more"></a><br><img src="https://ws1.sinaimg.cn/large/749c46aagy1fw9ag5gflvj20m50f2myh.jpg" alt="" title="希尔排序示例图"><br>在上图中：<br>初始时，有一个大小为10的无序序列，颜色相同为一组。<br>在第一趟排序中，初始增量gap=count/2=5，意味着整个数组被分为5组，[9,5] [3,4] [2,6] [8,1] [7,5]，对这5组数据进行直接插入排序。<br>在第二趟排序中，我们把上次的增量gap缩小一半，gap=5/2=2，数组被分为2组，[5,2,5,4,8] [3,1,9,6,7]，再对这2组数据进行直接插入排序。<br>在第三趟排序中，再次将增量缩小为一半，gap=2/2=1，此时，整个数组为1组，[2,1,4,3,5,6,5,7,8,9]，再对最后一组数据进行直接插入排序，排序结束。</p>
+        <h1 id="基本思想"><a href="#基本思想" class="headerlink" title="基本思想"></a>基本思想</h1><p>&emsp;&emsp;先将整个待排序的序列按照以增量gap=count/2的方式分割成为若干个子序列，再分别进行直接插入排序，待整个序列基本有序，即增量gap=1时，再对全体记录进行依次直接插入排序。<br><a id="more"></a><br><img src="http://pz1livcqe.bkt.clouddn.com/shell_sort.jpg" alt="" title="希尔排序示例图"><br>在上图中：<br>初始时，有一个大小为10的无序序列，颜色相同为一组。<br>在第一趟排序中，初始增量gap=count/2=5，意味着整个数组被分为5组，[9,5] [3,4] [2,6] [8,1] [7,5]，对这5组数据进行直接插入排序。<br>在第二趟排序中，我们把上次的增量gap缩小一半，gap=5/2=2，数组被分为2组，[5,2,5,4,8] [3,1,9,6,7]，再对这2组数据进行直接插入排序。<br>在第三趟排序中，再次将增量缩小为一半，gap=2/2=1，此时，整个数组为1组，[2,1,4,3,5,6,5,7,8,9]，再对最后一组数据进行直接插入排序，排序结束。</p>
 <h1 id="Swift-实现"><a href="#Swift-实现" class="headerlink" title="Swift 实现"></a>Swift 实现</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">func shellSort(_ array: inout [Int]) &#123;</span><br><span class="line">    var gap = array.count / 2</span><br><span class="line">    var j = 0</span><br><span class="line">    while gap &gt; 0 &#123;</span><br><span class="line">        for i in gap..&lt;array.count &#123;</span><br><span class="line">            let temp = array[i]</span><br><span class="line">            j = i</span><br><span class="line">            while j &gt;= gap &amp;&amp; temp &lt; array[j - gap] &#123;</span><br><span class="line">                array[j] = array[j - gap]</span><br><span class="line">                j -= gap</span><br><span class="line">            &#125;</span><br><span class="line">            array[j] = temp</span><br><span class="line">        &#125;</span><br><span class="line">        gap = gap / 2</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var shellArrays: [Int] = [9, 3, 2, 8, 7, 5, 4, 6, 1, 5]</span><br><span class="line">shellSort(&amp;shellArrays)</span><br></pre></td></tr></table></figure>
 <h1 id="稳定性"><a href="#稳定性" class="headerlink" title="稳定性"></a>稳定性</h1><p>&emsp;&emsp;由于多次插入排序，我们知道一次插入排序是稳定的，不会改变相同元素的相对位置，但在不同的插入排序过程中，相同的元素可能在各自的插入排序中移动，如上述数据中的5,5，最后其稳定性就会被打乱，所以希尔排序是不稳定的。</p>
 <h1 id="时间复杂度"><a href="#时间复杂度" class="headerlink" title="时间复杂度"></a>时间复杂度</h1><p>&emsp;&emsp;希尔排序的时间复杂度是根据增量gap有关的。<br>&emsp;&emsp;在最优的情况下，即元素已经排好序，时间复杂度为：O(n^1.3 )<br>&emsp;&emsp;在最差的情况下，时间复杂度为O(n^2 )</p>
@@ -419,7 +419,7 @@
   <p><span>本文标题:</span><a href="/shell_sort.html">算法学习 - 希尔排序</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 kim逸云 的个人博客">kim逸云</a></p>
   <p><span>发布时间:</span>2019年10月15日 - 10:10</p>
-  <p><span>最后更新:</span>2019年10月15日 - 10:10</p>
+  <p><span>最后更新:</span>2019年10月15日 - 11:10</p>
   <p><span>原始链接:</span><a href="/shell_sort.html" title="算法学习 - 希尔排序">http://cloverkim.com/shell_sort.html</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://cloverkim.com/shell_sort.html"  aria-label="复制成功！"></i></span>
   </p>

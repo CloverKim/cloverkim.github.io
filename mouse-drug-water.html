@@ -87,13 +87,13 @@
 <meta property="og:site_name" content="幸运四叶草">
 <meta property="og:description" content="请听题 有15个瓶子，其中最多有一瓶有毒，现在有四只老鼠，喝了有毒的水之后，第二天就会死。如何在第二天就可以判断出哪个瓶子有毒？">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fxtkabu3tyj20hg0a2dgc.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fxtkabxq3wj20j20dfgmr.jpg">
-<meta property="og:updated_time" content="2019-10-15T02:26:22.950Z">
+<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/瓶子编号.jpg">
+<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/老鼠存活组合.jpg">
+<meta property="og:updated_time" content="2019-10-15T04:00:11.877Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一道有趣的算法题：15个瓶子，4只老鼠，测试哪瓶有毒？">
 <meta name="twitter:description" content="请听题 有15个瓶子，其中最多有一瓶有毒，现在有四只老鼠，喝了有毒的水之后，第二天就会死。如何在第二天就可以判断出哪个瓶子有毒？">
-<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fxtkabu3tyj20hg0a2dgc.jpg">
+<meta name="twitter:image" content="http://pz1livcqe.bkt.clouddn.com/瓶子编号.jpg">
 
 
 
@@ -400,7 +400,7 @@
         <h1 id="请听题"><a href="#请听题" class="headerlink" title="请听题"></a>请听题</h1><blockquote>
 <p>有15个瓶子，其中最多有一瓶有毒，现在有四只老鼠，喝了有毒的水之后，第二天就会死。如何在第二天就可以判断出哪个瓶子有毒？<br><a id="more"></a></p>
 </blockquote>
-<h1 id="基本思路"><a href="#基本思路" class="headerlink" title="基本思路"></a>基本思路</h1><p>&emsp;&emsp;用二进制给每个瓶子进行编码0001-1111，如下图所示。四只老鼠分别喝第n位是1的瓶子的水，比如第1只老鼠喝1（0001）、3（0011）、5（0101）、7（0111）、9（1001）、11（1011）、13（1101）、15（1111）号瓶子的水。第二天，再通过4只老鼠的存活状态的组合来判断具体哪一瓶有毒。对于老鼠的存活状态，有生和死两种状态，0表示存活，1表示死亡，比如0011，即第1、2只老鼠死亡，第3、4只老鼠存活，0011进制表示的瓶子为3号瓶子，因此3号瓶子有毒。具体组合和结果如下图所示。<br><img src="https://ws1.sinaimg.cn/large/749c46aagy1fxtkabu3tyj20hg0a2dgc.jpg" alt="" title="瓶子编号"><br><img src="https://ws1.sinaimg.cn/large/749c46aagy1fxtkabxq3wj20j20dfgmr.jpg" alt="" title="老鼠存活组合"></p>
+<h1 id="基本思路"><a href="#基本思路" class="headerlink" title="基本思路"></a>基本思路</h1><p>&emsp;&emsp;用二进制给每个瓶子进行编码0001-1111，如下图所示。四只老鼠分别喝第n位是1的瓶子的水，比如第1只老鼠喝1（0001）、3（0011）、5（0101）、7（0111）、9（1001）、11（1011）、13（1101）、15（1111）号瓶子的水。第二天，再通过4只老鼠的存活状态的组合来判断具体哪一瓶有毒。对于老鼠的存活状态，有生和死两种状态，0表示存活，1表示死亡，比如0011，即第1、2只老鼠死亡，第3、4只老鼠存活，0011进制表示的瓶子为3号瓶子，因此3号瓶子有毒。具体组合和结果如下图所示。<br><img src="http://pz1livcqe.bkt.clouddn.com/瓶子编号.jpg" alt="" title="瓶子编号"><br><img src="http://pz1livcqe.bkt.clouddn.com/老鼠存活组合.jpg" alt="" title="老鼠存活组合"></p>
 <h1 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">- (void)drugWater:(NSString *)mice &#123;</span><br><span class="line">    NSInteger drug = 0;     // 有毒的瓶子编号</span><br><span class="line">    int mices[miceNum] = &#123;0&#125;;</span><br><span class="line">    </span><br><span class="line">    for (NSInteger i = 0; i &lt; [mice length]; i++) &#123;</span><br><span class="line">        mices[i] = [[mice substringWithRange:NSMakeRange(i, 1)] intValue];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    for (NSInteger i = 0; i &lt; miceNum; i++) &#123;</span><br><span class="line">        drug |= (mices[i] &lt;&lt; (miceNum - i - 1));</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    if (drug == 0) &#123;</span><br><span class="line">        NSLog(@&quot;%@&quot;, @&quot;无毒&quot;);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        NSLog(@&quot;有毒的瓶子是第 %ld 瓶&quot;, (long)drug);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>相关说明：</p>
 <ul>
@@ -426,7 +426,7 @@
   <p><span>本文标题:</span><a href="/mouse-drug-water.html">一道有趣的算法题：15个瓶子，4只老鼠，测试哪瓶有毒？</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 kim逸云 的个人博客">kim逸云</a></p>
   <p><span>发布时间:</span>2019年10月15日 - 10:10</p>
-  <p><span>最后更新:</span>2019年10月15日 - 10:10</p>
+  <p><span>最后更新:</span>2019年10月15日 - 12:10</p>
   <p><span>原始链接:</span><a href="/mouse-drug-water.html" title="一道有趣的算法题：15个瓶子，4只老鼠，测试哪瓶有毒？">http://cloverkim.com/mouse-drug-water.html</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://cloverkim.com/mouse-drug-water.html"  aria-label="复制成功！"></i></span>
   </p>

@@ -87,13 +87,13 @@
 <meta property="og:site_name" content="幸运四叶草">
 <meta property="og:description" content="CocoaPods介绍&amp;emsp;&amp;emsp;我们在iOS开发中不可避免的要使用第三方开源库，而CocoaPods的作用就是使我们方便管理应用中的第三方开源库。CocoaPods的项目源码在https://github.com/CocoaPods/Specs上管理。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fw37mrk9l9j20i005njsj.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fw38vsef5sj20hw0afwgl.jpg">
-<meta property="og:updated_time" content="2019-10-15T02:26:22.930Z">
+<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fw37mrk9l9j20i005njsj.jpg">
+<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fw38vsef5sj20hw0afwgl.jpg">
+<meta property="og:updated_time" content="2019-10-15T04:08:06.857Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CocoaPods安装教程">
 <meta name="twitter:description" content="CocoaPods介绍&amp;emsp;&amp;emsp;我们在iOS开发中不可避免的要使用第三方开源库，而CocoaPods的作用就是使我们方便管理应用中的第三方开源库。CocoaPods的项目源码在https://github.com/CocoaPods/Specs上管理。">
-<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fw37mrk9l9j20i005njsj.jpg">
+<meta name="twitter:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fw37mrk9l9j20i005njsj.jpg">
 
 
 
@@ -404,13 +404,13 @@
 <h2 id="更新gem版本"><a href="#更新gem版本" class="headerlink" title="更新gem版本"></a>更新gem版本</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo gem update --system</span><br></pre></td></tr></table></figure>
 <p>更新完毕后，可以通过以下命令查看gem版本<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gem -v</span><br></pre></td></tr></table></figure></p>
 <h2 id="安装CocoaPods"><a href="#安装CocoaPods" class="headerlink" title="安装CocoaPods"></a>安装CocoaPods</h2><p>使用以下安装命令，安装最新版本的CocoaPods<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo gem install -n /usr/local/bin cocoapods</span><br></pre></td></tr></table></figure></p>
-<p>安装成功如下图所示：<br><img src="https://ws1.sinaimg.cn/large/749c46aagy1fw37mrk9l9j20i005njsj.jpg" alt=""><br>安装成功之后，可以使用命令pod –version查看是否安装成功，如果成功会显示pod的版本号信息。</p>
+<p>安装成功如下图所示：<br><img src="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fw37mrk9l9j20i005njsj.jpg" alt=""><br>安装成功之后，可以使用命令pod –version查看是否安装成功，如果成功会显示pod的版本号信息。</p>
 <h2 id="更新Podspec索引文件"><a href="#更新Podspec索引文件" class="headerlink" title="更新Podspec索引文件"></a>更新Podspec索引文件</h2><p>pod安装成功之后，第一个操作就是执行以下命令：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pod setup</span><br></pre></td></tr></table></figure></p>
 <p>pod setup的作用：将所有第三方的Podspec索引文件更新到本地的~/.cocoapods/repos目录下<br>第一次执行pod setup命令时，github的Podspec索引文件比较大，所以第一次更新会比较慢，需要耐心等耐完成…</p>
 <ul>
 <li>如果没有执行过pod setup，用户根目录下~找不到.cocoapods/repos目录，没有创建这个目录。</li>
 <li>如果执行了pod setup，并且命令没有执行成功，那么会创建~/.cocoapods/repos目录，但该目录为空。</li>
-<li>如果执行了pod setup，并且命令执行成功，说明已经把github上的Podspec文件更新到本地，那么会创建~/.cocoapods/repos目录，并且repos目录里会有一个master目录，这个master目录保存的就是github上所有第三方开源库的Podspec索引文件。<br>最后pod setup成功时，如下图所示：<br><img src="https://ws1.sinaimg.cn/large/749c46aagy1fw38vsef5sj20hw0afwgl.jpg" alt=""></li>
+<li>如果执行了pod setup，并且命令执行成功，说明已经把github上的Podspec文件更新到本地，那么会创建~/.cocoapods/repos目录，并且repos目录里会有一个master目录，这个master目录保存的就是github上所有第三方开源库的Podspec索引文件。<br>最后pod setup成功时，如下图所示：<br><img src="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fw38vsef5sj20hw0afwgl.jpg" alt=""></li>
 </ul>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
 <li><a href="https://blog.csdn.net/jiankeufo/article/details/79362660" target="_blank" rel="noopener">https://blog.csdn.net/jiankeufo/article/details/79362660</a></li>
@@ -435,7 +435,7 @@
   <p><span>本文标题:</span><a href="/install_cocoapods.html">CocoaPods安装教程</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 kim逸云 的个人博客">kim逸云</a></p>
   <p><span>发布时间:</span>2019年10月15日 - 10:10</p>
-  <p><span>最后更新:</span>2019年10月15日 - 10:10</p>
+  <p><span>最后更新:</span>2019年10月15日 - 12:10</p>
   <p><span>原始链接:</span><a href="/install_cocoapods.html" title="CocoaPods安装教程">http://cloverkim.com/install_cocoapods.html</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://cloverkim.com/install_cocoapods.html"  aria-label="复制成功！"></i></span>
   </p>

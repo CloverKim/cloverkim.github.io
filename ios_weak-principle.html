@@ -87,12 +87,12 @@
 <meta property="og:site_name" content="幸运四叶草">
 <meta property="og:description" content="前言&amp;emsp;&amp;emsp;很少有人知道weak表其实是一个hash（哈希）表，key是所指对象的地址，value是weak指针的地址数组。大多数人只知道weak是弱引用，所引用对象的计数器不会加一，并在引用对象被释放的时候自动被置为nil。通常用于解决循环引用问题。但现在单知道这些已经不足以应对面试了，很多公司都会问weak的原理。weak的原理是什么？下面就分析一下weak的原理。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fxljq6knw6j20sg0sgwh5.jpg">
-<meta property="og:updated_time" content="2019-10-15T02:26:22.948Z">
+<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxljq6knw6j20sg0sgwh5.jpg">
+<meta property="og:updated_time" content="2019-10-15T04:02:34.729Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS开发 - 底层解析weak的实现原理">
 <meta name="twitter:description" content="前言&amp;emsp;&amp;emsp;很少有人知道weak表其实是一个hash（哈希）表，key是所指对象的地址，value是weak指针的地址数组。大多数人只知道weak是弱引用，所引用对象的计数器不会加一，并在引用对象被释放的时候自动被置为nil。通常用于解决循环引用问题。但现在单知道这些已经不足以应对面试了，很多公司都会问weak的原理。weak的原理是什么？下面就分析一下weak的原理。">
-<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fxljq6knw6j20sg0sgwh5.jpg">
+<meta name="twitter:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxljq6knw6j20sg0sgwh5.jpg">
 
 
 
@@ -421,7 +421,7 @@
 </li>
 <li><p>新对象添加注册操作weak_register_no_lock<br>&emsp;&emsp;这一步与上一步相反，通过weak_register_no_lock函数把新的对象进行注册操作，完成与对应的弱引用表进行绑定操作。</p>
 </li>
-<li><p>初始化弱引用对象流程一览<br>&emsp;&emsp;弱引用初始化，从上文的分析中可以看出，主要的操作部分就在弱引用表的取键、查询散列、创建弱引用表等操作，可以总结出如下的流程图：<br><img src="https://ws1.sinaimg.cn/large/749c46aagy1fxljq6knw6j20sg0sgwh5.jpg" alt=""> </p>
+<li><p>初始化弱引用对象流程一览<br>&emsp;&emsp;弱引用初始化，从上文的分析中可以看出，主要的操作部分就在弱引用表的取键、查询散列、创建弱引用表等操作，可以总结出如下的流程图：<br><img src="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxljq6knw6j20sg0sgwh5.jpg" alt=""></p>
 </li>
 </ol>
 <h2 id="三-、释放"><a href="#三-、释放" class="headerlink" title="(三)、释放"></a>(三)、释放</h2><p>&emsp;&emsp;释放时，调用clearDeallocating函数。clearDeallocating函数首先根据对象地址获取所有weak指针地址的数组，然后遍历这个数组把其中的数据设为nil，最后把这个entry从weak表中删除，最后清理对象的记录。<br>&emsp;&emsp;当weak引用指向的对象被释放时，又是如何去处理weak指针的呢？当释放对象时，其基本流程如下：</p>
@@ -465,7 +465,7 @@
   <p><span>本文标题:</span><a href="/ios_weak-principle.html">iOS开发 - 底层解析weak的实现原理</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 kim逸云 的个人博客">kim逸云</a></p>
   <p><span>发布时间:</span>2019年10月15日 - 10:10</p>
-  <p><span>最后更新:</span>2019年10月15日 - 10:10</p>
+  <p><span>最后更新:</span>2019年10月15日 - 12:10</p>
   <p><span>原始链接:</span><a href="/ios_weak-principle.html" title="iOS开发 - 底层解析weak的实现原理">http://cloverkim.com/ios_weak-principle.html</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://cloverkim.com/ios_weak-principle.html"  aria-label="复制成功！"></i></span>
   </p>

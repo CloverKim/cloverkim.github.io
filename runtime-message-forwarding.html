@@ -87,15 +87,15 @@
 <meta property="og:site_name" content="幸运四叶草">
 <meta property="og:description" content="消息传递机制&amp;emsp;&amp;emsp;在OC中，当调用了某个对象的方法时，其实质上就是向该对象发送了一条消息，OC的方法最终被生成了C函数，并附带额外的参数。消息传递机制中所调用的核心函数为：1objc_msgSend(id _Nullable self, SEL _Nonnull op, ...)">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fxuwcyy5n3j20qs0cht9t.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fxvojlgbk7j20hg02kmxn.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fxvojlinn5j20ha02zt9e.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fxvojll726j20he03fdgr.jpg">
-<meta property="og:updated_time" content="2019-10-15T02:26:22.952Z">
+<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/消息转发流程图.jpg">
+<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/动态方法解析.jpg">
+<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/备援接收者.jpg">
+<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/完整的消息转发.jpg">
+<meta property="og:updated_time" content="2019-10-15T03:58:01.495Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS开发 - runtime实践·消息转发（Message Forwarding）">
 <meta name="twitter:description" content="消息传递机制&amp;emsp;&amp;emsp;在OC中，当调用了某个对象的方法时，其实质上就是向该对象发送了一条消息，OC的方法最终被生成了C函数，并附带额外的参数。消息传递机制中所调用的核心函数为：1objc_msgSend(id _Nullable self, SEL _Nonnull op, ...)">
-<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fxuwcyy5n3j20qs0cht9t.jpg">
+<meta name="twitter:image" content="http://pz1livcqe.bkt.clouddn.com/消息转发流程图.jpg">
 
 
 
@@ -426,23 +426,23 @@
 </ol>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (void)forwardInvocation:(NSInvocation *)anInvocation;</span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;当运行时系统检测到第二步中用户未返回能处理相应选择子的对象时，那么来到这一步就要启动完成的消息转发机制了。该方法可以改变消息调用目标，运行时系统根据所改变的调用目标，向调用目标方法列表中查询对应方法的实现并实现跳转，这种方式和第二步的操作非常相似。当然，你也可以修改方法的选择子，亦或者向所调用方法中追加一个参数等来跳转到相关方法的实现。<br>&emsp;&emsp;最后，如果消息转发的第三步还未能处理未知选择子的话，那么最终会调用NSObject类的如下方法，用以异常的抛出，表明该选择子最终未能处理。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (void)doesNotRecognizeSelector:(SEL)aSelector;</span><br></pre></td></tr></table></figure></p>
-<p>&emsp;&emsp;对于完整的消息转发流程图如下图所示：<br><img src="https://ws1.sinaimg.cn/large/749c46aagy1fxuwcyy5n3j20qs0cht9t.jpg" alt="" title="消息转发流程图"></p>
+<p>&emsp;&emsp;对于完整的消息转发流程图如下图所示：<br><img src="http://pz1livcqe.bkt.clouddn.com/消息转发流程图.jpg" alt="" title="消息转发流程图"></p>
 <h1 id="消息转发实例-amp-验证"><a href="#消息转发实例-amp-验证" class="headerlink" title="消息转发实例&amp;验证"></a>消息转发实例&amp;验证</h1><p>&emsp;&emsp;在新建的Project中，添加Cat、Dog、Rabbit三个类，并在每个类的.h文件中声明jump方法。</p>
 <ol>
 <li>我们用Cat类来验证消息转发的第一步方法：resolveInstanceMethod:，在该方法中动态添加jump方法的实现，使用runtime的class_addMethod方法，该方法用以向该类的实例对象中添加相应的方法实现。</li>
 </ol>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">void jump(id self, SEL cmd) &#123;</span><br><span class="line">    NSLog(@&quot;%@  jump&quot;, self);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">+ (BOOL)resolveInstanceMethod:(SEL)sel &#123;</span><br><span class="line">    if ([NSStringFromSelector(sel) isEqualToString:@&quot;jump&quot;]) &#123;</span><br><span class="line">        class_addMethod(self, sel, (IMP)jump, &quot;v@:&quot;);</span><br><span class="line">        return YES;</span><br><span class="line">    &#125;</span><br><span class="line">    return [super resolveInstanceMethod:sel];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;然后在ViewController中创建Cat对象，并调用jump方法，如果Cat类中没有实现jump方法，正常的情况下，是会crash，但我们在resolveInstanceMethod: 方法中动态添加了方法的实现，则会跳转到新的方法实现中，因此才不会导致crash。控制台的打印如下：<br><img src="https://ws1.sinaimg.cn/large/749c46aagy1fxvojlgbk7j20hg02kmxn.jpg" alt="" title="动态方法解析"></p>
+<p>&emsp;&emsp;然后在ViewController中创建Cat对象，并调用jump方法，如果Cat类中没有实现jump方法，正常的情况下，是会crash，但我们在resolveInstanceMethod: 方法中动态添加了方法的实现，则会跳转到新的方法实现中，因此才不会导致crash。控制台的打印如下：<br><img src="http://pz1livcqe.bkt.clouddn.com/动态方法解析.jpg" alt="" title="动态方法解析"></p>
 <ol start="2">
 <li>我们用Dog类来验证消息转发的第二步过程，根据上面所述的流程图中，为了能让运行时系统能够运行到forwardingTargetForSelector: 方法，我们需要在resolveInstanceMethod: 方法中返回NO，并且在forwardingTargetForSelector: 方法中返回Cat类的实例对象，让Cat类的实例对象去处理Dog的jump方法。</li>
 </ol>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">+ (BOOL)resolveInstanceMethod:(SEL)sel &#123;</span><br><span class="line">    return NO;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (id)forwardingTargetForSelector:(SEL)aSelector &#123;</span><br><span class="line">    if ([NSStringFromSelector(aSelector) isEqualToString:@&quot;jump&quot;]) &#123;</span><br><span class="line">        return [[Cat alloc] init];</span><br><span class="line">    &#125;</span><br><span class="line">    return [super forwardingTargetForSelector:aSelector];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;在ViewController中创建Dog对象，并调用jump方法。由于我们在forwardingTargetForSelector: 方法中，返回了Cat的实例对象，因此Dog的jump方法转发给了能处理Dog jump方法的Cat对象，并跳转到Cat对象的jump方法中，因此也不会导致crash。控制台的打印如下：<br><img src="https://ws1.sinaimg.cn/large/749c46aagy1fxvojlinn5j20ha02zt9e.jpg" alt="" title="备援接收者"></p>
+<p>&emsp;&emsp;在ViewController中创建Dog对象，并调用jump方法。由于我们在forwardingTargetForSelector: 方法中，返回了Cat的实例对象，因此Dog的jump方法转发给了能处理Dog jump方法的Cat对象，并跳转到Cat对象的jump方法中，因此也不会导致crash。控制台的打印如下：<br><img src="http://pz1livcqe.bkt.clouddn.com/备援接收者.jpg" alt="" title="备援接收者"></p>
 <ol start="3">
 <li>最后用Rabbit类来验证消息转发的第三个步骤的过程。为了能触发完整的消息转发，我们需要将resolveInstanceMethod: 方法返回NO，并且在forwardingTargetForSelector: 方法中返回nil。另外，在实现forwardInvocation: 方法时，还需要实现methodSignatureForSelector: 方法，并将相应的选择子的描述返回。</li>
 </ol>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">+ (BOOL)resolveInstanceMethod:(SEL)sel &#123;</span><br><span class="line">    return NO;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (id)forwardingTargetForSelector:(SEL)aSelector &#123;</span><br><span class="line">    return nil;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (void)forwardInvocation:(NSInvocation *)anInvocation &#123;</span><br><span class="line">    [anInvocation invokeWithTarget:[[Cat alloc] init]];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector &#123;</span><br><span class="line">    if ([NSStringFromSelector(aSelector) isEqualToString:@&quot;jump&quot;]) &#123;</span><br><span class="line">        return [NSMethodSignature signatureWithObjCTypes:&quot;v@:&quot;];</span><br><span class="line">    &#125;</span><br><span class="line">    return [super methodSignatureForSelector:aSelector];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;最后在ViewController中创建Rabbit的实例，并调用jump方法，由于我们通过完整的消息转发，将方法的实现跳转到了Cat实例中，因此不但不会crash，还会执行Cat的jump方法，控制台的打印如下：<br><img src="https://ws1.sinaimg.cn/large/749c46aagy1fxvojll726j20he03fdgr.jpg" alt="" title="完整的消息转发"></p>
+<p>&emsp;&emsp;最后在ViewController中创建Rabbit的实例，并调用jump方法，由于我们通过完整的消息转发，将方法的实现跳转到了Cat实例中，因此不但不会crash，还会执行Cat的jump方法，控制台的打印如下：<br><img src="http://pz1livcqe.bkt.clouddn.com/完整的消息转发.jpg" alt="" title="完整的消息转发"></p>
 <h1 id="引申-向一个nil对象发送消息会怎样？"><a href="#引申-向一个nil对象发送消息会怎样？" class="headerlink" title="引申 - 向一个nil对象发送消息会怎样？"></a>引申 - 向一个nil对象发送消息会怎样？</h1><p>&emsp;&emsp;结论：OC中向为nil的对象发送消息，程序是不会crash的。<br>&emsp;&emsp;因为OC的函数都是通过<code>objc_msgSend</code>进行消息发送来实现，相对于C和C++来说，对于空指针的操作会引起crash问题，而<code>objc_msgSend</code>会通过判断self来决定是否发送消息，如果self为nil，那么selector也会为空，直接返回，不会出现问题。视方法返回值，向nil发消息可能会返回nil（返回值为对象），0（返回值为一些基础数据）或0X0（返回值为id）等。但对于<code>[NSNull null]</code>对象发送消息时，是会crash的，因为NSNull类只有一个null方法。</p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
 <li><a href="https://www.cnblogs.com/junhuawang/p/5196291.html" target="_blank" rel="noopener">博客园 - 俊华的博客 - Runtime 运行时之一：消息转发</a></li>
@@ -469,7 +469,7 @@
   <p><span>本文标题:</span><a href="/runtime-message-forwarding.html">iOS开发 - runtime实践·消息转发（Message Forwarding）</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 kim逸云 的个人博客">kim逸云</a></p>
   <p><span>发布时间:</span>2019年10月15日 - 10:10</p>
-  <p><span>最后更新:</span>2019年10月15日 - 10:10</p>
+  <p><span>最后更新:</span>2019年10月15日 - 11:10</p>
   <p><span>原始链接:</span><a href="/runtime-message-forwarding.html" title="iOS开发 - runtime实践·消息转发（Message Forwarding）">http://cloverkim.com/runtime-message-forwarding.html</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://cloverkim.com/runtime-message-forwarding.html"  aria-label="复制成功！"></i></span>
   </p>

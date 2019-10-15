@@ -87,12 +87,12 @@
 <meta property="og:site_name" content="幸运四叶草">
 <meta property="og:description" content="原理 比较相邻的元素，如果第一个比第二个大，就交换他们两个。 对每一组相邻元素做同样的工作，从开始第一对到结尾的最后一对。在这一点，最后的元素应该会是最大的数。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fvrm3x9pj5j20iu08xq4b.jpg">
-<meta property="og:updated_time" content="2019-10-15T02:26:22.926Z">
+<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fvrm3x9pj5j20iu08xq4b.jpg">
+<meta property="og:updated_time" content="2019-10-15T04:26:24.689Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="算法学习 - 冒泡排序">
 <meta name="twitter:description" content="原理 比较相邻的元素，如果第一个比第二个大，就交换他们两个。 对每一组相邻元素做同样的工作，从开始第一对到结尾的最后一对。在这一点，最后的元素应该会是最大的数。">
-<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fvrm3x9pj5j20iu08xq4b.jpg">
+<meta name="twitter:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fvrm3x9pj5j20iu08xq4b.jpg">
 
 
 
@@ -400,7 +400,7 @@
 <li>比较相邻的元素，如果第一个比第二个大，就交换他们两个。</li>
 <li>对每一组相邻元素做同样的工作，从开始第一对到结尾的最后一对。在这一点，最后的元素应该会是最大的数。<a id="more"></a></li>
 <li>针对所有的元素重复以后的步骤，除了最后一个。</li>
-<li>持续每次对越来越少的元素重复上面的步骤，直到满意任何一对数字需要比较，则序列最终有序。<br><img src="https://ws1.sinaimg.cn/large/749c46aagy1fvrm3x9pj5j20iu08xq4b.jpg" alt="" title="步骤图"></li>
+<li>持续每次对越来越少的元素重复上面的步骤，直到满意任何一对数字需要比较，则序列最终有序。<br><img src="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fvrm3x9pj5j20iu08xq4b.jpg" alt="" title="步骤图"></li>
 </ol>
 <h2 id="Swift实现"><a href="#Swift实现" class="headerlink" title="Swift实现"></a>Swift实现</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">func bubble_sort(_ array: inout [Int]) &#123;</span><br><span class="line">    for i in 0..&lt;array.count - 1 &#123;</span><br><span class="line">        for j in 0..&lt;array.count - i - 1 &#123;</span><br><span class="line">            if array[j] &gt; array[j + 1] &#123;</span><br><span class="line">                array.swapAt(j, j + 1)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var arrays: [Int] = [3, 6, 4, 2, 9, 8, 5]</span><br><span class="line">bubble_sort(&amp;arrays)</span><br></pre></td></tr></table></figure>
 <h3 id="代码优化："><a href="#代码优化：" class="headerlink" title="代码优化："></a>代码优化：</h3><p>在某些情况下，循环还未终止，整个数组已经排好序，此时应及时终止循环。（冒泡每次都会比较相邻两个数并交换次数不对的组，若一次循环后，都没进行交换，则判断为已完成排序）</p>
@@ -427,7 +427,7 @@
   <p><span>本文标题:</span><a href="/bubble_sort.html">算法学习 - 冒泡排序</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 kim逸云 的个人博客">kim逸云</a></p>
   <p><span>发布时间:</span>2019年10月15日 - 10:10</p>
-  <p><span>最后更新:</span>2019年10月15日 - 10:10</p>
+  <p><span>最后更新:</span>2019年10月15日 - 12:10</p>
   <p><span>原始链接:</span><a href="/bubble_sort.html" title="算法学习 - 冒泡排序">http://cloverkim.com/bubble_sort.html</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://cloverkim.com/bubble_sort.html"  aria-label="复制成功！"></i></span>
   </p>

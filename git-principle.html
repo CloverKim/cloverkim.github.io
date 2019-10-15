@@ -87,26 +87,26 @@
 <meta property="og:site_name" content="幸运四叶草">
 <meta property="og:description" content="前言&amp;emsp;&amp;emsp;在我们日常的开发工作中，对代码的管理一般会用到Git，当然也有使用SVN。对于刚接触Git或者仅仅是使用git pull、git push等几个常用命令的人来说，对Git还是挺陌生的，不理解其原理和如何具体使用。本文会对Git的原理以及常用命令进行介绍，希望对刚接触Git的开发者有一定的帮助。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fxy91cj41qj208c05iwf8.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fxwutjhlfrj20m808hwgu.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fxx2bz7s91j20p20ivdhh.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fxx4b6zt44j20f40ah0tc.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fxx4ana2tij20cr06s0t0.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fxx4anfmlzj20f009x0t9.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fxx6t7cb2bj20ot0bnmy9.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fxx76z1kc8j20l206sgm4.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fxx7s107mvj20sd064dg5.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fxy00bvqa4j20mk0c9wfo.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fxy00byt7bj20o50c43zh.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fxy16i1trqj20ez06nt90.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fxy73k6ut8j20ca04z74f.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fxy73k8nxxj20fp04s74h.jpg">
-<meta property="og:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fxy73kcohsj20hc03mt8t.jpg">
-<meta property="og:updated_time" content="2019-10-15T02:26:22.927Z">
+<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxy91cj41qj208c05iwf8.jpg">
+<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxwutjhlfrj20m808hwgu.jpg">
+<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxx2bz7s91j20p20ivdhh.jpg">
+<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxx4b6zt44j20f40ah0tc.jpg">
+<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxx4ana2tij20cr06s0t0.jpg">
+<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxx4anfmlzj20f009x0t9.jpg">
+<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxx6t7cb2bj20ot0bnmy9.jpg">
+<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxx76z1kc8j20l206sgm4.jpg">
+<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxx7s107mvj20sd064dg5.jpg">
+<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxy00bvqa4j20mk0c9wfo.jpg">
+<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxy00byt7bj20o50c43zh.jpg">
+<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxy16i1trqj20ez06nt90.jpg">
+<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxy73k6ut8j20ca04z74f.jpg">
+<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxy73k8nxxj20fp04s74h.jpg">
+<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxy73kcohsj20hc03mt8t.jpg">
+<meta property="og:updated_time" content="2019-10-15T04:18:47.574Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Git原理简介和常用命令">
 <meta name="twitter:description" content="前言&amp;emsp;&amp;emsp;在我们日常的开发工作中，对代码的管理一般会用到Git，当然也有使用SVN。对于刚接触Git或者仅仅是使用git pull、git push等几个常用命令的人来说，对Git还是挺陌生的，不理解其原理和如何具体使用。本文会对Git的原理以及常用命令进行介绍，希望对刚接触Git的开发者有一定的帮助。">
-<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/749c46aagy1fxy91cj41qj208c05iwf8.jpg">
+<meta name="twitter:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxy91cj41qj208c05iwf8.jpg">
 
 
 
@@ -410,8 +410,8 @@
       
 
       
-        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&emsp;&emsp;在我们日常的开发工作中，对代码的管理一般会用到Git，当然也有使用SVN。对于刚接触Git或者仅仅是使用<code>git pull</code>、<code>git push</code>等几个常用命令的人来说，对Git还是挺陌生的，不理解其原理和如何具体使用。本文会对Git的原理以及常用命令进行介绍，希望对刚接触Git的开发者有一定的帮助。<a id="more"></a><br><img src="https://ws1.sinaimg.cn/large/749c46aagy1fxy91cj41qj208c05iwf8.jpg" alt="" title="Git"></p>
-<h1 id="Git基础和原理"><a href="#Git基础和原理" class="headerlink" title="Git基础和原理"></a>Git基础和原理</h1><h2 id="直接记录快照，而非差异比较"><a href="#直接记录快照，而非差异比较" class="headerlink" title="直接记录快照，而非差异比较"></a>直接记录快照，而非差异比较</h2><p>&emsp;&emsp;Git和其他版本控制系统（包括SVN和近似工具）的主要差别在于Git对待数据的方法。概念上来区分，其他大部分系统以文件变更列表的方式存储信息。这类系统（CVS、Subversion、Perforce、Bazaar等等）将它们保存的信息看作是一组基本文件和每个文件随时间逐步累积的差异。Git不按照以上方式对待或保存数据。反之，Git更像是把数据看作是对小型文件系统的一组快照。每次你提交更新，或在Git中保存项目状态时，它主要对当时的全部文件制作一个快照并保存这个快照的索引。为了高效，如果文件没有修改，Git不再重新存储该文件，而是只保留一个链接指向之前存储的文件。Git对待数据更像是一个快照流。如下图所示。这是Git与几乎所有其它版本控制系统的重要区别。<br><img src="https://ws1.sinaimg.cn/large/749c46aagy1fxwutjhlfrj20m808hwgu.jpg" alt=""></p>
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&emsp;&emsp;在我们日常的开发工作中，对代码的管理一般会用到Git，当然也有使用SVN。对于刚接触Git或者仅仅是使用<code>git pull</code>、<code>git push</code>等几个常用命令的人来说，对Git还是挺陌生的，不理解其原理和如何具体使用。本文会对Git的原理以及常用命令进行介绍，希望对刚接触Git的开发者有一定的帮助。<a id="more"></a><br><img src="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxy91cj41qj208c05iwf8.jpg" alt="" title="Git"></p>
+<h1 id="Git基础和原理"><a href="#Git基础和原理" class="headerlink" title="Git基础和原理"></a>Git基础和原理</h1><h2 id="直接记录快照，而非差异比较"><a href="#直接记录快照，而非差异比较" class="headerlink" title="直接记录快照，而非差异比较"></a>直接记录快照，而非差异比较</h2><p>&emsp;&emsp;Git和其他版本控制系统（包括SVN和近似工具）的主要差别在于Git对待数据的方法。概念上来区分，其他大部分系统以文件变更列表的方式存储信息。这类系统（CVS、Subversion、Perforce、Bazaar等等）将它们保存的信息看作是一组基本文件和每个文件随时间逐步累积的差异。Git不按照以上方式对待或保存数据。反之，Git更像是把数据看作是对小型文件系统的一组快照。每次你提交更新，或在Git中保存项目状态时，它主要对当时的全部文件制作一个快照并保存这个快照的索引。为了高效，如果文件没有修改，Git不再重新存储该文件，而是只保留一个链接指向之前存储的文件。Git对待数据更像是一个快照流。如下图所示。这是Git与几乎所有其它版本控制系统的重要区别。<br><img src="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxwutjhlfrj20m808hwgu.jpg" alt=""></p>
 <h2 id="近乎所有操作都是本地执行"><a href="#近乎所有操作都是本地执行" class="headerlink" title="近乎所有操作都是本地执行"></a>近乎所有操作都是本地执行</h2><p>&emsp;&emsp;在Git中的绝大多数操作只需要访问本地文件和资源，一般不需要来自网络上其它计算机的信息。如果你习惯于所有操作都有网络延时开销的集中式版本控制系统，Git在这方面会让你感到速度之神赐给了Git超凡的能量。因为你在本地磁盘上就有项目的完整历史，所以大部分操作看起来瞬间完成。<br>&emsp;&emsp;举个🌰，要浏览项目的历史，Git不需要外连到服务器去获取历史，然后再显示出来，它只需要直接从本地数据库中读取。你能立即看到项目历史。如果想查看当前版本与一个月前的版本之间引入的修改，Git会查找到一个月前的文件做一次本地的差异计算，而不是由远程服务器处理或从远程服务器拉回旧版本文件再来本地处理。</p>
 <h2 id="Git-保证完整性"><a href="#Git-保证完整性" class="headerlink" title="Git 保证完整性"></a>Git 保证完整性</h2><p>&emsp;&emsp;Git中所有数据在存储前都计算校验和，然后以校验和来引用。这意味着不可能在Git不知情时更改任何文件内容或目录内容。这个功能构建在Git底层，是构成Git哲学不可或缺的部分。若你在传送过程中丢失信息或损坏文件，Git就能发现。</p>
 <h2 id="Git一般只添加数据"><a href="#Git一般只添加数据" class="headerlink" title="Git一般只添加数据"></a>Git一般只添加数据</h2><p>&emsp;&emsp;你执行的Git操作，几乎只往Git数据库中增加数据。很难让Git执行任何不可逆的操作，或者让它以任何形式清除数据。同别的VCS一样，未提交更新时有可能丢失或弄乱修改的内容，但是一旦你提交快照到Git中，就难以再丢失数据，特别是如果你定期的推送数据库到其它仓库的话。</p>
@@ -425,8 +425,8 @@
 <li><p>Remote Repository（远程仓库）：<br>&emsp;&emsp;远程仓库是指托管在一些Git代码托管平台上的你的项目的版本库，比如<a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>、<a href="https://about.gitlab.com/" target="_blank" rel="noopener">GitLab</a>、<a href="https://gitee.com/" target="_blank" rel="noopener">码云</a>、<a href="https://coding.net/" target="_blank" rel="noopener">码市</a>等等。远程仓库的内容可能被分布在多个地点的处于协作关系的本地仓库修改，因此它可能与本地仓库同步，也可能不同步，但是远程仓库的内容是最旧的。</p>
 </li>
 </ul>
-<p>&emsp;&emsp;四个区域之间的关系如下图所示：<br><img src="https://ws1.sinaimg.cn/large/749c46aagy1fxx2bz7s91j20p20ivdhh.jpg" alt=""></p>
-<h1 id="常用的Git命令详解"><a href="#常用的Git命令详解" class="headerlink" title="常用的Git命令详解"></a>常用的Git命令详解</h1><h2 id="HEAD"><a href="#HEAD" class="headerlink" title="HEAD"></a>HEAD</h2><p>&emsp;&emsp;HEAD，它始终指向当前所处分支的最新的提交点，所处的分支发生了变化，或者产生了新的提交点，HEAD就会跟着改变。<br><img src="https://ws1.sinaimg.cn/large/749c46aagy1fxx4b6zt44j20f40ah0tc.jpg" alt="" title="HEAD"></p>
+<p>&emsp;&emsp;四个区域之间的关系如下图所示：<br><img src="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxx2bz7s91j20p20ivdhh.jpg" alt=""></p>
+<h1 id="常用的Git命令详解"><a href="#常用的Git命令详解" class="headerlink" title="常用的Git命令详解"></a>常用的Git命令详解</h1><h2 id="HEAD"><a href="#HEAD" class="headerlink" title="HEAD"></a>HEAD</h2><p>&emsp;&emsp;HEAD，它始终指向当前所处分支的最新的提交点，所处的分支发生了变化，或者产生了新的提交点，HEAD就会跟着改变。<br><img src="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxx4b6zt44j20f40ah0tc.jpg" alt="" title="HEAD"></p>
 <h2 id="git-add"><a href="#git-add" class="headerlink" title="git add"></a>git add</h2><p>&emsp;&emsp;<code>git add</code>主要实现将工作区修改的内容提交到暂存区，交由git管理。相关命令如下表所示：</p>
 <table>
 <thead>
@@ -450,7 +450,7 @@
 </tr>
 </tbody>
 </table>
-<p><img src="https://ws1.sinaimg.cn/large/749c46aagy1fxx4ana2tij20cr06s0t0.jpg" alt="" title="git add"></p>
+<p><img src="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxx4ana2tij20cr06s0t0.jpg" alt="" title="git add"></p>
 <h2 id="git-commit"><a href="#git-commit" class="headerlink" title="git commit"></a>git commit</h2><p>&emsp;&emsp;<code>git commit</code>主要实现将暂存区的内容提交到本地仓库，并使得当前分支的HEAD向后移动一个提交点。相关命令如下表所示：</p>
 <table>
 <thead>
@@ -474,7 +474,7 @@
 </tr>
 </tbody>
 </table>
-<p><img src="https://ws1.sinaimg.cn/large/749c46aagy1fxx4anfmlzj20f009x0t9.jpg" alt="" title="git commit"></p>
+<p><img src="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxx4anfmlzj20f009x0t9.jpg" alt="" title="git commit"></p>
 <h2 id="git-branch"><a href="#git-branch" class="headerlink" title="git branch"></a>git branch</h2><p>&emsp;&emsp;在我们的代码仓库中，有一条主分支Master，我们可以从主分支当中，创建出许多分支以开发其他功能，创建子分支的好处是每个分支互不影响，大家只需要在自己的分支上继续开发，正常工作。待开发完毕后，再将自己的子分支合并到主分支或者其他分支即可，这样，即安全又不影响他人的工作。<br>&emsp;&emsp;关于分支，主要有展示分支、切换分支、创建分支、删除分支操作。相关命令如下表所示：</p>
 <table>
 <thead>
@@ -522,7 +522,7 @@
 </tr>
 </tbody>
 </table>
-<p><img src="https://ws1.sinaimg.cn/large/749c46aagy1fxx6t7cb2bj20ot0bnmy9.jpg" alt="" title="git branch"></p>
+<p><img src="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxx6t7cb2bj20ot0bnmy9.jpg" alt="" title="git branch"></p>
 <h2 id="git-merge"><a href="#git-merge" class="headerlink" title="git merge"></a>git merge</h2><p>&emsp;&emsp;<code>git merge</code>命令的作用是把不同的分支合并起来。在实际的开发中，我们会从master主分支中创建出一个新的分支，然后进行需求或功能的开发，最后开发完成后需要合并子分支到主分支master中，这就需要用到<code>git merge</code>命令。</p>
 <table>
 <thead>
@@ -538,9 +538,10 @@
 </tr>
 </tbody>
 </table>
-<p><img src="https://ws1.sinaimg.cn/large/749c46aagy1fxx76z1kc8j20l206sgm4.jpg" alt="" title="git branch"></p>
-<h2 id="git-rebase"><a href="#git-rebase" class="headerlink" title="git rebase"></a>git rebase</h2><p>&emsp;&emsp;rebase又称为衍合，是合并的另外一种选择。在开始阶段，我们在新的分支上，执行<code>git rebase dev</code>，那么新分支上的commit都在master分支上重演一遍，最后checkout切换回到新的分支。这一点与merge命令是一样的，合并前后所处的分支并没有改变。<br><img src="https://ws1.sinaimg.cn/large/749c46aagy1fxx7s107mvj20sd064dg5.jpg" alt="" title="git rebase dev"></p>
-<h2 id="git-reset"><a href="#git-reset" class="headerlink" title="git reset"></a>git reset</h2><p>&emsp;&emsp;<code>git reset</code>命令把当前分支指向另一个位置，并且有选择的变动工作目录和索引。也用来从历史仓库中复制文件到索引，而不动工作目录。如果不给选项，那么当前分支指向到那个提交。如果用–hard参数，那么工作目录也更新，如果用–soft参数，那么都不变。使用 <code>git reset HEAD ~3</code> 命令的说明如下图所示：<br><img src="https://ws1.sinaimg.cn/large/749c46aagy1fxy00bvqa4j20mk0c9wfo.jpg" alt="" title="git reset HEAD~3"><br>&emsp;&emsp;如果没有给出提交的版本号，那么默认用HEAD。这样，分支指向不变，但是索引会回滚到最后一次提交，如果用–hard参数，工作目录也一样。<br><img src="https://ws1.sinaimg.cn/large/749c46aagy1fxy00byt7bj20o50c43zh.jpg" alt="" title="git reset"></p>
+<p><img src="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxx76z1kc8j20l206sgm4.jpg" alt="" title="git branch"></p>
+<h2 id="git-rebase"><a href="#git-rebase" class="headerlink" title="git rebase"></a>git rebase</h2><p>&emsp;&emsp;rebase又称为衍合，是合并的另外一种选择。在开始阶段，我们在新的分支上，执行<code>git rebase dev</code>，那么新分支上的commit都在master分支上重演一遍，最后checkout切换回到新的分支。这一点与merge命令是一样的，合并前后所处的分支并没有改变。<br><img src="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxx7s107mvj20sd064dg5.jpg" alt="" title="git rebase dev"></p>
+<h2 id="git-reset"><a href="#git-reset" class="headerlink" title="git reset"></a>git reset</h2><p>&emsp;&emsp;<code>git reset</code>命令把当前分支指向另一个位置，并且有选择的变动工作目录和索引。也用来从历史仓库中复制文件到索引，而不动工作目录。如果不给选项，那么当前分支指向到那个提交。如果用–hard参数，那么工作目录也更新，如果用–soft参数，那么都不变。使用 <code>git reset HEAD ~3</code> 命令的说明如下图所示：<br><img src="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxy00bvqa4j20mk0c9wfo.jpg" alt="" title="git reset HEAD~3"></p>
+<p>&emsp;&emsp;如果没有给出提交的版本号，那么默认用HEAD。这样，分支指向不变，但是索引会回滚到最后一次提交，如果用–hard参数，工作目录也一样。<br><img src="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxy00byt7bj20o50c43zh.jpg" alt="" title="git reset"></p>
 <table>
 <thead>
 <tr>
@@ -568,7 +569,7 @@
 </tbody>
 </table>
 <h2 id="git-revert"><a href="#git-revert" class="headerlink" title="git revert"></a>git revert</h2><p>&emsp;&emsp; revert 是用一个新的提交来消除一个历史提交所做的任何修改，revert之后，我们本地的代码会回滚到指定的历史版本。举个🌰，其结果如下图所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git commit -am &apos;update readme&apos;</span><br><span class="line">git revert 15df9b6</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://ws1.sinaimg.cn/large/749c46aagy1fxy16i1trqj20ez06nt90.jpg" alt="" title="git revert"></p>
+<p><img src="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxy16i1trqj20ez06nt90.jpg" alt="" title="git revert"></p>
 <h2 id="git-push"><a href="#git-push" class="headerlink" title="git push"></a>git push</h2><p>&emsp;&emsp;将本地仓库分支上传到远程仓库分支，实现同步。相关命令如下：</p>
 <table>
 <thead>
@@ -595,7 +596,7 @@
 <h2 id="git-fetch"><a href="#git-fetch" class="headerlink" title="git fetch"></a>git fetch</h2><p>&emsp;&emsp;<code>git fetch</code>是从远程仓库中获取最新版本到本地仓库中，但不会自动合并本地的版本，也就说，我们可以查看更新情况，然后再决定是否进行合并。在fetch命令中，有一个重要的概念：<strong>FETCH_HEAD</strong>：某个branch在服务器上的最新状态，每一个执行过fetch操作，都会存在一个FETCH_HEAD列表，这个列表保存在<strong>.git</strong>目录的<strong>FETCH_HEAD</strong>文件中，其中每一行对应于远程服务器的每一个分支。当前分支指向的FETCH_HEAD，就是文件第一行对应的那个分支。</p>
 <h2 id="git-pull"><a href="#git-pull" class="headerlink" title="git pull"></a>git pull</h2><p>&emsp;&emsp;<code>git pull</code>是从远程仓库中获取最新版本并自动合并到本地的仓库。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git pull origin next</span><br></pre></td></tr></table></figure></p>
 <p>&emsp;&emsp;上面命令表示，取回<strong>origin/next</strong>分支的更新，再与当前分支进行合并。实质上，等同于，先做<code>git fetch</code>，再执行<code>git merge</code>。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git fetch origin</span><br><span class="line">git merge origin/next</span><br></pre></td></tr></table></figure></p>
-<h1 id="一些命令的区别"><a href="#一些命令的区别" class="headerlink" title="一些命令的区别"></a>一些命令的区别</h1><h2 id="merge-和-rebase"><a href="#merge-和-rebase" class="headerlink" title="merge 和 rebase"></a>merge 和 rebase</h2><p>&emsp;&emsp;举个🌰说明：现在我们有这样两个分支，test和master，其提交记录如下图所示：<br><img src="https://ws1.sinaimg.cn/large/749c46aagy1fxy73k6ut8j20ca04z74f.jpg" alt=""><br>&emsp;&emsp;在master分支上执行<code>git merge test</code>命令后，会得到如下图所示的结果：<br><img src="https://ws1.sinaimg.cn/large/749c46aagy1fxy73k8nxxj20fp04s74h.jpg" alt=""><br>&emsp;&emsp;如果在master分支上执行<code>git rebase test</code>命令，则会得到如下图所示的结果：<br><img src="https://ws1.sinaimg.cn/large/749c46aagy1fxy73kcohsj20hc03mt8t.jpg" alt=""><br>&emsp;&emsp;由上面的🌰可以看出，merge操作会生成一个新的节点，之前的提交分开显示。而rebase操作不会生成新的节点，是将两个分支融合成一个线性的提交记录。<br>&emsp;&emsp;如果我们想要一个干净的，没有merge commit的线性历史树，那么应该选择<code>git rebase</code>，如果想保留完整的历史记录，并且想要避免重写commit history的风险，应该选择使用<code>git merge</code>。</p>
+<h1 id="一些命令的区别"><a href="#一些命令的区别" class="headerlink" title="一些命令的区别"></a>一些命令的区别</h1><h2 id="merge-和-rebase"><a href="#merge-和-rebase" class="headerlink" title="merge 和 rebase"></a>merge 和 rebase</h2><p>&emsp;&emsp;举个🌰说明：现在我们有这样两个分支，test和master，其提交记录如下图所示：<br><img src="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxy73k6ut8j20ca04z74f.jpg" alt=""><br>&emsp;&emsp;在master分支上执行<code>git merge test</code>命令后，会得到如下图所示的结果：<br><img src="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxy73k8nxxj20fp04s74h.jpg" alt=""><br>&emsp;&emsp;如果在master分支上执行<code>git rebase test</code>命令，则会得到如下图所示的结果：<br><img src="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fxy73kcohsj20hc03mt8t.jpg" alt=""><br>&emsp;&emsp;由上面的🌰可以看出，merge操作会生成一个新的节点，之前的提交分开显示。而rebase操作不会生成新的节点，是将两个分支融合成一个线性的提交记录。<br>&emsp;&emsp;如果我们想要一个干净的，没有merge commit的线性历史树，那么应该选择<code>git rebase</code>，如果想保留完整的历史记录，并且想要避免重写commit history的风险，应该选择使用<code>git merge</code>。</p>
 <h2 id="reset-和-revert"><a href="#reset-和-revert" class="headerlink" title="reset 和 revert"></a>reset 和 revert</h2><ul>
 <li>revert 是用一次新的commit来回滚之前的commit，而 reset 是直接删除指定的commit。</li>
 <li>在回滚这一操作上看，效果差不多。但在日后继续merge以前的老版本时有区别。因为<code>git revert</code>是用一次逆向的commit“中和”之前的提交，因此日后合并老的分支时，导致这部分改变不会再次出现，减少冲突。但是<code>git reset</code>是直接把某个commit在某个分支上删除，因而和老的分支再次merge时，这些被回滚的commit应该还会被引入，产生很多冲突。</li>
@@ -629,7 +630,7 @@
   <p><span>本文标题:</span><a href="/git-principle.html">Git原理简介和常用命令</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 kim逸云 的个人博客">kim逸云</a></p>
   <p><span>发布时间:</span>2019年10月15日 - 10:10</p>
-  <p><span>最后更新:</span>2019年10月15日 - 10:10</p>
+  <p><span>最后更新:</span>2019年10月15日 - 12:10</p>
   <p><span>原始链接:</span><a href="/git-principle.html" title="Git原理简介和常用命令">http://cloverkim.com/git-principle.html</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://cloverkim.com/git-principle.html"  aria-label="复制成功！"></i></span>
   </p>
