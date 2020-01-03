@@ -32,9 +32,9 @@ func evaluatePolicy(_ policy: LAPolicy, localizedReason: String, reply: @escapin
 ```
 localizedReason parameter is mandatory and the call will throw NSInvalidArgumentException if nil or empty string is specified.
 ```
-![](http://pz1livcqe.bkt.clouddn.com/749c46aagy1fx7mizkbgij20bd07pt9w.jpg 'Touch ID')
+![](http://pic.cloverkim.com/749c46aagy1fx7mizkbgij20bd07pt9w.jpg 'Touch ID')
 
-![](http://pz1livcqe.bkt.clouddn.com/749c46aagy1fx7miznpcsj209108ngm2.jpg 'Face ID')
+![](http://pic.cloverkim.com/749c46aagy1fx7miznpcsj209108ngm2.jpg 'Face ID')
 
 - reply：验证回调，包含是否验证通过的Bool值和错误信息。 我们在拿到验证结果后，进行判断并进行下一步的处理操作，成功跳转或者错误提示等。
 
@@ -178,9 +178,9 @@ class LocalAuthenticationService: NSObject {
 ```
 - github链接：[UnlockDemo](https://github.com/CloverKim/UnlockDemo)
 ## 运行效果图
-![](http://pz1livcqe.bkt.clouddn.com/749c46aagy1fx7k6vlb9yg20op0dwe81.gif 'Touch ID')
+![](http://pic.cloverkim.com/749c46aagy1fx7k6vlb9yg20op0dwe81.gif 'Touch ID')
 
-![](http://pz1livcqe.bkt.clouddn.com/749c46aagy1fx7k1sjb6ag20op0dwb29.gif 'Face ID')
+![](http://pic.cloverkim.com/749c46aagy1fx7k1sjb6ag20op0dwb29.gif 'Face ID')
 
 # 参考
 - [csdn - mengkeer - iOS FaceID & TouchID](https://blog.csdn.net/zuoqianheng/article/details/80594389)

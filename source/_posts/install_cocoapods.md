@@ -46,7 +46,7 @@ gem -v
 sudo gem install -n /usr/local/bin cocoapods
 ```
 安装成功如下图所示：
-![](http://pz1livcqe.bkt.clouddn.com/749c46aagy1fw37mrk9l9j20i005njsj.jpg)
+![](http://pic.cloverkim.com/749c46aagy1fw37mrk9l9j20i005njsj.jpg)
 安装成功之后，可以使用命令pod --version查看是否安装成功，如果成功会显示pod的版本号信息。
 
 ## 更新Podspec索引文件
@@ -60,7 +60,7 @@ pod setup的作用：将所有第三方的Podspec索引文件更新到本地的~
 - 如果执行了pod setup，并且命令没有执行成功，那么会创建~/.cocoapods/repos目录，但该目录为空。
 - 如果执行了pod setup，并且命令执行成功，说明已经把github上的Podspec文件更新到本地，那么会创建~/.cocoapods/repos目录，并且repos目录里会有一个master目录，这个master目录保存的就是github上所有第三方开源库的Podspec索引文件。
 最后pod setup成功时，如下图所示：
-![](http://pz1livcqe.bkt.clouddn.com/749c46aagy1fw38vsef5sj20hw0afwgl.jpg)
+![](http://pic.cloverkim.com/749c46aagy1fw38vsef5sj20hw0afwgl.jpg)
 
 # 参考
 - [https://blog.csdn.net/jiankeufo/article/details/79362660](https://blog.csdn.net/jiankeufo/article/details/79362660)

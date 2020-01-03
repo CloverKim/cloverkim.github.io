@@ -96,4 +96,4 @@ print("\n总共喝了\(turnBeerInfo.drinkTotal)瓶啤酒，还剩下\(turnBeerIn
 ```
 
 # 运行结果
-![](http://pz1livcqe.bkt.clouddn.com/749c46aagy1fwbncmbf1qj20aj03874o.jpg)
+![](http://pic.cloverkim.com/749c46aagy1fwbncmbf1qj20aj03874o.jpg)

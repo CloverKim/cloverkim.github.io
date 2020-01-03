@@ -47,7 +47,7 @@ if let imageData = NSData(contentsOfFile: gifPath ?? "") {
 }
 ```
 运行结果如下图所示：
-![](http://pz1livcqe.bkt.clouddn.com/006tKfTcgy1g0e679vq7dg30aw0lkkjm.gif)
+![](http://pic.cloverkim.com/006tKfTcgy1g0e679vq7dg30aw0lkkjm.gif)
 
 # SDWebImage如何区分图片格式？
 常见的三种图片格式：
@@ -156,7 +156,7 @@ if ([NSThread isMainThread]) {
 }
 ```
 &emsp;&emsp;这在大多数情况下是有效的，直到它出现了异常。下面是关于ReactiveCocoa repo问题的摘录：[ReactiveCocoa issue](https://github.com/ReactiveCocoa/ReactiveCocoa/issues/2635#issuecomment-170215083)
-![](http://pz1livcqe.bkt.clouddn.com/006tKfTcgy1g0e7ys9bihj317m0eagpe.jpg)
+![](http://pic.cloverkim.com/006tKfTcgy1g0e7ys9bihj317m0eagpe.jpg)
 &emsp;&emsp;潜在的问题是VektorKit API正在检查是否在主队列上调用它，而不是检查它是否在主线程上运行。虽然每个应用程序都只有一个主线程，但是在这个主线程上执行许多不同的队列是可能的。
 &emsp;&emsp;如果库（如VektorKit）依赖于在主队列上检查执行，那么从主线程上执行的非主队列调用API将导致问题。也就是说，如果主线程执行非主队列调度的API，而这个API需要检查是否由主队列上调度，那么将会出现问题。
 

@@ -346,10 +346,10 @@ for (uint32_t m = 0; (scanForCustomRR || scanForCustomAWZ)  &&  m < mlist->count
 - 这么几个+load方法，调用顺序是怎样的呢？
 
 &emsp;&emsp;鉴于上述几节我们看的代码太多了，对于这两个问题，我们先来看一点直观的
-![](http://pz1livcqe.bkt.clouddn.com/006tNc79gy1g02j2m78u0j308c04l74u.jpg)
+![](http://pic.cloverkim.com/006tNc79gy1g02j2m78u0j308c04l74u.jpg)
 &emsp;&emsp;我们的代码里有MyClass和MyClass的两个Category（Category1和Category2），MyClass和两个Category都添加了+load方法，并且Category1和Category2都写了MyClass的printName方法。
 &emsp;&emsp;在Xcode中点击Edit Scheme，添加如下两个环境变量（可以在执行load方法以及加载Category的时候打印log信息，更多的环境变量选项可参见objc-private.h）：
-![](http://pz1livcqe.bkt.clouddn.com/006tNc79gy1g02j5obh5bj30qk08qgmb.jpg)
+![](http://pic.cloverkim.com/006tNc79gy1g02j5obh5bj30qk08qgmb.jpg)
 &emsp;&emsp;运行项目，我们会看到控制台打印很多东西，我们只找我们想要的信息，顺序如下：
 ```
 objc[1187]: REPLACED: -[MyClass printName] by category Category1
@@ -375,9 +375,9 @@ objc[1187]: LOAD: +[MyClass(Category2) load]
 - +load的执行顺序是先类，后Category，而Category的+load执行顺序是根据编译顺序决定的。
 
 &emsp;&emsp;目前的编译顺序是这样的：
-![](http://pz1livcqe.bkt.clouddn.com/006tNc79gy1g02j978gp0j30mw09o75k.jpg)
+![](http://pic.cloverkim.com/006tNc79gy1g02j978gp0j30mw09o75k.jpg)
 &emsp;&emsp;我们调整一下Category1和Category2的编译顺序，如下图所示，run。ok，我们可以看到控制台的输出顺序变了：
-![](http://pz1livcqe.bkt.clouddn.com/006tNc79gy1g02jgvfocnj30lu09u3zm.jpg)
+![](http://pic.cloverkim.com/006tNc79gy1g02jgvfocnj30lu09u3zm.jpg)
 ```
 objc[1187]: REPLACED: -[MyClass printName] by category Category2
 objc[1187]: REPLACED: -[MyClass printName] by category Category1

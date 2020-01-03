@@ -10,7 +10,7 @@ copyright: ture
 # 问题的开始
 &emsp;&emsp;之前项目需要集成连连支付，根据连连支付文档集成之后，发现编译报了如图1-1 所示的错误，即libRsaCrypto.a中的base64.o和其他库冲突了，在网上进行了搜索与一番尝试，比如在linking—>other linker flags使用-force_load导入我们的libRsaCrypto.a，但还是无补于事。最后找到了一个比较简单粗暴的方法，既然libRsaCrypto.a中的base64.o和其他库冲突了，那就将其base64.o删除，前提是确定删除base64.o对原有的第三方库没有影响。
 <!-- more -->
-![](http://pz1livcqe.bkt.clouddn.com/749c46aagy1fw2wubwxvij219g046768.jpg '1-1')
+![](http://pic.cloverkim.com/749c46aagy1fw2wubwxvij219g046768.jpg '1-1')
 
  附带介绍下－ObjC、－all_load、-force_load 3个参数的作用： 
 - -ObjC：加了这个参数后，链接器就会把静态库中所有的Objective-C类和分类都加载到最后的可执行文件中。
@@ -24,7 +24,7 @@ copyright: ture
 lipo -info libRsaCrypto.a 
 ```
 输出结果如图2-1 所示：
-![](http://pz1livcqe.bkt.clouddn.com/749c46aagy1fw2wuc64t4j20uc03cdhm.jpg '2-1')
+![](http://pic.cloverkim.com/749c46aagy1fw2wuc64t4j20uc03cdhm.jpg '2-1')
 ## 2、根据上面的输出平台进行拆分.a文件
 ``` 
 lipo libRsaCrypto.a -thin armv7 -output 1/libRsaCrypto-armv7.a
@@ -33,7 +33,7 @@ lipo libRsaCrypto.a -thin x86_64 -output 3/libRsaCrypto-x86_64.a
 lipo libRsaCrypto.a -thin arm64 -output 4/libRsaCrypto-arm64.a
 ```
 这里需要注意的是：拆分后的.a文件在放在不同的文件夹下，这里我用当前目录下的文件夹1/2/3/4代替了。效果图如图2-2 所示：
-![](http://pz1livcqe.bkt.clouddn.com/749c46aagy1fw2wud4b2qj20my04ewer.jpg '2-2')
+![](http://pic.cloverkim.com/749c46aagy1fw2wud4b2qj20my04ewer.jpg '2-2')
 ## 3、解压每个拆分后的.a文件
 注意在解压前，先进入拆分后.a对应的文件夹下，在解压的命令分别在不同的文件夹下执行。
 ```
@@ -43,7 +43,7 @@ ar -x libRsaCrypto-x86_64.a
 ar -x libRsaCrypto-arm64.a
 ```
 解压完后，对应的文件效果如图2-3 所示：
-![](http://pz1livcqe.bkt.clouddn.com/749c46aagy1fw2wuc0afcj20bm0esab1.jpg '2-3')
+![](http://pic.cloverkim.com/749c46aagy1fw2wuc0afcj20bm0esab1.jpg '2-3')
 解压后可以删除对应的.o文件，这里我们需要删除的是base64.o。注意：要在每个文件夹里把对应的文件全部删除。然后再将解压之前的.a文件进行删除，即libRsaCrypto-armv7.a、libRsaCrypto-i386.a、libRsaCrypto-x86_64.a、libRsaCrypto-arm64.a。这样做，是为了方便我们重新命名合并后的.a文件。
 ## 4、合并解压后的.o文件
 分别进入对应的文件夹，对所有解压出来的.o文件进行合并。命令如下：

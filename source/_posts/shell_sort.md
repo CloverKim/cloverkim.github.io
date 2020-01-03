@@ -10,7 +10,7 @@ copyright: ture
 # 基本思想
 &emsp;&emsp;先将整个待排序的序列按照以增量gap=count/2的方式分割成为若干个子序列，再分别进行直接插入排序，待整个序列基本有序，即增量gap=1时，再对全体记录进行依次直接插入排序。
 <!-- more -->
-![](http://pz1livcqe.bkt.clouddn.com/shell_sort.jpg '希尔排序示例图')
+![](http://pic.cloverkim.com/shell_sort.jpg '希尔排序示例图')
 在上图中：
 初始时，有一个大小为10的无序序列，颜色相同为一组。
 在第一趟排序中，初始增量gap=count/2=5，意味着整个数组被分为5组，[9,5] [3,4] [2,6] [8,1] [7,5]，对这5组数据进行直接插入排序。

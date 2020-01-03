@@ -52,7 +52,7 @@ copyright: ture
 }
 ```
 运行结果如下图所示：
-![](http://pz1livcqe.bkt.clouddn.com/load.jpg '+load')
+![](http://pic.cloverkim.com/load.jpg '+load')
 
 由上图的运行结果可知：
 - 首先执行的父类Animal的load方法，再执行子类Cat的load方法，说明父类的load方法执行顺序要优先于子类。
@@ -93,7 +93,7 @@ copyright: ture
 }
 ```
 运行结果如下图所示：
-![](http://pz1livcqe.bkt.clouddn.com/749c46aagy1fwgtelwx4zj20fu02jaab.jpg)
+![](http://pic.cloverkim.com/749c46aagy1fwgtelwx4zj20fu02jaab.jpg)
 由运行结果发现，Animal类的+initialie方法被调用了2次，这是因为在创建子类对象时，首先要创建父类对象，所以会调用一次父类的initialize方法，然后创建子类时，尽管该类没有实现initialize方法，但还是会调用父类的方法。虽然initialize方法对一个类而言会调用一次，但这里由于出现了两个类，所以调用两次符合规则，但不符合我们的需求。正确使用initialize方法的方式如下：
 ```
 + (void)initialize {

@@ -360,7 +360,7 @@ int main() {
 ```
 为什么要通过`__forwarding`指针完成对count变量的读写修改？
 为了保证无论是在栈上还是在堆上，都能通过`__forwarding`指针找到堆上创建的count这个` __main_block_func_0 `结构体，以完成对count->count（第一个count是` __main_block_func_0 `对象，第二个count是int类型变量）的访问和修改。示意图如下：
-![](http://pz1livcqe.bkt.clouddn.com/006tNc79gy1g03s2zred9j30xc0o1408.jpg)
+![](http://pic.cloverkim.com/006tNc79gy1g03s2zred9j30xc0o1408.jpg)
 
 ## Block的循环引用
 &emsp;&emsp;Block的循环引用原理和解决方法大家都比较熟悉，此处将结合上文的介绍，介绍一种不常用的解决Block循环引用的方法和一种借助Block参数该问题的方法。

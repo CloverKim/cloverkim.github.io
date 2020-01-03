@@ -49,7 +49,7 @@ copyright: ture
 # 寻找key的策略
 ## setValue:forKey:方法赋值的原理
 &emsp;&emsp;设值会调用`setValue:forKey:`方法，其大致步骤如下流程图所示：
-![](http://pz1livcqe.bkt.clouddn.com/setValue-forKey-流程图.jpg 'setValue:forKey:流程图')
+![](http://pic.cloverkim.com/setValue-forKey-流程图.jpg 'setValue:forKey:流程图')
 
 1. 查找`set<Key>:`或`_set<Key>:`命名的setter，按照这个顺序，如果找到，则调用这个方法并将值传进去。
 2. 如果没有发现一个简单的setter，但是`accessInstanceVariablesDirectly`类属性返回YES，则查找一个命名规则为_key、_isKey、key、isKey的实例变量。按照这个顺序，如果查找到则将value赋值给实例变量。

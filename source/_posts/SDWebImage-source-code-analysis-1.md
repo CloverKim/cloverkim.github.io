@@ -9,11 +9,11 @@ copyright: ture
 ---
 
 &emsp;&emsp;[SDWebImage](https://github.com/SDWebImage/SDWebImage)是我们常用的图片缓存加载库，基本是iOS项目中标配的第三方库。SDWebImage提供了图片从加载、解析、处理、缓存、清理等一系列功能。对于一个我们常用的库，就很有必要对源码进行仔细阅读与学习，以便了解更多SDWebImage支持的功能与实现原理，当然学习和分析优秀的源码，也能为我们在调试解决问题时提供一定帮助。<!-- more -->
-![](http://pz1livcqe.bkt.clouddn.com/006tKfTcgy1g05syshw7tj30ct0360so.jpg 'SDWebImage')
+![](http://pic.cloverkim.com/006tKfTcgy1g05syshw7tj30ct0360so.jpg 'SDWebImage')
 
 # 基本架构图
 下图为作者给出的SDWebImage基本架构图：
-![](http://pz1livcqe.bkt.clouddn.com/006tKfTcgy1g05wka6jb7j314q0u0dox.jpg '基本架构图')
+![](http://pic.cloverkim.com/006tKfTcgy1g05wka6jb7j314q0u0dox.jpg '基本架构图')
 由上图架构图，我们将SDWebImage的相关类分为以下三种：
 - 各种分类：
     - UIButton+WebCache：为UIButton类添加加载图片的方法。
@@ -39,7 +39,7 @@ copyright: ture
 
 # 流程
 下图为SDWebImage图片加载的时序图，实现了图片加载、数据处理、图片缓存等一系列工作。
-![](http://pz1livcqe.bkt.clouddn.com/006tKfTcgy1g05xvrthcvj321m0r4q68.jpg 'SDWebImage图片加载时序图')
+![](http://pic.cloverkim.com/006tKfTcgy1g05xvrthcvj321m0r4q68.jpg 'SDWebImage图片加载时序图')
 由上图时序图，SDWebImage加载图片的流程大致如下：
 1. 对象调用暴露的接口方法` sd_setImageWithURL() `时，会再调用` setImageWithURL:placeholderImage:options: `方法，先把占位图placeholderImage显示，然后SDWebImageManager根据URL开始处理图片。
 2. SDImageCache类先从内存缓存查找是否有图片缓存，如果内存中已经有图片缓存，则直接回调到前端进行图片的显示。
@@ -49,7 +49,7 @@ copyright: ture
 6. 最后将图片通过SDImageCache类，同时保存到内存缓存和硬盘缓存中。写文件到硬盘的过程也在以单独NSInvocationOperation完成，避免阻塞主线程。
 
 这里借用一下在网上看到的一张非常详细的流程图：
-![](http://pz1livcqe.bkt.clouddn.com/006tKfTcgy1g063b1fc81j321e0lrdms.jpg)
+![](http://pic.cloverkim.com/006tKfTcgy1g063b1fc81j321e0lrdms.jpg)
 
 # 详细分析
 ## 相关工具类分析
