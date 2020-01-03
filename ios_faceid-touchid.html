@@ -87,15 +87,15 @@
 <meta property="og:site_name" content="幸运四叶草">
 <meta property="og:description" content="概述&amp;emsp;&amp;emsp;Touch ID指纹识别是iPhone 5s开始增加的一项重大功能，在实际的用途有：快捷登录、指纹支付等。Face ID面容识别是iPhone X开始增加的，与Touch ID类似，都是属于生物验证的范畴。在我们的App使用Face ID或Touch ID时，所使用的方法都是同样的，不得不感谢一下苹果对开发者的照顾。需要注意的是Touch ID需要iOS 8以上，Fac">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fx7mizkbgij20bd07pt9w.jpg">
-<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fx7miznpcsj209108ngm2.jpg">
-<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fx7k6vlb9yg20op0dwe81.gif">
-<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fx7k1sjb6ag20op0dwb29.gif">
-<meta property="og:updated_time" content="2019-10-15T04:07:17.117Z">
+<meta property="og:image" content="http://pic.cloverkim.com/749c46aagy1fx7mizkbgij20bd07pt9w.jpg">
+<meta property="og:image" content="http://pic.cloverkim.com/749c46aagy1fx7miznpcsj209108ngm2.jpg">
+<meta property="og:image" content="http://pic.cloverkim.com/749c46aagy1fx7k6vlb9yg20op0dwe81.gif">
+<meta property="og:image" content="http://pic.cloverkim.com/749c46aagy1fx7k1sjb6ag20op0dwb29.gif">
+<meta property="og:updated_time" content="2020-01-03T08:33:34.524Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS开发 - Face ID &amp; Touch ID">
 <meta name="twitter:description" content="概述&amp;emsp;&amp;emsp;Touch ID指纹识别是iPhone 5s开始增加的一项重大功能，在实际的用途有：快捷登录、指纹支付等。Face ID面容识别是iPhone X开始增加的，与Touch ID类似，都是属于生物验证的范畴。在我们的App使用Face ID或Touch ID时，所使用的方法都是同样的，不得不感谢一下苹果对开发者的照顾。需要注意的是Touch ID需要iOS 8以上，Fac">
-<meta name="twitter:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fx7mizkbgij20bd07pt9w.jpg">
+<meta name="twitter:image" content="http://pic.cloverkim.com/749c46aagy1fx7mizkbgij20bd07pt9w.jpg">
 
 
 
@@ -420,8 +420,8 @@
 <li>localizedReason：我们应用程序需要验证指纹/面容的原因，具体地方如下图所示。官方强调，这个参数为必须有值，且不能为空。不然App将会闪退，并提示：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">localizedReason parameter is mandatory and the call will throw NSInvalidArgumentException if nil or empty string is specified.</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
-<p><img src="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fx7mizkbgij20bd07pt9w.jpg" alt="" title="Touch ID"></p>
-<p><img src="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fx7miznpcsj209108ngm2.jpg" alt="" title="Face ID"></p>
+<p><img src="http://pic.cloverkim.com/749c46aagy1fx7mizkbgij20bd07pt9w.jpg" alt="" title="Touch ID"></p>
+<p><img src="http://pic.cloverkim.com/749c46aagy1fx7miznpcsj209108ngm2.jpg" alt="" title="Face ID"></p>
 <ul>
 <li>reply：验证回调，包含是否验证通过的Bool值和错误信息。 我们在拿到验证结果后，进行判断并进行下一步的处理操作，成功跳转或者错误提示等。</li>
 </ul>
@@ -450,10 +450,10 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">class LocalAuthenticationService: NSObject &#123;</span><br><span class="line">    </span><br><span class="line">    /// 进行Face ID / Touch ID验证</span><br><span class="line">    class func verifyAuthentication(with type: BiometricsType, success: @escaping () -&gt; Void) &#123;</span><br><span class="line">        guard type != .none else &#123;</span><br><span class="line">            return</span><br><span class="line">        &#125;</span><br><span class="line">        let context = LAContext()</span><br><span class="line">        context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: type == .touchID ? &quot;通过Home键验证已有手机指纹&quot; : &quot;面容ID&quot;) &#123; (isSuccess, error) in</span><br><span class="line">            if isSuccess &#123;</span><br><span class="line">                success()</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    /// 判断是否支持Face ID / Touch ID</span><br><span class="line">    class func justSupportBiometricsType() -&gt; BiometricsType &#123;</span><br><span class="line">        let context = LAContext()</span><br><span class="line">        let error: NSErrorPointer = nil</span><br><span class="line">        if context.canEvaluatePolicy(.deviceOwnerAuthentication, error: error) &#123;</span><br><span class="line">            guard error == nil else &#123;</span><br><span class="line">                return .none</span><br><span class="line">            &#125;</span><br><span class="line">            if #available(iOS 11.0, *) &#123;</span><br><span class="line">                return context.biometryType == .faceID ? .faceID : .touchID</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                return .touchID</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return .none</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>github链接：<a href="https://github.com/CloverKim/UnlockDemo" target="_blank" rel="noopener">UnlockDemo</a></p>
-<h2 id="运行效果图"><a href="#运行效果图" class="headerlink" title="运行效果图"></a>运行效果图</h2><p><img src="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fx7k6vlb9yg20op0dwe81.gif" alt="" title="Touch ID"></p>
+<h2 id="运行效果图"><a href="#运行效果图" class="headerlink" title="运行效果图"></a>运行效果图</h2><p><img src="http://pic.cloverkim.com/749c46aagy1fx7k6vlb9yg20op0dwe81.gif" alt="" title="Touch ID"></p>
 </li>
 </ul>
-<p><img src="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fx7k1sjb6ag20op0dwb29.gif" alt="" title="Face ID"></p>
+<p><img src="http://pic.cloverkim.com/749c46aagy1fx7k1sjb6ag20op0dwb29.gif" alt="" title="Face ID"></p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
 <li><a href="https://blog.csdn.net/zuoqianheng/article/details/80594389" target="_blank" rel="noopener">csdn - mengkeer - iOS FaceID &amp; TouchID</a></li>
 <li><a href="https://www.jianshu.com/p/277ab9d45115" target="_blank" rel="noopener">简书 - zuoqianheng- iOS集成FaceID或TouchID</a></li>
@@ -477,7 +477,7 @@
   <p><span>本文标题:</span><a href="/ios_faceid-touchid.html">iOS开发 - Face ID & Touch ID</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 kim逸云 的个人博客">kim逸云</a></p>
   <p><span>发布时间:</span>2019年10月15日 - 10:10</p>
-  <p><span>最后更新:</span>2019年10月15日 - 12:10</p>
+  <p><span>最后更新:</span>2020年01月03日 - 16:01</p>
   <p><span>原始链接:</span><a href="/ios_faceid-touchid.html" title="iOS开发 - Face ID & Touch ID">http://cloverkim.com/ios_faceid-touchid.html</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://cloverkim.com/ios_faceid-touchid.html"  aria-label="复制成功！"></i></span>
   </p>
@@ -721,7 +721,7 @@
     <footer id="footer" class="footer">
       <div class="footer-inner">
         <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="fa fa-heart" aria-hidden="true"></i>
   </span>

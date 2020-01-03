@@ -87,14 +87,14 @@
 <meta property="og:site_name" content="幸运四叶草">
 <meta property="og:description" content="配置用户信息&amp;emsp;&amp;emsp;在安装完Git时候，第一件事就是设置我们的用户名称和邮箱地址，因为每一次Git的提交都会使用这些信息，并且它会写入到每一次的提交当中，不可更改。如果是应用于多人协助开发的话，用户名和邮箱地址要按照公司部门的规范来进行设置。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fy1tkaqhwmj206g02x74b.jpg">
-<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fy1txneeedj20fi095mya.jpg">
-<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fy1u5qayc7j20uh0iqn0j.jpg">
-<meta property="og:updated_time" content="2019-10-15T04:19:31.519Z">
+<meta property="og:image" content="http://pic.cloverkim.com/749c46aagy1fy1tkaqhwmj206g02x74b.jpg">
+<meta property="og:image" content="http://pic.cloverkim.com/749c46aagy1fy1txneeedj20fi095mya.jpg">
+<meta property="og:image" content="http://pic.cloverkim.com/749c46aagy1fy1u5qayc7j20uh0iqn0j.jpg">
+<meta property="og:updated_time" content="2020-01-03T08:33:42.045Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Git使用前配置">
 <meta name="twitter:description" content="配置用户信息&amp;emsp;&amp;emsp;在安装完Git时候，第一件事就是设置我们的用户名称和邮箱地址，因为每一次Git的提交都会使用这些信息，并且它会写入到每一次的提交当中，不可更改。如果是应用于多人协助开发的话，用户名和邮箱地址要按照公司部门的规范来进行设置。">
-<meta name="twitter:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fy1tkaqhwmj206g02x74b.jpg">
+<meta name="twitter:image" content="http://pic.cloverkim.com/749c46aagy1fy1tkaqhwmj206g02x74b.jpg">
 
 
 
@@ -399,9 +399,9 @@
 
       
         <h1 id="配置用户信息"><a href="#配置用户信息" class="headerlink" title="配置用户信息"></a>配置用户信息</h1><p>&emsp;&emsp;在安装完Git时候，第一件事就是设置我们的用户名称和邮箱地址，因为每一次Git的提交都会使用这些信息，并且它会写入到每一次的提交当中，不可更改。如果是应用于多人协助开发的话，用户名和邮箱地址要按照公司部门的规范来进行设置。<a id="more"></a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git config --global user.name &quot;cloverkim&quot;</span><br><span class="line">$ git config --global user.email &quot;jiang.shunjin@icloud.com&quot;</span><br></pre></td></tr></table></figure></p>
-<h1 id="配置SSH-key"><a href="#配置SSH-key" class="headerlink" title="配置SSH key"></a>配置SSH key</h1><p>1、首先查看本地是否存在SSH-Key，打开终端，输入命令<code>ls ~/.ssh</code>，如果结果如下图所示，则说明本地已经存在SSH Key，则跳过创建的步骤，直接到第3步。<br><img src="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fy1tkaqhwmj206g02x74b.jpg" alt=""><br>2、如果本地没有生成过SSH Key，则需要生成，相关命令如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -C&quot;you_email&quot;</span><br></pre></td></tr></table></figure></p>
-<p>&emsp;&emsp;your_email：填写自己的邮箱地址，在终端输入命令后，根据提示直接敲回车即可，生成成功后如下图所示：<br><img src="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fy1txneeedj20fi095mya.jpg" alt=""></p>
-<p>3、然后在终端执行命令<code>cat ~/.ssh/id_rsa.pub</code>，将我们的ssh key进行复制，然后打开代码托管平台的设置界面，这里以<a href="https://gitee.com/" target="_blank" rel="noopener">码云</a>为例。点击安全设置的SSH公钥选项，根据情况添加标题、将刚刚复制的ssh key粘贴到③处，然后点击确定即可，这就在码云上配置好了我们的ssh key。<br><img src="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fy1u5qayc7j20uh0iqn0j.jpg" alt="" title="码云"></p>
+<h1 id="配置SSH-key"><a href="#配置SSH-key" class="headerlink" title="配置SSH key"></a>配置SSH key</h1><p>1、首先查看本地是否存在SSH-Key，打开终端，输入命令<code>ls ~/.ssh</code>，如果结果如下图所示，则说明本地已经存在SSH Key，则跳过创建的步骤，直接到第3步。<br><img src="http://pic.cloverkim.com/749c46aagy1fy1tkaqhwmj206g02x74b.jpg" alt=""><br>2、如果本地没有生成过SSH Key，则需要生成，相关命令如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -C&quot;you_email&quot;</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;your_email：填写自己的邮箱地址，在终端输入命令后，根据提示直接敲回车即可，生成成功后如下图所示：<br><img src="http://pic.cloverkim.com/749c46aagy1fy1txneeedj20fi095mya.jpg" alt=""></p>
+<p>3、然后在终端执行命令<code>cat ~/.ssh/id_rsa.pub</code>，将我们的ssh key进行复制，然后打开代码托管平台的设置界面，这里以<a href="https://gitee.com/" target="_blank" rel="noopener">码云</a>为例。点击安全设置的SSH公钥选项，根据情况添加标题、将刚刚复制的ssh key粘贴到③处，然后点击确定即可，这就在码云上配置好了我们的ssh key。<br><img src="http://pic.cloverkim.com/749c46aagy1fy1u5qayc7j20uh0iqn0j.jpg" alt="" title="码云"></p>
 
       
     </div>
@@ -421,7 +421,7 @@
   <p><span>本文标题:</span><a href="/git-config.html">Git使用前配置</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 kim逸云 的个人博客">kim逸云</a></p>
   <p><span>发布时间:</span>2019年10月15日 - 10:10</p>
-  <p><span>最后更新:</span>2019年10月15日 - 12:10</p>
+  <p><span>最后更新:</span>2020年01月03日 - 16:01</p>
   <p><span>原始链接:</span><a href="/git-config.html" title="Git使用前配置">http://cloverkim.com/git-config.html</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://cloverkim.com/git-config.html"  aria-label="复制成功！"></i></span>
   </p>
@@ -669,7 +669,7 @@
     <footer id="footer" class="footer">
       <div class="footer-inner">
         <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="fa fa-heart" aria-hidden="true"></i>
   </span>

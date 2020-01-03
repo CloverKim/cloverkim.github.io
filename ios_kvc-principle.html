@@ -87,12 +87,12 @@
 <meta property="og:site_name" content="幸运四叶草">
 <meta property="og:description" content="定义&amp;emsp;&amp;emsp;KVC（全称key-value coding）键值编码。在iOS开发中，允许开发者通过key直接访问对象的属性，或者给对象的属性进行赋值，而不需要调用明确的存取方法。这样就可以在运行时动态的访问和修改对象的属性，而不是在编译时确定。&amp;emsp;&amp;emsp;KVC的定义是通过对NSObject的扩展来实现的，定义在NSKeyValueCoding.h文件中，是一个非正式协">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/setValue-forKey-流程图.jpg">
-<meta property="og:updated_time" content="2019-10-15T04:06:03.024Z">
+<meta property="og:image" content="http://pic.cloverkim.com/setValue-forKey-流程图.jpg">
+<meta property="og:updated_time" content="2020-01-03T08:33:34.511Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS开发 - KVC原理分析">
 <meta name="twitter:description" content="定义&amp;emsp;&amp;emsp;KVC（全称key-value coding）键值编码。在iOS开发中，允许开发者通过key直接访问对象的属性，或者给对象的属性进行赋值，而不需要调用明确的存取方法。这样就可以在运行时动态的访问和修改对象的属性，而不是在编译时确定。&amp;emsp;&amp;emsp;KVC的定义是通过对NSObject的扩展来实现的，定义在NSKeyValueCoding.h文件中，是一个非正式协">
-<meta name="twitter:image" content="http://pz1livcqe.bkt.clouddn.com/setValue-forKey-流程图.jpg">
+<meta name="twitter:image" content="http://pic.cloverkim.com/setValue-forKey-流程图.jpg">
 
 
 
@@ -399,7 +399,7 @@
         <h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>&emsp;&emsp;KVC（全称key-value coding）键值编码。在iOS开发中，允许开发者通过key直接访问对象的属性，或者给对象的属性进行赋值，而不需要调用明确的存取方法。这样就可以在运行时动态的访问和修改对象的属性，而不是在编译时确定。<br>&emsp;&emsp;KVC的定义是通过对NSObject的扩展来实现的，定义在NSKeyValueCoding.h文件中，是一个非正式协议。<br><a id="more"></a></p>
 <h1 id="KVC相关方法"><a href="#KVC相关方法" class="headerlink" title="KVC相关方法"></a>KVC相关方法</h1><p>&emsp;&emsp;在NSKeyValueCoding中，KVC最为重要的方法如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">// 通过key来取值</span><br><span class="line">- (id)valueForKey:(NSString *)key;</span><br><span class="line"></span><br><span class="line">// 通过keyPath来取值</span><br><span class="line">- (id)valueForKeyPath:(NSString *)keyPath;</span><br><span class="line"></span><br><span class="line">// 通过key来设值</span><br><span class="line">- (void)setValue:(id)value forKey:(NSString *)key;</span><br><span class="line"></span><br><span class="line">// 通过keyPath来设值</span><br><span class="line">- (void)setValue:(id)value forKeyPath:(NSString *)keyPath;</span><br></pre></td></tr></table></figure></p>
 <p>&emsp;&emsp;NSKeyValueCoding中还有其他的相关方法，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">// KVC提供属性值确认的API，它可以用来检查set的值是否正确，为不正确的值做一个替换值或者拒绝设值新值并返回错误原因</span><br><span class="line">- (BOOL)validateValue:(inout id  _Nullable *)ioValue forKey:(NSString *)inKey error:(out NSError * _Nullable *)outError;</span><br><span class="line"></span><br><span class="line">// 如果key不存在，且没有KVC无法搜索到任何和key有关的字段或者属性，则会调用这个方法，默认是抛出异常</span><br><span class="line">- (void)setValue:(id)value forUndefinedKey:(NSString *)key;</span><br><span class="line"></span><br><span class="line">// 和上一个方法一样，上一个方法为设值，该方法为取值</span><br><span class="line">- (id)valueForUndefinedKey:(NSString *)key;</span><br><span class="line"></span><br><span class="line">// 如果在setValue方法时给value传nil，则会调用该方法</span><br><span class="line">- (void)setNilValueForKey:(NSString *)key;</span><br><span class="line"></span><br><span class="line">// 输入一组key，返回该组key对应的value，再转成字典返回，用于将model转字典</span><br><span class="line">- (NSDictionary&lt;NSString *,id&gt; *)dictionaryWithValuesForKeys:(NSArray&lt;NSString *&gt; *)keys;</span><br></pre></td></tr></table></figure></p>
-<h1 id="寻找key的策略"><a href="#寻找key的策略" class="headerlink" title="寻找key的策略"></a>寻找key的策略</h1><h2 id="setValue-forKey-方法赋值的原理"><a href="#setValue-forKey-方法赋值的原理" class="headerlink" title="setValue:forKey:方法赋值的原理"></a>setValue:forKey:方法赋值的原理</h2><p>&emsp;&emsp;设值会调用<code>setValue:forKey:</code>方法，其大致步骤如下流程图所示：<br><img src="http://pz1livcqe.bkt.clouddn.com/setValue-forKey-流程图.jpg" alt="" title="setValue:forKey:流程图"></p>
+<h1 id="寻找key的策略"><a href="#寻找key的策略" class="headerlink" title="寻找key的策略"></a>寻找key的策略</h1><h2 id="setValue-forKey-方法赋值的原理"><a href="#setValue-forKey-方法赋值的原理" class="headerlink" title="setValue:forKey:方法赋值的原理"></a>setValue:forKey:方法赋值的原理</h2><p>&emsp;&emsp;设值会调用<code>setValue:forKey:</code>方法，其大致步骤如下流程图所示：<br><img src="http://pic.cloverkim.com/setValue-forKey-流程图.jpg" alt="" title="setValue:forKey:流程图"></p>
 <ol>
 <li>查找<code>set&lt;Key&gt;:</code>或<code>_set&lt;Key&gt;:</code>命名的setter，按照这个顺序，如果找到，则调用这个方法并将值传进去。</li>
 <li>如果没有发现一个简单的setter，但是<code>accessInstanceVariablesDirectly</code>类属性返回YES，则查找一个命名规则为_key、_isKey、key、isKey的实例变量。按照这个顺序，如果查找到则将value赋值给实例变量。</li>
@@ -501,7 +501,7 @@
   <p><span>本文标题:</span><a href="/ios_kvc-principle.html">iOS开发 - KVC原理分析</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 kim逸云 的个人博客">kim逸云</a></p>
   <p><span>发布时间:</span>2019年10月15日 - 10:10</p>
-  <p><span>最后更新:</span>2019年10月15日 - 12:10</p>
+  <p><span>最后更新:</span>2020年01月03日 - 16:01</p>
   <p><span>原始链接:</span><a href="/ios_kvc-principle.html" title="iOS开发 - KVC原理分析">http://cloverkim.com/ios_kvc-principle.html</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://cloverkim.com/ios_kvc-principle.html"  aria-label="复制成功！"></i></span>
   </p>
@@ -747,7 +747,7 @@
     <footer id="footer" class="footer">
       <div class="footer-inner">
         <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="fa fa-heart" aria-hidden="true"></i>
   </span>

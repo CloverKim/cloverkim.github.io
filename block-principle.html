@@ -87,12 +87,12 @@
 <meta property="og:site_name" content="幸运四叶草">
 <meta property="og:description" content="&amp;emsp;&amp;emsp;《Objective-C高级编程》是一本有趣又难懂的书，全书就讲了引用计数、Block、GCD三个概念，有趣是因为讲原理、实现的部分是其他iOS专业书籍里少有的。然而每个章节不读个三五遍还是比较难理解贯通。本文针对其中的Block部分做些简单的笔记记录，讲述Block的用法和部分实现原理，详细解说从原书中寻。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/006tNc79gy1g03s2zred9j30xc0o1408.jpg">
-<meta property="og:updated_time" content="2019-10-15T04:26:54.788Z">
+<meta property="og:image" content="http://pic.cloverkim.com/006tNc79gy1g03s2zred9j30xc0o1408.jpg">
+<meta property="og:updated_time" content="2020-01-03T08:33:42.059Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS开发 - Block用法和实现原理">
 <meta name="twitter:description" content="&amp;emsp;&amp;emsp;《Objective-C高级编程》是一本有趣又难懂的书，全书就讲了引用计数、Block、GCD三个概念，有趣是因为讲原理、实现的部分是其他iOS专业书籍里少有的。然而每个章节不读个三五遍还是比较难理解贯通。本文针对其中的Block部分做些简单的笔记记录，讲述Block的用法和部分实现原理，详细解说从原书中寻。">
-<meta name="twitter:image" content="http://pz1livcqe.bkt.clouddn.com/006tNc79gy1g03s2zred9j30xc0o1408.jpg">
+<meta name="twitter:image" content="http://pic.cloverkim.com/006tNc79gy1g03s2zred9j30xc0o1408.jpg">
 
 
 
@@ -465,7 +465,7 @@
 <p>最大的变化就是count变量不再是int类型了，count变成了一个指向<code>__Block_byref_count_0</code>结构体的指针，<code>__Block_byref_count_0</code>结构如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">struct __Block_byref_count_0 &#123;</span><br><span class="line">  void *__isa;</span><br><span class="line">__Block_byref_count_0 *__forwarding;</span><br><span class="line"> int __flags;</span><br><span class="line"> int __size;</span><br><span class="line"> int count;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
 <p>它保存了int count变量，还有一个指向<code>__Block_byref_count_0</code>实例的指针<code>__forwarding</code>，通过下面两段代码<code>__forwarding</code>指针的用法可以知道，该指针其实指向的是对象自身：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// Block的执行函数</span><br><span class="line">static void __main_block_func_0(struct __main_block_impl_0 *__cself) &#123;</span><br><span class="line">  __Block_byref_count_0 *count = __cself-&gt;count;    // bound by ref</span><br><span class="line"></span><br><span class="line">        (count-&gt;__forwarding-&gt;count) = 20;          // 对应count = 20;</span><br><span class="line">        NSLog((NSString *)&amp;__NSConstantStringImpl__var_folders_64_vf2p_jz52yz7x4xtcx55yv0r0000gn_T_main_fafeeb_mi_0, </span><br><span class="line">        (count-&gt;__forwarding-&gt;count));</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">// main函数</span><br><span class="line">int main() &#123;</span><br><span class="line">    __attribute__((__blocks__(byref))) __Block_byref_count_0 count = &#123;(void*)0,</span><br><span class="line">    (__Block_byref_count_0 *)&amp;count, </span><br><span class="line">    0, </span><br><span class="line">    sizeof(__Block_byref_count_0), </span><br><span class="line">    10&#125;;</span><br><span class="line">    </span><br><span class="line">    void (* blk)() = ((void (*)())&amp;__main_block_impl_0((void *)__main_block_func_0, </span><br><span class="line">    &amp;__main_block_desc_0_DATA, </span><br><span class="line">    (__Block_byref_count_0 *)&amp;count, </span><br><span class="line">    570425344));</span><br><span class="line">    </span><br><span class="line">    (count.__forwarding-&gt;count) ++;         // 对应count ++;</span><br><span class="line">    </span><br><span class="line">    NSLog((NSString *)&amp;__NSConstantStringImpl__var_folders_64_vf2p_jz52yz7x4xtcx55yv0r0000gn_T_main_fafeeb_mi_1, </span><br><span class="line">    (count.__forwarding-&gt;count));</span><br><span class="line">    </span><br><span class="line">    ((void (*)(__block_impl *))((__block_impl *)blk)-&gt;FuncPtr)((__block_impl *)blk);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>为什么要通过<code>__forwarding</code>指针完成对count变量的读写修改？<br>为了保证无论是在栈上还是在堆上，都能通过<code>__forwarding</code>指针找到堆上创建的count这个<code>__main_block_func_0</code>结构体，以完成对count-&gt;count（第一个count是<code>__main_block_func_0</code>对象，第二个count是int类型变量）的访问和修改。示意图如下：<br><img src="http://pz1livcqe.bkt.clouddn.com/006tNc79gy1g03s2zred9j30xc0o1408.jpg" alt=""></p>
+<p>为什么要通过<code>__forwarding</code>指针完成对count变量的读写修改？<br>为了保证无论是在栈上还是在堆上，都能通过<code>__forwarding</code>指针找到堆上创建的count这个<code>__main_block_func_0</code>结构体，以完成对count-&gt;count（第一个count是<code>__main_block_func_0</code>对象，第二个count是int类型变量）的访问和修改。示意图如下：<br><img src="http://pic.cloverkim.com/006tNc79gy1g03s2zred9j30xc0o1408.jpg" alt=""></p>
 <h2 id="Block的循环引用"><a href="#Block的循环引用" class="headerlink" title="Block的循环引用"></a>Block的循环引用</h2><p>&emsp;&emsp;Block的循环引用原理和解决方法大家都比较熟悉，此处将结合上文的介绍，介绍一种不常用的解决Block循环引用的方法和一种借助Block参数该问题的方法。<br>&emsp;&emsp;Block循环引用的原因：一个对象A有Block类型的属性，从而持有这个Block，如果Block的代码块中使用到这个对象A，或者仅仅是用到A对象的属性，会使Block也持有A对象，导致两者互相持有，不能在作用域结束后正常释放。<br>&emsp;&emsp;解决原理：对象A照常持有Block，但Block不能强引用持有对象A以打破循环。</p>
 <h3 id="第一种解决方法"><a href="#第一种解决方法" class="headerlink" title="第一种解决方法"></a>第一种解决方法</h3><p>&emsp;&emsp;对Block内部使用的对象A使用<code>__weak</code>进行修饰，Block对对象A弱引用打破循环。有以下三种常用形式：</p>
 <ul>
@@ -538,7 +538,7 @@
   <p><span>本文标题:</span><a href="/block-principle.html">iOS开发 - Block用法和实现原理</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 kim逸云 的个人博客">kim逸云</a></p>
   <p><span>发布时间:</span>2019年10月15日 - 10:10</p>
-  <p><span>最后更新:</span>2019年10月15日 - 12:10</p>
+  <p><span>最后更新:</span>2020年01月03日 - 16:01</p>
   <p><span>原始链接:</span><a href="/block-principle.html" title="iOS开发 - Block用法和实现原理">http://cloverkim.com/block-principle.html</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://cloverkim.com/block-principle.html"  aria-label="复制成功！"></i></span>
   </p>
@@ -786,7 +786,7 @@
     <footer id="footer" class="footer">
       <div class="footer-inner">
         <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="fa fa-heart" aria-hidden="true"></i>
   </span>

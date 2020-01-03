@@ -87,13 +87,13 @@
 <meta property="og:site_name" content="幸运四叶草">
 <meta property="og:description" content="概述&amp;emsp;&amp;emsp;Objective-C作为一门面向对象的开发语言，有类和对象的概念。编译后，类相关的数据结构会保留在目标文件中，在运行时得到解析和使用。在应用程序运行起来的时候，类的信息会有加载和初始化的过程。&amp;emsp;&amp;emsp;就像Application有生命周期回调方法一样，在Objective-C的类被加载和初始化的时候，也可以收到方法回到，可以在适当的情况下做一些定制处理。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/load.jpg">
-<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fwgtelwx4zj20fu02jaab.jpg">
-<meta property="og:updated_time" content="2019-10-15T04:01:29.490Z">
+<meta property="og:image" content="http://pic.cloverkim.com/load.jpg">
+<meta property="og:image" content="http://pic.cloverkim.com/749c46aagy1fwgtelwx4zj20fu02jaab.jpg">
+<meta property="og:updated_time" content="2020-01-03T08:33:28.890Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS开发 - +load 和 +initialize 方法">
 <meta name="twitter:description" content="概述&amp;emsp;&amp;emsp;Objective-C作为一门面向对象的开发语言，有类和对象的概念。编译后，类相关的数据结构会保留在目标文件中，在运行时得到解析和使用。在应用程序运行起来的时候，类的信息会有加载和初始化的过程。&amp;emsp;&amp;emsp;就像Application有生命周期回调方法一样，在Objective-C的类被加载和初始化的时候，也可以收到方法回到，可以在适当的情况下做一些定制处理。">
-<meta name="twitter:image" content="http://pz1livcqe.bkt.clouddn.com/load.jpg">
+<meta name="twitter:image" content="http://pic.cloverkim.com/load.jpg">
 
 
 
@@ -421,7 +421,7 @@
 <li>当然当有多个不同的类的时候，每个类的+load方法执行的顺序与其在Compile Sources出现的顺序一致。</li>
 </ul>
 <h2 id="下面通过🌰来验证"><a href="#下面通过🌰来验证" class="headerlink" title="下面通过🌰来验证"></a>下面通过🌰来验证</h2><p>&emsp;&emsp;新建3个类：Animal继承NSObject，Cat和Dog均继承Animal，并且新建3个Animal的分类，分别命名为Animal (Category1)、Animal (Category2)、Animal (Category3)<br>在Animal、Cat、Animal (Category1)、Animal (Category2)、Animal (Category3)均实现+load方法，并且打印对应的信息（Dog类除外）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">+ (void)load &#123;</span><br><span class="line">    NSLog(@&quot;%s&quot;, __func__);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>运行结果如下图所示：<br><img src="http://pz1livcqe.bkt.clouddn.com/load.jpg" alt="" title="+load"></p>
+<p>运行结果如下图所示：<br><img src="http://pic.cloverkim.com/load.jpg" alt="" title="+load"></p>
 <p>由上图的运行结果可知：</p>
 <ul>
 <li>首先执行的父类Animal的load方法，再执行子类Cat的load方法，说明父类的load方法执行顺序要优先于子类。</li>
@@ -449,7 +449,7 @@
 <li>当有多个Category都实现了initialize方法，会覆盖类中的方法，只执行一个（会执行Compile Sources列表中最后一个Category的initialize方法）</li>
 </ul>
 <h2 id="下面通过🌰来验证-1"><a href="#下面通过🌰来验证-1" class="headerlink" title="下面通过🌰来验证"></a>下面通过🌰来验证</h2><p>&emsp;&emsp;依旧使用上面创建的3个类：Animal、Cat和Dog。<br>我们在Animal类中实现+initialize方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">+ (void)initialize &#123;</span><br><span class="line">    NSLog(@&quot;%s&quot;, __func__);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>运行结果如下图所示：<br><img src="http://pz1livcqe.bkt.clouddn.com/749c46aagy1fwgtelwx4zj20fu02jaab.jpg" alt=""><br>由运行结果发现，Animal类的+initialie方法被调用了2次，这是因为在创建子类对象时，首先要创建父类对象，所以会调用一次父类的initialize方法，然后创建子类时，尽管该类没有实现initialize方法，但还是会调用父类的方法。虽然initialize方法对一个类而言会调用一次，但这里由于出现了两个类，所以调用两次符合规则，但不符合我们的需求。正确使用initialize方法的方式如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+ (void)initialize &#123;</span><br><span class="line">    if (self == [Animal class]) &#123;</span><br><span class="line">        NSLog(@&quot;%s&quot;, __func__);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>运行结果如下图所示：<br><img src="http://pic.cloverkim.com/749c46aagy1fwgtelwx4zj20fu02jaab.jpg" alt=""><br>由运行结果发现，Animal类的+initialie方法被调用了2次，这是因为在创建子类对象时，首先要创建父类对象，所以会调用一次父类的initialize方法，然后创建子类时，尽管该类没有实现initialize方法，但还是会调用父类的方法。虽然initialize方法对一个类而言会调用一次，但这里由于出现了两个类，所以调用两次符合规则，但不符合我们的需求。正确使用initialize方法的方式如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+ (void)initialize &#123;</span><br><span class="line">    if (self == [Animal class]) &#123;</span><br><span class="line">        NSLog(@&quot;%s&quot;, __func__);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>加上判断后，就不会因为子类而调用到自己的initialize方法了。</p>
 <h2 id="应用场景-1"><a href="#应用场景-1" class="headerlink" title="应用场景"></a>应用场景</h2><p>&emsp;&emsp;initialize方法主要用来对一些不方便在编译期初始化的对象进行赋值。比如NSMutableArray这种类型的实例化依赖于Runtime的消息发送，所以无法再编译期初始化。</p>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ul>
@@ -477,7 +477,7 @@
   <p><span>本文标题:</span><a href="/method_load_initialize.html">iOS开发 - +load 和 +initialize 方法</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 kim逸云 的个人博客">kim逸云</a></p>
   <p><span>发布时间:</span>2019年10月15日 - 10:10</p>
-  <p><span>最后更新:</span>2019年10月15日 - 12:10</p>
+  <p><span>最后更新:</span>2020年01月03日 - 16:01</p>
   <p><span>原始链接:</span><a href="/method_load_initialize.html" title="iOS开发 - +load 和 +initialize 方法">http://cloverkim.com/method_load_initialize.html</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://cloverkim.com/method_load_initialize.html"  aria-label="复制成功！"></i></span>
   </p>
@@ -725,7 +725,7 @@
     <footer id="footer" class="footer">
       <div class="footer-inner">
         <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="fa fa-heart" aria-hidden="true"></i>
   </span>

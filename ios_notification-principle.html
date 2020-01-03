@@ -87,14 +87,14 @@
 <meta property="og:site_name" content="幸运四叶草">
 <meta property="og:description" content="概念&amp;emsp;&amp;emsp;NSNotification是iOS中一个调度消息通知的类，采用单例设计模式，在开发中实现传值、回调等。在iOS中，NSNotification是使用观察者模式来实现用于跨层传递消息。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/Named Table.jpg">
-<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/UnNamed Table.jpg">
-<meta property="og:image" content="http://pz1livcqe.bkt.clouddn.com/总结.jpg">
-<meta property="og:updated_time" content="2019-10-15T04:05:37.775Z">
+<meta property="og:image" content="http://pic.cloverkim.com/Named Table.jpg">
+<meta property="og:image" content="http://pic.cloverkim.com/UnNamed Table.jpg">
+<meta property="og:image" content="http://pic.cloverkim.com/总结.jpg">
+<meta property="og:updated_time" content="2020-01-03T08:33:34.536Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS开发 - NSNotification原理理解">
 <meta name="twitter:description" content="概念&amp;emsp;&amp;emsp;NSNotification是iOS中一个调度消息通知的类，采用单例设计模式，在开发中实现传值、回调等。在iOS中，NSNotification是使用观察者模式来实现用于跨层传递消息。">
-<meta name="twitter:image" content="http://pz1livcqe.bkt.clouddn.com/Named Table.jpg">
+<meta name="twitter:image" content="http://pic.cloverkim.com/Named Table.jpg">
 
 
 
@@ -502,9 +502,9 @@
 <li>首先外层有一个Table，以通知名称为key。其value同样是一个Table。</li>
 <li>为了实现可以传入一个参数object用于只监听指定该对象发出的通知，及一个通知可以添加多个观察者。则内Table以传入的object为key，用链表来保存所有的观察者，并且以这个链表为value。</li>
 </ul>
-<p><img src="http://pz1livcqe.bkt.clouddn.com/Named Table.jpg" alt="" title="Named Table"></p>
+<p><img src="http://pic.cloverkim.com/Named Table.jpg" alt="" title="Named Table"></p>
 <p>&emsp;&emsp;特别说明：在实际开发中，我们经常将object参数传nil，这个时候系统会根据nil自动产生一个key。相当于这个key对应的value（链表）保存的就是对于当前NotificationName没有传入object的所有观察者。当NotificationName被发送时，在链表中的观察者都会收到通知。</p>
-<h3 id="UnNamed-Table"><a href="#UnNamed-Table" class="headerlink" title="UnNamed Table"></a>UnNamed Table</h3><p>&emsp;&emsp;UNamed Table结构比Named Table简单得多。因为没有NotificationName作为key。这里直接就以object为key，比Named Table少了一层Table嵌套。<br><img src="http://pz1livcqe.bkt.clouddn.com/UnNamed Table.jpg" alt="" title="UnNamed Table"></p>
+<h3 id="UnNamed-Table"><a href="#UnNamed-Table" class="headerlink" title="UnNamed Table"></a>UnNamed Table</h3><p>&emsp;&emsp;UNamed Table结构比Named Table简单得多。因为没有NotificationName作为key。这里直接就以object为key，比Named Table少了一层Table嵌套。<br><img src="http://pic.cloverkim.com/UnNamed Table.jpg" alt="" title="UnNamed Table"></p>
 <p>&emsp;&emsp;如果在注册观察者时没有传入NotificationName，同时没有传入object，所有的系统通知都会发送到注册的对象里。</p>
 <h2 id="添加观察者的流程"><a href="#添加观察者的流程" class="headerlink" title="添加观察者的流程"></a>添加观察者的流程</h2><p>&emsp;&emsp;首先在初始化NSNotificationCenter时会创建一个对象，这个对象里面保存了Named Table、UNamed Table和其他信息。</p>
 <ol>
@@ -534,7 +534,7 @@
 <p>在多线程应用程序中，通知总是在发出通知的线程中传递，而该线程不一定是观察者观察者的那个线程。</p>
 </blockquote>
 <p>&emsp;&emsp;更多关于NSNotification与线程之间的关系，请阅读下面的文章：<a href="http://cloverkim.com/ios_notification-thread.html">iOS开发 - NSNotification和线程相关</a></p>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>&emsp;&emsp;总的来说，NSNotification的三个相关类的作用，可以用下图进行归纳总结。<br><img src="http://pz1livcqe.bkt.clouddn.com/总结.jpg" alt="" title="总结"></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>&emsp;&emsp;总的来说，NSNotification的三个相关类的作用，可以用下图进行归纳总结。<br><img src="http://pic.cloverkim.com/总结.jpg" alt="" title="总结"></p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
 <li><a href="https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Notifications/Articles/Notifications.html" target="_blank" rel="noopener">Apple官方文档</a></li>
 <li><a href="https://www.jianshu.com/p/83770200d476" target="_blank" rel="noopener">简书 - 纸简书生 - 深入理解iOS NSNotification</a></li>
@@ -560,7 +560,7 @@
   <p><span>本文标题:</span><a href="/ios_notification-principle.html">iOS开发 - NSNotification原理理解</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 kim逸云 的个人博客">kim逸云</a></p>
   <p><span>发布时间:</span>2019年10月15日 - 10:10</p>
-  <p><span>最后更新:</span>2019年10月15日 - 12:10</p>
+  <p><span>最后更新:</span>2020年01月03日 - 16:01</p>
   <p><span>原始链接:</span><a href="/ios_notification-principle.html" title="iOS开发 - NSNotification原理理解">http://cloverkim.com/ios_notification-principle.html</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://cloverkim.com/ios_notification-principle.html"  aria-label="复制成功！"></i></span>
   </p>
@@ -806,7 +806,7 @@
     <footer id="footer" class="footer">
       <div class="footer-inner">
         <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="fa fa-heart" aria-hidden="true"></i>
   </span>
