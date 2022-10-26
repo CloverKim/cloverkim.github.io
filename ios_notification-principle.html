@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/uploads/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="iOS,基础," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="概念&amp;emsp;&amp;emsp;NSNotification是iOS中一个调度消息通知的类，采用单例设计模式，在开发中实现传值、回调等。在iOS中，NSNotification是使用观察者模式来实现用于跨层传递消息。">
+<meta name="keywords" content="iOS,基础">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS开发 - NSNotification原理理解">
+<meta property="og:url" content="http://cloverkim.com/ios_notification-principle.html">
+<meta property="og:site_name" content="幸运四叶草">
+<meta property="og:description" content="概念&amp;emsp;&amp;emsp;NSNotification是iOS中一个调度消息通知的类，采用单例设计模式，在开发中实现传值、回调等。在iOS中，NSNotification是使用观察者模式来实现用于跨层传递消息。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://pic.cloverkim.com/Named Table.jpg">
+<meta property="og:image" content="http://pic.cloverkim.com/UnNamed Table.jpg">
+<meta property="og:image" content="http://pic.cloverkim.com/总结.jpg">
+<meta property="og:updated_time" content="2022-10-26T11:24:45.528Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS开发 - NSNotification原理理解">
+<meta name="twitter:description" content="概念&amp;emsp;&amp;emsp;NSNotification是iOS中一个调度消息通知的类，采用单例设计模式，在开发中实现传值、回调等。在iOS中，NSNotification是使用观察者模式来实现用于跨层传递消息。">
+<meta name="twitter:image" content="http://pic.cloverkim.com/Named Table.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://cloverkim.com/ios_notification-principle.html"/>
+
+
+
+
+
+  <title>iOS开发 - NSNotification原理理解 | 幸运四叶草</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">幸运四叶草</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">相思形色露，欲掩不从心。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav" id="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-首页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-标签">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-分类">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-关于">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cloverkim.com/ios_notification-principle.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kim逸云">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="幸运四叶草">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">iOS开发 - NSNotification原理理解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-10-26T19:24:45+08:00">
+                2022-10-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOSDevelopment/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS开发</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/ios_notification-principle.html" class="leancloud_visitors" data-flag-title="iOS开发 - NSNotification原理理解">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.7k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  9
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h1><p>&emsp;&emsp;NSNotification是iOS中一个调度消息通知的类，采用单例设计模式，在开发中实现传值、回调等。在iOS中，NSNotification是使用观察者模式来实现用于跨层传递消息。</p>
+<a id="more"></a>
+<h1 id="三个主要类"><a href="#三个主要类" class="headerlink" title="三个主要类"></a>三个主要类</h1><h2 id="NSNotification"><a href="#NSNotification" class="headerlink" title="NSNotification"></a>NSNotification</h2><p>&emsp;&emsp;NSNotification包含了一些用于向其他对象发送通知的必要信息，包括名称、对象和可选字典，并由NSNotificationCenter或NSDistributedNotificationCenter的实例进行发送。name是标识通知的标记、object是保存发送通知的对象、userinfo存储其他相关对象。<strong>这里主要注意的是：NSNotification对象是不可变的。</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">字段名</th>
+<th style="text-align:center">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">name</td>
+<td style="text-align:center">通知的名称，用于通知的唯一标识</td>
+</tr>
+<tr>
+<td style="text-align:center">object</td>
+<td style="text-align:center">保存发送通知的对象</td>
+</tr>
+<tr>
+<td style="text-align:center">userinfo</td>
+<td style="text-align:center">存储其他相关对象</td>
+</tr>
+</tbody>
+</table>
+<p>&emsp;&emsp;可以使用<code>notificationWithName:object:</code> 或 <code>notificationWithName:object:userInfo:</code> 创建通知对象。但实际开发中，一般是直接使用NSNotificationCenter调用 <code>postNotificationName:object:</code> 或 <code>postNotificationName:object:userInfo:</code> ，这两个类方法会在内部直接创建NSNotification对象，并发出通知。<br>&emsp;&emsp;从官网文档可知，NSNotification是不能直接实例化的，如果用init方法进行实例化时，会引发异常。还有需要注意的是如果我们自己去实现构造方法时，不能在super上调用init方法。</p>
+<h2 id="NSNotificationCenter"><a href="#NSNotificationCenter" class="headerlink" title="NSNotificationCenter"></a>NSNotificationCenter</h2><p>&emsp;&emsp;NSNotificationCenter提供了一套机制来发送通知，每个运行中的应用程序都有一个defaultCenter通知中心，我们可以创建新的通知中心来组织特定上下文中的通信。&emsp;&emsp;NSNotificationCenter暴露给外部的字段只有一个defaultCenter，并且该字段是只读的，暴露出来的方法分为三种：添加、移除通知观察者和发出通知。详细如下表所示：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">作用</th>
+<th style="text-align:center">相关方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">添加通知观察者</td>
+<td style="text-align:center">addObserver:selector:name:object:<br>addObserverForName:object:queue:usingBlock:</td>
+</tr>
+<tr>
+<td style="text-align:center">移除通知观察者</td>
+<td style="text-align:center">removeObserver: <br>removeObserver:name:object:</td>
+</tr>
+<tr>
+<td style="text-align:center">发出通知</td>
+<td style="text-align:center">postNotification:<br>postNotificationName:object: <br>postNotificationName:object:userInfo:</td>
+</tr>
+</tbody>
+</table>
+<p>&emsp;&emsp;相关说明：</p>
+<ul>
+<li><code>addObserverForName:object:queue:usingBlock:</code>方法，相比<code>addObserver:selector:name:object:</code>方法多了queue和block，queue就是决定将block回调提交到哪个队列里面执行。这里需要注意的是发送通知和接收通知的线程必须为同一个。常见情况下会把queue设置为主队列，因为主队列的任务都会在主线程下完成，因此可以用这种方式来实现通知更新UI。</li>
+</ul>
+<h2 id="NSNotificationQueue"><a href="#NSNotificationQueue" class="headerlink" title="NSNotificationQueue"></a>NSNotificationQueue</h2><p>&emsp;&emsp;简单理解为：通知中心的缓冲区。尽管通知中心已经分发通知，但放置到队列中的通知可能会延迟，直到runloop结束或者runloop空闲时才发送。如果有多个相同的通知，NSNotificationQueue会将其进行合并，以便在发布多个通知的情况下只发送一个通知。<br>&emsp;&emsp;通知队列按照先进先出(FIFO)的顺序维护通知。当一个通知移动到队列的前面时，队列将它发送到通知中心，然后再将通知分派给所有注册为观察者的对象。每个线程都有一个默认的通知队列，该队列与流程的默认通知中心相关联。我们也可以创建自己的通知队列。<br>&emsp;&emsp;和NSNotificationCenter一样，NSNotificationQueue也只暴露了一个字段：defaultQueue，返回当前线程的默认通知队列。方法分为：创建通知队列和管理通知。详细说明如下表所示：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">作用</th>
+<th style="text-align:center">相关方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">创建通知队列</td>
+<td style="text-align:center">initWithNotificationCenter:</td>
+</tr>
+<tr>
+<td style="text-align:center">管理通知</td>
+<td style="text-align:center">enqueueNotification:postingStyle:<br> dequeueNotificationsMatching:coalesceMask:<br>enqueueNotification:postingStyle:coalesceMask:forModes:</td>
+</tr>
+</tbody>
+</table>
+<p>&emsp;&emsp;方法相关说明：</p>
+<ul>
+<li><code>initWithNotificationCenter:</code> 初始化并返回指定通知中心的通知队列。</li>
+<li><code>enqueueNotification:postingStyle:</code> 使用指定的发布样式向通知队列添加通知。</li>
+<li><code>dequeueNotificationsMatching:coalesceMask:</code> 使用提供的匹配条件从匹配提供的通知的队列中删除所有通知。</li>
+<li><code>enqueueNotification:postingStyle:coalesceMask:forModes:</code> 使用指定的发布样式、合并标准和运行循环模式向通知队列添加通知。</li>
+</ul>
+<p>&emsp;&emsp;在上面的方法中，需要注意的2个常量，相关说明如下：</p>
+<ul>
+<li><p>NSPostingStyle：用于指定何时发布通知</p>
+<ul>
+<li>NSPostASAP：在当前通知调用或者计时器结束时发出通知</li>
+<li>NSPostWhenIdle：当runloop处于空闲时发出通知</li>
+<li>NSPostNow：当合并通知完成之后立即发出通知</li>
+</ul>
+</li>
+<li><p>NSNotificationCoalescing：用于指定通知如何合并</p>
+<ul>
+<li>NSNotificationNoCoalescing：不合并通知</li>
+<li>NSNotificationCoalescingOnName：合并具有相同名称的通知</li>
+<li>NSNotificationCoalescingOnSender： 将通知与相同的对象合并</li>
+</ul>
+</li>
+</ul>
+<h1 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h1><p>&emsp;&emsp;NSNotificationCenter定义了两个Table，同时为了封装观察者信息，也定义了Observation保存观察者信息。他们的结构体可以简化如下所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">typedef struct NCTbl &#123;</span><br><span class="line">    Observation   *wildcard;  // 保存既没有没有传入通知名字也没有传入object的通知</span><br><span class="line">    MapTable       nameless;  // 保存没有传入通知名字的通知</span><br><span class="line">    MapTable       named;     // 保存传入了通知名字的通知</span><br><span class="line">&#125; NCTable;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">typedef struct Obs &#123;</span><br><span class="line">    id        observer;       // 保存接受消息的对象</span><br><span class="line">    SEL       selector;       // 保存注册通知时传入的SEL</span><br><span class="line">    struct Obs    *next;      // 保存注册了同一个通知的下一个观察者</span><br><span class="line">    struct NCTbl  *link;      // 保存改Observation的Table</span><br><span class="line">&#125; Observation;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;在NSNotificationCenter内部一共保存了两张表，一张用于保存添加观察者的时候传入的NotificationName的情况；一张用于保存添加观察者的时候没有传入NotificationCenter的情况，详细分析如下：</p>
+<h2 id="Table"><a href="#Table" class="headerlink" title="Table"></a>Table</h2><h3 id="Named-Table"><a href="#Named-Table" class="headerlink" title="Named Table"></a>Named Table</h3><p>&emsp;&emsp;在Named Table中，NotificationName作为表的key，因为我们在注册观察者的时候是可以传入一个object参数用于只监听该对象发出的通知，并且一个通知可以添加多个观察者，所以还需要一张表用来保存object和observe的对应关系。这张表的key、value分别是以object为key，observe为value。所以对于Named Table，最终的结构为：</p>
+<ul>
+<li>首先外层有一个Table，以通知名称为key。其value同样是一个Table。</li>
+<li>为了实现可以传入一个参数object用于只监听指定该对象发出的通知，及一个通知可以添加多个观察者。则内Table以传入的object为key，用链表来保存所有的观察者，并且以这个链表为value。</li>
+</ul>
+<p><img src="http://pic.cloverkim.com/Named Table.jpg" alt="" title="Named Table"></p>
+<p>&emsp;&emsp;特别说明：在实际开发中，我们经常将object参数传nil，这个时候系统会根据nil自动产生一个key。相当于这个key对应的value（链表）保存的就是对于当前NotificationName没有传入object的所有观察者。当NotificationName被发送时，在链表中的观察者都会收到通知。</p>
+<h3 id="UnNamed-Table"><a href="#UnNamed-Table" class="headerlink" title="UnNamed Table"></a>UnNamed Table</h3><p>&emsp;&emsp;UNamed Table结构比Named Table简单得多。因为没有NotificationName作为key。这里直接就以object为key，比Named Table少了一层Table嵌套。<br><img src="http://pic.cloverkim.com/UnNamed Table.jpg" alt="" title="UnNamed Table"></p>
+<p>&emsp;&emsp;如果在注册观察者时没有传入NotificationName，同时没有传入object，所有的系统通知都会发送到注册的对象里。</p>
+<h2 id="添加观察者的流程"><a href="#添加观察者的流程" class="headerlink" title="添加观察者的流程"></a>添加观察者的流程</h2><p>&emsp;&emsp;首先在初始化NSNotificationCenter时会创建一个对象，这个对象里面保存了Named Table、UNamed Table和其他信息。</p>
+<ol>
+<li>首先会根据传入的参数，实例化一个Observation。该Observation对象保存了观察者对象、接收到通知观察者对所执行的方法，由于Observation是一个链表，还保存了下一个Observation的地址。</li>
+<li>根据是否传入通知的Name，选择在Named Table还是UNamed Table进行操作。</li>
+<li>如果传入通知的name，则会先去用name去查找是否已经有对应的value（注意这个时候返回的value是一个Table）</li>
+<li>如果没有对应的value，则创建一个新的Table，然后将这个Table以name为key添加到Named Table。如果有value，那直接去取出这个Table。</li>
+<li>得到了保存Observation的Table之后，就通过传入的object拿对应的链表。如果object为空，会默认有一个key表示传入object为空的情况，取的时候也会直接用这个key去取，表示任何地方发送通知都会监听。</li>
+<li>如果保存Observation的Table中根据object作为key没有找到对应的链表时，则会创建一个节点，作为头结点插入进去；如果找到了则直接在链表末尾插入之前实例化好的Observation中。</li>
+</ol>
+<p>&emsp;&emsp;在没有传入NotificationName的情况和上面的过程类似，只不过是直接根据object去对应的链表而已。如果既没有传入NotificationName，也没有传入object，则这个观察者会添加到wildcard链表中。</p>
+<h2 id="发送通知的流程"><a href="#发送通知的流程" class="headerlink" title="发送通知的流程"></a>发送通知的流程</h2><p>&emsp;&emsp;发送通知一般是调用<code>postNotificationName:object:userInfo:</code>方法来实现。该方法内部会实例化一个NSNotification来保存传入的各种参数，包括name、object和userinfo。<br>&emsp;&emsp;发送通知的流程总体来说就是根据NotificationName查找到对应的Observer链表，然后遍历整个链表，给每个Observer结点中保存的对象及SEL，来向对象发送消息。具体流程如下：</p>
+<ol>
+<li>首先会定义一个数组ObserversArray来保存需要通知的Observer。之前在添加观察者的时候把既没有传入NotificationName，也没有传入object的，保存在了wildcard。因为这样观察者会监听所有NotificationName的通知，所以先把wildcard链表遍历一遍，将其中的Observer加到数组ObserversArray中。</li>
+<li>找到以object为key的Observer链表。这个过程分为：在Named Table中查找，以及在UNamed Table中查找。然后将遍历找到的链表，同样加入到最开始创建的数组ObserversArray中。</li>
+<li><p>至此，所有关于NotificationName的Observer（wildcard + UNamed Table + Named Table）已经加入到了数组ObserversArray中。接下来就是遍历这个ObserversArray数组，一次取出其中的Observer结点。因为这个结点保存了观察者对象以及selector。所以最终调用形式如下：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[observerNode-&gt;observer performSelector: o-&gt;selector withObject: notification];</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>&emsp;&emsp;这个方式也就能说明，发送通知的线程和接收通知的线程都是同一个线程。</p>
+<h1 id="NSNotification与多线程"><a href="#NSNotification与多线程" class="headerlink" title="NSNotification与多线程"></a>NSNotification与多线程</h1><p>&emsp;&emsp;NSNotification和线程同步之间是什么关系呢？先看下官方文档的说明：</p>
+<blockquote>
+<p>In a multithreaded application, notifications are always delivered in the thread in which the notification was posted, which may not be the same thread in which an observer registered itself.</p>
+</blockquote>
+<p>翻译过来意思为：</p>
+<blockquote>
+<p>在多线程应用程序中，通知总是在发出通知的线程中传递，而该线程不一定是观察者观察者的那个线程。</p>
+</blockquote>
+<p>&emsp;&emsp;更多关于NSNotification与线程之间的关系，请阅读下面的文章：<a href="http://cloverkim.com/ios_notification-thread.html">iOS开发 - NSNotification和线程相关</a></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>&emsp;&emsp;总的来说，NSNotification的三个相关类的作用，可以用下图进行归纳总结。<br><img src="http://pic.cloverkim.com/总结.jpg" alt="" title="总结"></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Notifications/Articles/Notifications.html" target="_blank" rel="noopener">Apple官方文档</a></li>
+<li><a href="https://www.jianshu.com/p/83770200d476" target="_blank" rel="noopener">简书 - 纸简书生 - 深入理解iOS NSNotification</a></li>
+<li><a href="https://blog.csdn.net/qq_18505715/article/details/76146575" target="_blank" rel="noopener">CSDN - YFL_iOS - iOS Notification实现原理</a></li>
+<li><a href="https://www.jianshu.com/p/4f47a8f07f0e" target="_blank" rel="noopener">简书 - 高浩浩浩浩浩浩 - NSNotification 的细节</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    <div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/ios_notification-principle.html">iOS开发 - NSNotification原理理解</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 kim逸云 的个人博客">kim逸云</a></p>
+  <p><span>发布时间:</span>2022年10月26日 - 19:10</p>
+  <p><span>最后更新:</span>2022年10月26日 - 19:10</p>
+  <p><span>原始链接:</span><a href="/ios_notification-principle.html" title="iOS开发 - NSNotification原理理解">http://cloverkim.com/ios_notification-principle.html</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://cloverkim.com/ios_notification-principle.html"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+	});
+    });  
+</script>
+
+
+      
+    </div>
+
+    <div>
+      
+        <div>
+    <br>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">------本文结束<i class="fa fa-paw"></i>感谢阅读------</div>
+    
+</div>
+
+      
+    </div>
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag"><i class="fa fa-tag"></i> iOS</a>
+          
+            <a href="/tags/基础/" rel="tag"><i class="fa fa-tag"></i> 基础</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/ios_notification-thread.html" rel="next" title="iOS开发 - NSNotification和线程相关">
+                <i class="fa fa-chevron-left"></i> iOS开发 - NSNotification和线程相关
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/ios_memory-management.html" rel="prev" title="iOS开发 - 对MRC和ARC的理解">
+                iOS开发 - 对MRC和ARC的理解 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/uploads/avatar.png"
+                alt="kim逸云" />
+            
+              <p class="site-author-name" itemprop="name">kim逸云</p>
+              <p class="site-description motion-element" itemprop="description">笑而不语是一种豁达，痛而不言是一种修养。</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">47</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/CloverKim" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:jiang.shunjin@icloud.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#概念"><span class="nav-number">1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三个主要类"><span class="nav-number">2.</span> <span class="nav-text">三个主要类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#NSNotification"><span class="nav-number">2.1.</span> <span class="nav-text">NSNotification</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NSNotificationCenter"><span class="nav-number">2.2.</span> <span class="nav-text">NSNotificationCenter</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NSNotificationQueue"><span class="nav-number">2.3.</span> <span class="nav-text">NSNotificationQueue</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实现原理"><span class="nav-number">3.</span> <span class="nav-text">实现原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Table"><span class="nav-number">3.1.</span> <span class="nav-text">Table</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Named-Table"><span class="nav-number">3.1.1.</span> <span class="nav-text">Named Table</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UnNamed-Table"><span class="nav-number">3.1.2.</span> <span class="nav-text">UnNamed Table</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#添加观察者的流程"><span class="nav-number">3.2.</span> <span class="nav-text">添加观察者的流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#发送通知的流程"><span class="nav-number">3.3.</span> <span class="nav-text">发送通知的流程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#NSNotification与多线程"><span class="nav-number">4.</span> <span class="nav-text">NSNotification与多线程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart" aria-hidden="true"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kim逸云</span>
+
+<!--
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">77.8k</span>
+  
+-->
+</div>
+
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数：<span id="busuanzi_value_site_uv"></span>
+</span>
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共77.8k字</span>
+</div>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("G2qCMJW5Y7Vdp7p7AjogwjJp-gzGzoHsz", "khenv4NT1LkNeUV3t853rJJU");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  <!-- 背景动画 -->
+  <script type="text/javascript" src="/js/src/particle.js"></script>
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/love.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/z16.model.json"},"display":{"position":"right","width":100,"height":200},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

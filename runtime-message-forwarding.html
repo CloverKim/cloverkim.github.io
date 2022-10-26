@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/uploads/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="iOS,实践,runtime," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="消息传递机制&amp;emsp;&amp;emsp;在OC中，当调用了某个对象的方法时，其实质上就是向该对象发送了一条消息，OC的方法最终被生成了C函数，并附带额外的参数。消息传递机制中所调用的核心函数为：1objc_msgSend(id _Nullable self, SEL _Nonnull op, ...)">
+<meta name="keywords" content="iOS,实践,runtime">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS开发 - runtime实践·消息转发（Message Forwarding）">
+<meta property="og:url" content="http://cloverkim.com/runtime-message-forwarding.html">
+<meta property="og:site_name" content="幸运四叶草">
+<meta property="og:description" content="消息传递机制&amp;emsp;&amp;emsp;在OC中，当调用了某个对象的方法时，其实质上就是向该对象发送了一条消息，OC的方法最终被生成了C函数，并附带额外的参数。消息传递机制中所调用的核心函数为：1objc_msgSend(id _Nullable self, SEL _Nonnull op, ...)">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://pic.cloverkim.com/消息转发流程图.jpg">
+<meta property="og:image" content="http://pic.cloverkim.com/动态方法解析.jpg">
+<meta property="og:image" content="http://pic.cloverkim.com/备援接收者.jpg">
+<meta property="og:image" content="http://pic.cloverkim.com/完整的消息转发.jpg">
+<meta property="og:updated_time" content="2022-10-26T11:24:45.529Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS开发 - runtime实践·消息转发（Message Forwarding）">
+<meta name="twitter:description" content="消息传递机制&amp;emsp;&amp;emsp;在OC中，当调用了某个对象的方法时，其实质上就是向该对象发送了一条消息，OC的方法最终被生成了C函数，并附带额外的参数。消息传递机制中所调用的核心函数为：1objc_msgSend(id _Nullable self, SEL _Nonnull op, ...)">
+<meta name="twitter:image" content="http://pic.cloverkim.com/消息转发流程图.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://cloverkim.com/runtime-message-forwarding.html"/>
+
+
+
+
+
+  <title>iOS开发 - runtime实践·消息转发（Message Forwarding） | 幸运四叶草</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">幸运四叶草</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">相思形色露，欲掩不从心。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav" id="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-首页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-标签">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-分类">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-关于">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cloverkim.com/runtime-message-forwarding.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kim逸云">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="幸运四叶草">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">iOS开发 - runtime实践·消息转发（Message Forwarding）</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-10-26T19:24:45+08:00">
+                2022-10-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOSDevelopment/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS开发</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/runtime-message-forwarding.html" class="leancloud_visitors" data-flag-title="iOS开发 - runtime实践·消息转发（Message Forwarding）">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1.8k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  7
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="消息传递机制"><a href="#消息传递机制" class="headerlink" title="消息传递机制"></a>消息传递机制</h1><p>&emsp;&emsp;在OC中，当调用了某个对象的方法时，其实质上就是向该对象发送了一条消息，OC的方法最终被生成了C函数，并附带额外的参数。消息传递机制中所调用的核心函数为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">objc_msgSend(id _Nullable self, SEL _Nonnull op, ...)</span><br></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>&emsp;&emsp;该函数是个参数可变的函数，能接收两个及以上的参数，第一个参数为方法接收者，第二个参数为选择器，后续的参数则为方法调用所需要的相应参数。<br>&emsp;&emsp;举个🌰：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[array insertObject:message atIndex: 3];</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;在编译时，我们上面所写的OC函数会被转化成如下C函数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">objc_msgSend(array, @selector(insertObject:atIndex:), message, 3);</span><br></pre></td></tr></table></figure></p>
+<h1 id="消息转发"><a href="#消息转发" class="headerlink" title="消息转发"></a>消息转发</h1><p>&emsp;&emsp;当向某个对象发送一条消息时，若该对象的方法列表以及它相应继承链上的方法列表都无法找到以该消息选择子作为key的方法实现时，则会触发消息转发机制。<br>&emsp;&emsp;如果没有方法的实现，程序会在运行时crash并抛出<strong>unrecognized selector sent to instance</strong>的异常，但在抛出异常之前，OC的runtime会给我们3次拯救程序的机会。</p>
+<ol>
+<li>动态方法解析</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">+ (BOOL)resolveInstanceMethod:(SEL)sel;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;当接收到未能识别的选择子时，运行时系统会调用该函数用以给对象一次机会来添加相应的方法实现，如果用户在该函数中动态添加了相应方法的实现，则跳转到方法的实现部分，并将该实现存入缓存中，以供下次调用。举个🌰：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">- (void) btnActionMethod &#123;</span><br><span class="line">    NSLog(@&quot;btnAction&quot;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">+ (BOOL)resolveInstanceMethod:(SEL)sel &#123;</span><br><span class="line">    if (sel == @selector(btnAction)) &#123;</span><br><span class="line">        class_addMethod([self class], sel, class_getMethodImplementation([self class], @selector(btnActionMethod)),  &quot;v@:&quot;);</span><br><span class="line">        return YES;</span><br><span class="line">    &#125;</span><br><span class="line">    return [super resolveInstanceMethod:sel];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;关于class_addMethod方法const char *types参数：</p>
+<ul>
+<li>“v@:”：这是一个void类型的方法，没有参数传入</li>
+<li>“i@:”：这是一个int类型的方法，没有参数传入</li>
+<li>“i@:@”：这是一个int类型的方法，有一个参数传入</li>
+<li>更多相关，可以参考官方文档说明：<a href="https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html#//apple_ref/doc/uid/TP40008048-CH100" target="_blank" rel="noopener">Type Encodings</a></li>
+</ul>
+<ol start="2">
+<li>备援接收者</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (id)forwardingTargetForSelector:(SEL)aSelector;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;如果运行时在消息转发的第一步中未找到所调用方法的实现，那么当前接收者还有第二次机会进行未知选择子的处理。这是运行时系统会调用上述方法，并将未知选择子作为参数传入，该方法可以返回一个能处理该选择子的对象，运行时系统会根据返回的对象进行查找，若找到则跳转到相应的方法的实现，则消息转发结束。</p>
+<ol start="3">
+<li>完整的消息转发</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (void)forwardInvocation:(NSInvocation *)anInvocation;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;当运行时系统检测到第二步中用户未返回能处理相应选择子的对象时，那么来到这一步就要启动完成的消息转发机制了。该方法可以改变消息调用目标，运行时系统根据所改变的调用目标，向调用目标方法列表中查询对应方法的实现并实现跳转，这种方式和第二步的操作非常相似。当然，你也可以修改方法的选择子，亦或者向所调用方法中追加一个参数等来跳转到相关方法的实现。<br>&emsp;&emsp;最后，如果消息转发的第三步还未能处理未知选择子的话，那么最终会调用NSObject类的如下方法，用以异常的抛出，表明该选择子最终未能处理。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (void)doesNotRecognizeSelector:(SEL)aSelector;</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;对于完整的消息转发流程图如下图所示：<br><img src="http://pic.cloverkim.com/消息转发流程图.jpg" alt="" title="消息转发流程图"></p>
+<h1 id="消息转发实例-amp-验证"><a href="#消息转发实例-amp-验证" class="headerlink" title="消息转发实例&amp;验证"></a>消息转发实例&amp;验证</h1><p>&emsp;&emsp;在新建的Project中，添加Cat、Dog、Rabbit三个类，并在每个类的.h文件中声明jump方法。</p>
+<ol>
+<li>我们用Cat类来验证消息转发的第一步方法：resolveInstanceMethod:，在该方法中动态添加jump方法的实现，使用runtime的class_addMethod方法，该方法用以向该类的实例对象中添加相应的方法实现。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">void jump(id self, SEL cmd) &#123;</span><br><span class="line">    NSLog(@&quot;%@  jump&quot;, self);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">+ (BOOL)resolveInstanceMethod:(SEL)sel &#123;</span><br><span class="line">    if ([NSStringFromSelector(sel) isEqualToString:@&quot;jump&quot;]) &#123;</span><br><span class="line">        class_addMethod(self, sel, (IMP)jump, &quot;v@:&quot;);</span><br><span class="line">        return YES;</span><br><span class="line">    &#125;</span><br><span class="line">    return [super resolveInstanceMethod:sel];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;然后在ViewController中创建Cat对象，并调用jump方法，如果Cat类中没有实现jump方法，正常的情况下，是会crash，但我们在resolveInstanceMethod: 方法中动态添加了方法的实现，则会跳转到新的方法实现中，因此才不会导致crash。控制台的打印如下：<br><img src="http://pic.cloverkim.com/动态方法解析.jpg" alt="" title="动态方法解析"></p>
+<ol start="2">
+<li>我们用Dog类来验证消息转发的第二步过程，根据上面所述的流程图中，为了能让运行时系统能够运行到forwardingTargetForSelector: 方法，我们需要在resolveInstanceMethod: 方法中返回NO，并且在forwardingTargetForSelector: 方法中返回Cat类的实例对象，让Cat类的实例对象去处理Dog的jump方法。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">+ (BOOL)resolveInstanceMethod:(SEL)sel &#123;</span><br><span class="line">    return NO;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (id)forwardingTargetForSelector:(SEL)aSelector &#123;</span><br><span class="line">    if ([NSStringFromSelector(aSelector) isEqualToString:@&quot;jump&quot;]) &#123;</span><br><span class="line">        return [[Cat alloc] init];</span><br><span class="line">    &#125;</span><br><span class="line">    return [super forwardingTargetForSelector:aSelector];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;在ViewController中创建Dog对象，并调用jump方法。由于我们在forwardingTargetForSelector: 方法中，返回了Cat的实例对象，因此Dog的jump方法转发给了能处理Dog jump方法的Cat对象，并跳转到Cat对象的jump方法中，因此也不会导致crash。控制台的打印如下：<br><img src="http://pic.cloverkim.com/备援接收者.jpg" alt="" title="备援接收者"></p>
+<ol start="3">
+<li>最后用Rabbit类来验证消息转发的第三个步骤的过程。为了能触发完整的消息转发，我们需要将resolveInstanceMethod: 方法返回NO，并且在forwardingTargetForSelector: 方法中返回nil。另外，在实现forwardInvocation: 方法时，还需要实现methodSignatureForSelector: 方法，并将相应的选择子的描述返回。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">+ (BOOL)resolveInstanceMethod:(SEL)sel &#123;</span><br><span class="line">    return NO;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (id)forwardingTargetForSelector:(SEL)aSelector &#123;</span><br><span class="line">    return nil;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (void)forwardInvocation:(NSInvocation *)anInvocation &#123;</span><br><span class="line">    [anInvocation invokeWithTarget:[[Cat alloc] init]];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector &#123;</span><br><span class="line">    if ([NSStringFromSelector(aSelector) isEqualToString:@&quot;jump&quot;]) &#123;</span><br><span class="line">        return [NSMethodSignature signatureWithObjCTypes:&quot;v@:&quot;];</span><br><span class="line">    &#125;</span><br><span class="line">    return [super methodSignatureForSelector:aSelector];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;最后在ViewController中创建Rabbit的实例，并调用jump方法，由于我们通过完整的消息转发，将方法的实现跳转到了Cat实例中，因此不但不会crash，还会执行Cat的jump方法，控制台的打印如下：<br><img src="http://pic.cloverkim.com/完整的消息转发.jpg" alt="" title="完整的消息转发"></p>
+<h1 id="引申-向一个nil对象发送消息会怎样？"><a href="#引申-向一个nil对象发送消息会怎样？" class="headerlink" title="引申 - 向一个nil对象发送消息会怎样？"></a>引申 - 向一个nil对象发送消息会怎样？</h1><p>&emsp;&emsp;结论：OC中向为nil的对象发送消息，程序是不会crash的。<br>&emsp;&emsp;因为OC的函数都是通过<code>objc_msgSend</code>进行消息发送来实现，相对于C和C++来说，对于空指针的操作会引起crash问题，而<code>objc_msgSend</code>会通过判断self来决定是否发送消息，如果self为nil，那么selector也会为空，直接返回，不会出现问题。视方法返回值，向nil发消息可能会返回nil（返回值为对象），0（返回值为一些基础数据）或0X0（返回值为id）等。但对于<code>[NSNull null]</code>对象发送消息时，是会crash的，因为NSNull类只有一个null方法。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://www.cnblogs.com/junhuawang/p/5196291.html" target="_blank" rel="noopener">博客园 - 俊华的博客 - Runtime 运行时之一：消息转发</a></li>
+<li><a href="https://www.jianshu.com/p/2fd4b930588e" target="_blank" rel="noopener">简书 - 陈满iOS - iOS开发·runtime原理与实践: 消息转发篇(Message Forwarding) (消息机制，方法未实现+API不兼容奔溃，模拟多继承)</a></li>
+<li><a href="https://www.jianshu.com/p/11dca953f962" target="_blank" rel="noopener">简书 - 高浩浩浩浩浩浩 - Objc中向一个nil对象发送消息会怎样</a></li>
+<li><a href="https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html#//apple_ref/doc/uid/TP40008048-CH100" target="_blank" rel="noopener">Objective-C Runtime Programming Guide</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    <div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/runtime-message-forwarding.html">iOS开发 - runtime实践·消息转发（Message Forwarding）</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 kim逸云 的个人博客">kim逸云</a></p>
+  <p><span>发布时间:</span>2022年10月26日 - 19:10</p>
+  <p><span>最后更新:</span>2022年10月26日 - 19:10</p>
+  <p><span>原始链接:</span><a href="/runtime-message-forwarding.html" title="iOS开发 - runtime实践·消息转发（Message Forwarding）">http://cloverkim.com/runtime-message-forwarding.html</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://cloverkim.com/runtime-message-forwarding.html"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+	});
+    });  
+</script>
+
+
+      
+    </div>
+
+    <div>
+      
+        <div>
+    <br>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">------本文结束<i class="fa fa-paw"></i>感谢阅读------</div>
+    
+</div>
+
+      
+    </div>
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag"><i class="fa fa-tag"></i> iOS</a>
+          
+            <a href="/tags/实践/" rel="tag"><i class="fa fa-tag"></i> 实践</a>
+          
+            <a href="/tags/runtime/" rel="tag"><i class="fa fa-tag"></i> runtime</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/selection_sort.html" rel="next" title="算法学习 - 选择排序">
+                <i class="fa fa-chevron-left"></i> 算法学习 - 选择排序
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/runtime-associated-object.html" rel="prev" title="iOS开发 - runtime实践·关联对象（Associated Object）">
+                iOS开发 - runtime实践·关联对象（Associated Object） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/uploads/avatar.png"
+                alt="kim逸云" />
+            
+              <p class="site-author-name" itemprop="name">kim逸云</p>
+              <p class="site-description motion-element" itemprop="description">笑而不语是一种豁达，痛而不言是一种修养。</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">47</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/CloverKim" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:jiang.shunjin@icloud.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#消息传递机制"><span class="nav-number">1.</span> <span class="nav-text">消息传递机制</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#消息转发"><span class="nav-number">2.</span> <span class="nav-text">消息转发</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#消息转发实例-amp-验证"><span class="nav-number">3.</span> <span class="nav-text">消息转发实例&amp;验证</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#引申-向一个nil对象发送消息会怎样？"><span class="nav-number">4.</span> <span class="nav-text">引申 - 向一个nil对象发送消息会怎样？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart" aria-hidden="true"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kim逸云</span>
+
+<!--
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">77.8k</span>
+  
+-->
+</div>
+
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数：<span id="busuanzi_value_site_uv"></span>
+</span>
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共77.8k字</span>
+</div>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("G2qCMJW5Y7Vdp7p7AjogwjJp-gzGzoHsz", "khenv4NT1LkNeUV3t853rJJU");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  <!-- 背景动画 -->
+  <script type="text/javascript" src="/js/src/particle.js"></script>
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/love.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/z16.model.json"},"display":{"position":"right","width":100,"height":200},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

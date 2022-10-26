@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/uploads/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="基础,http," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="介绍&amp;emsp;&amp;emsp;HTTP是Hyper Text Transfer Protocol（超文本传输协议）的缩写。它的发展是万维网协会（World Wide Web Consortium）和Internet工作小组IETF（Internet Engineering Task Force）合作的结果，最终发布了一系列的RFC，RFC 1945定义了HTTP/1.0版本。其中最著名的就是RFC">
+<meta name="keywords" content="基础,http">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HTTP协议详解">
+<meta property="og:url" content="http://cloverkim.com/http-protocol.html">
+<meta property="og:site_name" content="幸运四叶草">
+<meta property="og:description" content="介绍&amp;emsp;&amp;emsp;HTTP是Hyper Text Transfer Protocol（超文本传输协议）的缩写。它的发展是万维网协会（World Wide Web Consortium）和Internet工作小组IETF（Internet Engineering Task Force）合作的结果，最终发布了一系列的RFC，RFC 1945定义了HTTP/1.0版本。其中最著名的就是RFC">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://pic.cloverkim.com/HTTP请求消息体结构.jpg">
+<meta property="og:image" content="http://pic.cloverkim.com/解析图.jpg">
+<meta property="og:updated_time" content="2022-10-26T11:24:45.527Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="HTTP协议详解">
+<meta name="twitter:description" content="介绍&amp;emsp;&amp;emsp;HTTP是Hyper Text Transfer Protocol（超文本传输协议）的缩写。它的发展是万维网协会（World Wide Web Consortium）和Internet工作小组IETF（Internet Engineering Task Force）合作的结果，最终发布了一系列的RFC，RFC 1945定义了HTTP/1.0版本。其中最著名的就是RFC">
+<meta name="twitter:image" content="http://pic.cloverkim.com/HTTP请求消息体结构.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://cloverkim.com/http-protocol.html"/>
+
+
+
+
+
+  <title>HTTP协议详解 | 幸运四叶草</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">幸运四叶草</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">相思形色露，欲掩不从心。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav" id="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-首页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-标签">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-分类">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-关于">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cloverkim.com/http-protocol.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kim逸云">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="幸运四叶草">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">HTTP协议详解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-10-26T19:24:45+08:00">
+                2022-10-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/开发基础/" itemprop="url" rel="index">
+                    <span itemprop="name">开发基础</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/http-protocol.html" class="leancloud_visitors" data-flag-title="HTTP协议详解">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.5k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  9
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>&emsp;&emsp;HTTP是Hyper Text Transfer Protocol（超文本传输协议）的缩写。它的发展是万维网协会（World Wide Web Consortium）和Internet工作小组IETF（Internet Engineering Task Force）合作的结果，最终发布了一系列的RFC，RFC 1945定义了HTTP/1.0版本。其中最著名的就是RFC 2616。RFC 2616定义了今天普遍使用的一个版本–HTTP 1.1。<a id="more"></a><br>&emsp;&emsp;HTTP协议是用于从WWW服务器传输超文本到本地浏览器的传送协议。它可以使浏览器更加高效，使网络传输减少。它不仅保证计算机正确快速地传输超文本文档，还确定传输文档中的哪一部分，以及哪部分内容首先显示（如文本先于图形）等。<br>&emsp;&emsp;HTTP是一个应用层协议，由请求和响应构成，是一个标准的客户端服务器模型，而且HTTP是一个无状态的协议。</p>
+<h1 id="主要特点"><a href="#主要特点" class="headerlink" title="主要特点"></a>主要特点</h1><ul>
+<li>简单快速：客户向服务器请求服务时，只需传达请求方法和路径。请求方法常用的有GET、HEAD、POST。每种方法规定了客户端与服务器联系的类型不同。由于HTTP协议简单，使得HTTP服务器的程序规模小，因而通信速度很快。</li>
+<li>灵活：HTTP允许传输任意类型的数据对象。正在传输的类型由Content-Type加以标记。</li>
+<li>无连接：无连接的含义是限制每次连接只处理一个请求。服务器处理完客户端的请求，并收到客户端的应答后，即断开连接。采用这种方式可以节省传输时间。</li>
+<li>无状态：HTTP协议是无状态协议。无状态是指协议对于事务处理没有记忆能力。缺少状态意味着如果后续处理需要前面的信息，则它必须重传，这样可能导致每次连接传送的数据量增大；另一方面，在服务器不需要先前信息时，它的应答就很快。</li>
+<li>支持<a href="https://www.cnblogs.com/jingmin/p/6493216.html" target="_blank" rel="noopener">B/S及C/S模式</a></li>
+</ul>
+<h1 id="HTTP协议请求消息结构"><a href="#HTTP协议请求消息结构" class="headerlink" title="HTTP协议请求消息结构"></a>HTTP协议请求消息结构</h1><p>&emsp;&emsp;客户端发送一个HTTP请求到服务器的请求消息包括以下格式：请求行（request line）、请求头部（header）、空行和请求数据四个部分组成，下图给出了请求报文的一般格式。<br><img src="http://pic.cloverkim.com/HTTP请求消息体结构.jpg" alt="" title="HTTP请求消息体结构"></p>
+<p>&emsp;&emsp;HTTP消息体主要包含以下实质内容（空格和换行也必不可少）：</p>
+<ul>
+<li>请求方法</li>
+<li>URL：统一资源定位符</li>
+<li>HTTP请求头部</li>
+<li>HTTP请求体</li>
+</ul>
+<h2 id="请求方法"><a href="#请求方法" class="headerlink" title="请求方法"></a>请求方法</h2><p>&emsp;&emsp;HTTP包含了多种不同的请求方式，每一种请求方式用在不同的场景。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">序号</th>
+<th style="text-align:center">方法</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">GET</td>
+<td style="text-align:center">请求指定的页面信息，并返回实体主体</td>
+</tr>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:center">HEAD</td>
+<td style="text-align:center">类似于GET请求，只不过返回的响应中没有具体的内容，用于获取报头</td>
+</tr>
+<tr>
+<td style="text-align:center">3</td>
+<td style="text-align:center">POST</td>
+<td style="text-align:center">向指定资源提交数据进行处理请求（例如提交表单或者上传文件）。数据被包含在请求体中。POST请求可能会导致新的资源的建立或已有资源的修改</td>
+</tr>
+<tr>
+<td style="text-align:center">4</td>
+<td style="text-align:center">PUT</td>
+<td style="text-align:center">从客户端向服务器传送的数据取代指定的文档的内容</td>
+</tr>
+<tr>
+<td style="text-align:center">5</td>
+<td style="text-align:center">DELETE</td>
+<td style="text-align:center">请求服务器删除指定的页面</td>
+</tr>
+<tr>
+<td style="text-align:center">6</td>
+<td style="text-align:center">CONNECT</td>
+<td style="text-align:center">HTTP/1.1协议中预留给能够将连接改为管道方式的代理服务器。</td>
+</tr>
+<tr>
+<td style="text-align:center">7</td>
+<td style="text-align:center">OPTIONS</td>
+<td style="text-align:center">允许客户端查看服务器的性能</td>
+</tr>
+<tr>
+<td style="text-align:center">8</td>
+<td style="text-align:center">TRACE</td>
+<td style="text-align:center">回显服务器收到的请求，主要用于测试或诊断。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="URL——统一资源定位符"><a href="#URL——统一资源定位符" class="headerlink" title="URL——统一资源定位符"></a>URL——统一资源定位符</h2><p>&emsp;&emsp;URL由三部分组成：资源类型、存放资源的主机域名、资源文件名。<br>&emsp;&emsp;URL的一般语法格式为（带方括号[]的为可选项）：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">protocol :// hostname[:port] / path / [;parameters][?query]#fragment</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;举个🌰：<a href="https://baijiahao.baidu.com/s?id=1603848351636567407&amp;wfr=spider&amp;for=pc" target="_blank" rel="noopener">https://baijiahao.baidu.com/s?id=1603848351636567407&amp;wfr=spider&amp;for=pc</a></p>
+<ul>
+<li>protocol：https</li>
+<li>hostname：baijiahao.baidu.com</li>
+<li>parameters：id=1603848351636567407&amp;wfr=spider&amp;for=pc （使用&amp;分割参数）</li>
+</ul>
+<p>&emsp;&emsp;总结如下图所示：<br><img src="http://pic.cloverkim.com/解析图.jpg" alt="" title="解析图"></p>
+<h2 id="请求头"><a href="#请求头" class="headerlink" title="请求头"></a>请求头</h2><p>&emsp;&emsp;请求头中主要包含本次请求的附加信息，其中常用的字段如：</p>
+<ul>
+<li>Accept：指定客户端能够接收的内容类型</li>
+<li>Accept-Encoding：指定浏览器可以支持的web服务器返回内容压缩编码类型</li>
+<li>Accept-Language：浏览器可接受的语言</li>
+<li>Content-Length：请求的内容的长度，如：Content-Lenght：348</li>
+<li>Content-Type：请求的与实体对应的MIME信息，常用的类型如下：<ul>
+<li>text/html：HTML格式</li>
+<li>text/plain：纯文本格式</li>
+<li>text/xml：XML格式</li>
+<li>image/gif：gif图片格式</li>
+<li>image/jpeg：jpg图片格式</li>
+<li>image/png：png图片格式</li>
+<li>application/xhtml+xml：XHTML格式</li>
+<li>application/xml：XML数据格式</li>
+<li>application/json：JSON数据格式</li>
+<li>application/pdf：pdf格式</li>
+<li>application/msword：word文档格式</li>
+<li>application/octet-stream：二进制流数据</li>
+</ul>
+</li>
+<li>Date请求发送的日期和时间</li>
+<li>更多的请求头字段参考：<a href="http://tools.jb51.net/table/http_header" target="_blank" rel="noopener">HTTP响应头和请求头信息对照表</a></li>
+</ul>
+<h2 id="请求体"><a href="#请求体" class="headerlink" title="请求体"></a>请求体</h2><p>&emsp;&emsp;在整个报文中，请求头之后，隔一行空格，以下部分就是HTTP的请求体了。请求体是我们发送请求的时候需要传给接收端的内容。其格式需要和请求头中的<code>Content-Type</code>对应，不然会导致接受无法识别。</p>
+<h1 id="HTTP响应"><a href="#HTTP响应" class="headerlink" title="HTTP响应"></a>HTTP响应</h1><p>&emsp;&emsp;HTTP的响应同样分为：响应行、响应头和响应体。和请求报文有点类似。</p>
+<h2 id="响应行"><a href="#响应行" class="headerlink" title="响应行"></a>响应行</h2><p>&emsp;&emsp;响应行中包含了HTTP的版本和本次请求的状态，请求状态的对应值见下文或见<a href="https://blog.csdn.net/ddhsea/article/details/79405996" target="_blank" rel="noopener">HTTP响应码大全</a></p>
+<h2 id="响应头"><a href="#响应头" class="headerlink" title="响应头"></a>响应头</h2><p>&emsp;&emsp;响应头用于描述服务器的基本信息、数据的描述，这些信息将告知客户端如何处理响应头中的内容。</p>
+<ul>
+<li>Allow 服务器支持哪些请求方法（如GET、POST等）。</li>
+<li>Content-Encoding 文档的编码（Encode）方法。只有在解码之后才能得到Content-Type头指定的内容类型。利用gzip压缩文档能够显著地减少HTML文档的下载时间。Java的GZIPOutputStream可以很方便地进行gzip压缩，但只有Unix上的Netscape和Windows上的IE 4、IE 5才支持它。因此，Servlet应该通过查看Accept-Encoding头（即<code>request.getHeader(&quot;Accept-Encoding&quot;)</code>）检查浏览器是否支持gzip，为支持gzip的浏览器返回经gzip压缩的HTML页面，为其他浏览器返回普通页面。</li>
+<li>Content-Lenght 表示内容长度。只有当浏览器使用持久HTTP连接时才需要这个数据。如果你想利用持久连接的优势，可以把输出文档写入ByteArrayOutputStream，完成后查看其大小，然后把该值放入Content-Length头，最后通过<code>byteArrayStream.writeTo(response.getOutputStream())</code>发送内容。</li>
+<li>Content-Type 表示后面的文档属于什么MIME类型。Servlet默认为text/plain，但通常需要显式地指定为text/html。由于经常要设置Content-Type，因此HttpServletResponse提供了一个专用的方法setContentType。更多的请求头字段参考：<a href="http://tools.jb51.net/table/http_header" target="_blank" rel="noopener">HTTP响应头和请求头信息对照表</a></li>
+</ul>
+<h2 id="响应实体"><a href="#响应实体" class="headerlink" title="响应实体"></a>响应实体</h2><p>&emsp;&emsp;响应实体中包含的就是客户端从服务器中获取的数据了。数据的格式和长度都会在响应体中描述。</p>
+<h1 id="状态码"><a href="#状态码" class="headerlink" title="状态码"></a>状态码</h1><p>&emsp;&emsp;HTTP的状态码由三位数字组成，第一个数字定义了响应的类别，共有5种类别：</p>
+<ul>
+<li>1xx：指示信息 — 表示请求已接收，继续处理</li>
+<li>2xx：成功 — 表示请求已被成功接收、理解、接受</li>
+<li>3xx：重定向 — 要完成请求必须进行更进一步的操作</li>
+<li>4xx：客户端错误 — 请求有语法错误或请求无法实现</li>
+<li>5xx：服务器端错误 — 服务器未能实现合法的请求</li>
+</ul>
+<h2 id="常见的状态码："><a href="#常见的状态码：" class="headerlink" title="常见的状态码："></a>常见的状态码：</h2><ul>
+<li>200 OK：客户端请求成功</li>
+<li>400 Bad Request：客户端请求有语法错误，不能被服务器所理解</li>
+<li>401 Unauthorized：请求未经授权，这个状态代码必须和<code>WWW-Authenticate</code>报头域一起使用</li>
+<li>403 Forbidden：服务器收到请求，但是拒绝提供服务</li>
+<li>404 Not Found：请求资源不存在，不如：输入了错误的URL</li>
+<li>500 Internal Server Error：服务器发生不可预期的错误</li>
+<li>503 Server Unavailable：服务器当前不能处理客户端的请求，一段时间后可能恢复正常。</li>
+<li>更多状态码见：<a href="https://blog.csdn.net/ddhsea/article/details/79405996" target="_blank" rel="noopener">HTTP响应码大全</a></li>
+</ul>
+<h1 id="GET-请求和POST-请求的区别"><a href="#GET-请求和POST-请求的区别" class="headerlink" title="GET 请求和POST 请求的区别"></a>GET 请求和POST 请求的区别</h1><h2 id="区别"><a href="#区别" class="headerlink" title="区别"></a>区别</h2><ul>
+<li>GET请求：请求的数据会附在URL之后（就是把数据放置在HTTP协议头中），以?分隔URL和传输数据，多个参数用&amp;进行连接；如果数据是英文字母/数组，原样发送，如果是空格，则转换为+，如果是中文/其他字符，则直接把字符串用base64进行加密。</li>
+<li>POST请求：把提交的数据放置在是HTTP包的包体中。因此，GET请求的数据会在地址栏中显示出来；而POST请求，地址栏不会改变。</li>
+</ul>
+<h2 id="实际开发中传输大小存在的限制"><a href="#实际开发中传输大小存在的限制" class="headerlink" title="实际开发中传输大小存在的限制"></a>实际开发中传输大小存在的限制</h2><ul>
+<li>GET：特定浏览器和服务器对URL长度有限制，例如IE对URL长度的限制是2083字节（2K + 35）。对于其他浏览器，如FireFox等，理论上没有长度限制，其限制取决于操作系统的支持。因此对于GET请求时，传输数据就会受到URL长度的限制。</li>
+<li>POST：由于不是通过URL传值，理论上数据不受限制。但实际各个web服务器会规定对POST请求数据大小进行限制，Apache、IIS6都有各自的配置。</li>
+</ul>
+<h2 id="安全性"><a href="#安全性" class="headerlink" title="安全性"></a>安全性</h2><p>&emsp;&emsp;POST的安全性要比GET的安全性高。比如：GET提交数据，用户名和密码将以明文的形式出现在URL上，因为①登录页面有可能被浏览器缓存；②其他人查看浏览器的历史记录；除此之外，使用GET提交数据还可能会造成Cross-site request forgery攻击。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://www.jianshu.com/p/acf4efd9ebce" target="_blank" rel="noopener">简书 - 他头上长犄角 - http协议详解</a></li>
+<li><a href="https://www.cnblogs.com/wangning528/p/6388464.html" target="_blank" rel="noopener">博客园 - 不必、放弃 - http协议详解(超详细)</a></li>
+<li><a href="https://www.jianshu.com/p/dac7b8bdb682" target="_blank" rel="noopener">简书 - BennyLoo - TCP/IP协议栈 —— IP、TCP、UDP、HTTP协议详解</a></li>
+<li><a href="http://tools.jb51.net/table/http_header" target="_blank" rel="noopener">HTTP响应头和请求头信息对照表</a></li>
+<li><a href="http://tools.jb51.net/table/http_status_code" target="_blank" rel="noopener">HTTP状态码对照表</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    <div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/http-protocol.html">HTTP协议详解</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 kim逸云 的个人博客">kim逸云</a></p>
+  <p><span>发布时间:</span>2022年10月26日 - 19:10</p>
+  <p><span>最后更新:</span>2022年10月26日 - 19:10</p>
+  <p><span>原始链接:</span><a href="/http-protocol.html" title="HTTP协议详解">http://cloverkim.com/http-protocol.html</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://cloverkim.com/http-protocol.html"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+	});
+    });  
+</script>
+
+
+      
+    </div>
+
+    <div>
+      
+        <div>
+    <br>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">------本文结束<i class="fa fa-paw"></i>感谢阅读------</div>
+    
+</div>
+
+      
+    </div>
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/基础/" rel="tag"><i class="fa fa-tag"></i> 基础</a>
+          
+            <a href="/tags/http/" rel="tag"><i class="fa fa-tag"></i> http</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/iOS_delbase64.html" rel="next" title="iOS开发 - 删除连连支付libRsaCrypto.a中的base64.o">
+                <i class="fa fa-chevron-left"></i> iOS开发 - 删除连连支付libRsaCrypto.a中的base64.o
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/hege_introduce.html" rel="prev" title="日本和歌">
+                日本和歌 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/uploads/avatar.png"
+                alt="kim逸云" />
+            
+              <p class="site-author-name" itemprop="name">kim逸云</p>
+              <p class="site-description motion-element" itemprop="description">笑而不语是一种豁达，痛而不言是一种修养。</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">47</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/CloverKim" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:jiang.shunjin@icloud.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#主要特点"><span class="nav-number">2.</span> <span class="nav-text">主要特点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HTTP协议请求消息结构"><span class="nav-number">3.</span> <span class="nav-text">HTTP协议请求消息结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#请求方法"><span class="nav-number">3.1.</span> <span class="nav-text">请求方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#URL——统一资源定位符"><span class="nav-number">3.2.</span> <span class="nav-text">URL——统一资源定位符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#请求头"><span class="nav-number">3.3.</span> <span class="nav-text">请求头</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#请求体"><span class="nav-number">3.4.</span> <span class="nav-text">请求体</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HTTP响应"><span class="nav-number">4.</span> <span class="nav-text">HTTP响应</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#响应行"><span class="nav-number">4.1.</span> <span class="nav-text">响应行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#响应头"><span class="nav-number">4.2.</span> <span class="nav-text">响应头</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#响应实体"><span class="nav-number">4.3.</span> <span class="nav-text">响应实体</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#状态码"><span class="nav-number">5.</span> <span class="nav-text">状态码</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#常见的状态码："><span class="nav-number">5.1.</span> <span class="nav-text">常见的状态码：</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#GET-请求和POST-请求的区别"><span class="nav-number">6.</span> <span class="nav-text">GET 请求和POST 请求的区别</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#区别"><span class="nav-number">6.1.</span> <span class="nav-text">区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实际开发中传输大小存在的限制"><span class="nav-number">6.2.</span> <span class="nav-text">实际开发中传输大小存在的限制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安全性"><span class="nav-number">6.3.</span> <span class="nav-text">安全性</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">7.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart" aria-hidden="true"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kim逸云</span>
+
+<!--
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">77.8k</span>
+  
+-->
+</div>
+
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数：<span id="busuanzi_value_site_uv"></span>
+</span>
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共77.8k字</span>
+</div>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("G2qCMJW5Y7Vdp7p7AjogwjJp-gzGzoHsz", "khenv4NT1LkNeUV3t853rJJU");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  <!-- 背景动画 -->
+  <script type="text/javascript" src="/js/src/particle.js"></script>
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/love.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/z16.model.json"},"display":{"position":"right","width":100,"height":200},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

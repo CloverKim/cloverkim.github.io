@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/uploads/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="iOS,面试题," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="概述&amp;emsp;&amp;emsp;在之前的三篇文章中（SDWebImage源码解析（一）、SDWebImage源码解析（二）、SDWebImage源码解析（三）），对SDWebImage的源码进行了详细的解析，阅读优秀的源码是一种很好的学习方式，对自己的技术成长有着一定的帮助。本文中，是对网上一些关于SDWebImage面试题的相关列举和分析解答。">
+<meta name="keywords" content="iOS,面试题">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SDWebImage相关面试题">
+<meta property="og:url" content="http://cloverkim.com/SDWebImage-interview-question.html">
+<meta property="og:site_name" content="幸运四叶草">
+<meta property="og:description" content="概述&amp;emsp;&amp;emsp;在之前的三篇文章中（SDWebImage源码解析（一）、SDWebImage源码解析（二）、SDWebImage源码解析（三）），对SDWebImage的源码进行了详细的解析，阅读优秀的源码是一种很好的学习方式，对自己的技术成长有着一定的帮助。本文中，是对网上一些关于SDWebImage面试题的相关列举和分析解答。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://pic.cloverkim.com/006tKfTcgy1g0e679vq7dg30aw0lkkjm.gif">
+<meta property="og:image" content="http://pic.cloverkim.com/006tKfTcgy1g0e7ys9bihj317m0eagpe.jpg">
+<meta property="og:updated_time" content="2022-10-26T11:24:45.523Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SDWebImage相关面试题">
+<meta name="twitter:description" content="概述&amp;emsp;&amp;emsp;在之前的三篇文章中（SDWebImage源码解析（一）、SDWebImage源码解析（二）、SDWebImage源码解析（三）），对SDWebImage的源码进行了详细的解析，阅读优秀的源码是一种很好的学习方式，对自己的技术成长有着一定的帮助。本文中，是对网上一些关于SDWebImage面试题的相关列举和分析解答。">
+<meta name="twitter:image" content="http://pic.cloverkim.com/006tKfTcgy1g0e679vq7dg30aw0lkkjm.gif">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://cloverkim.com/SDWebImage-interview-question.html"/>
+
+
+
+
+
+  <title>SDWebImage相关面试题 | 幸运四叶草</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">幸运四叶草</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">相思形色露，欲掩不从心。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav" id="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-首页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-标签">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-分类">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-关于">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cloverkim.com/SDWebImage-interview-question.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kim逸云">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="幸运四叶草">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">SDWebImage相关面试题</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-10-26T19:24:45+08:00">
+                2022-10-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOSDevelopment/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS开发</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/SDWebImage-interview-question.html" class="leancloud_visitors" data-flag-title="SDWebImage相关面试题">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3.7k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  16
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>&emsp;&emsp;在之前的三篇文章中（<a href="http://cloverkim.com/SDWebImage-source-code-analysis-1.html">SDWebImage源码解析（一）</a>、<a href="http://cloverkim.com/SDWebImage-source-code-analysis-2.html">SDWebImage源码解析（二）</a>、<a href="http://cloverkim.com/SDWebImage-source-code-analysis-3.html">SDWebImage源码解析（三）</a>），对<a href="https://github.com/SDWebImage/SDWebImage" target="_blank" rel="noopener">SDWebImage</a>的源码进行了详细的解析，阅读优秀的源码是一种很好的学习方式，对自己的技术成长有着一定的帮助。本文中，是对网上一些关于SDWebImage面试题的相关列举和分析解答。<a id="more"></a></p>
+<h1 id="SDWebImage支持GIF图吗？"><a href="#SDWebImage支持GIF图吗？" class="headerlink" title="SDWebImage支持GIF图吗？"></a>SDWebImage支持GIF图吗？</h1><h2 id="FLAnimatedImage"><a href="#FLAnimatedImage" class="headerlink" title="FLAnimatedImage"></a>FLAnimatedImage</h2><p>&emsp;&emsp;在SDWebImage 4.0版本之后，可以用<a href="https://github.com/Flipboard/FLAnimatedImage" target="_blank" rel="noopener">FLAnimatedImage</a>来加载GIF图，官方文档说明如下：</p>
+<blockquote>
+<p>Starting with the 4.0 version, we rely on <a href="https://github.com/Flipboard/FLAnimatedImage" target="_blank" rel="noopener">FLAnimatedImage</a> to take care of our animated images.<br>If you use cocoapods, add <code>pod &#39;SDWebImage/GIF&#39;</code> to your podfile.<br>To use it, simply make sure you use FLAnimatedImageView instead of UIImageView.</p>
+</blockquote>
+<blockquote>
+<p>Note: there is a backwards compatible feature, so if you are still trying to load a GIF into a UIImageView, it will only show the 1st frame as a static image by default. However, you can enable the full GIF support by using the built-in GIF coder. See <a href="https://github.com/SDWebImage/SDWebImage/wiki/Advanced-Usage#gif-coder" target="_blank" rel="noopener">GIF coder</a></p>
+</blockquote>
+<blockquote>
+<p>Important: FLAnimatedImage only works on the iOS platform. For macOS, use NSImageView with animates set to YES to show the entire animated images and NO to only show the 1st frame. For all the other platforms (tvOS, watchOS) we will fallback to the backwards compatibility feature described above</p>
+</blockquote>
+<p>FLAnimatedImage使用流程大致可以概括为：</p>
+<ul>
+<li>CocoaPods单独倒入库<code>pod &#39;SDWebImage/GIF&#39;</code>,并引入<code>import FLAnimatedImage</code></li>
+<li>使用<code>initWithAnimatedGIFData:</code>方法新建FLAnimatedImage类</li>
+<li>然后再新建FLAnimatedImageView类，将刚刚新建的FLAnimatedImage赋值给FLAnimatedImageView的animatedImage变量即可。</li>
+</ul>
+<p>简易demo代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">let gifPath = Bundle.main.path(forResource: &quot;gif_test&quot;, ofType: &quot;gif&quot;)</span><br><span class="line">if let imageData = NSData(contentsOfFile: gifPath ?? &quot;&quot;) &#123;</span><br><span class="line">    let animatedImageView = FLAnimatedImageView(frame: animatedBgView.bounds)</span><br><span class="line">    animatedImageView.animatedImage = FLAnimatedImage(animatedGIFData: imageData as Data)</span><br><span class="line">    animatedBgView.addSubview(animatedImageView)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="SDWebImage-4-4-2版本的sd-animatedGIFWithData方法"><a href="#SDWebImage-4-4-2版本的sd-animatedGIFWithData方法" class="headerlink" title="SDWebImage 4.4.2版本的sd_animatedGIFWithData方法"></a>SDWebImage 4.4.2版本的<code>sd_animatedGIFWithData</code>方法</h2><p>&emsp;&emsp;在SDWebImage的4.4.2版本中，已经支持加载GIF图，使用的是<code>UIImage+GIF</code>分类中的<code>sd_animatedGIFWithData</code>方法，具体使用方法如下demo所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">let gifPath = Bundle.main.path(forResource: &quot;gif_test&quot;, ofType: &quot;gif&quot;)</span><br><span class="line">if let imageData = NSData(contentsOfFile: gifPath ?? &quot;&quot;) &#123;</span><br><span class="line">    gifImageView.image = UIImage.sd_animatedGIF(with: imageData as Data)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>运行结果如下图所示：<br><img src="http://pic.cloverkim.com/006tKfTcgy1g0e679vq7dg30aw0lkkjm.gif" alt=""></p>
+<h1 id="SDWebImage如何区分图片格式？"><a href="#SDWebImage如何区分图片格式？" class="headerlink" title="SDWebImage如何区分图片格式？"></a>SDWebImage如何区分图片格式？</h1><p>常见的三种图片格式：</p>
+<ul>
+<li>PNG：压缩比没有JPG高，但是无损压缩，解压缩性能高，苹果推荐的图片格式</li>
+<li>JPG：压缩比最高的一种图片格式，有损压缩。</li>
+<li>GIF：序列帧动图。特点：只支持256种颜色。</li>
+</ul>
+<p>在<code>NSData+ImageContentType</code>分类中，对图片格式枚举的定义，以及根据图片data获取图片类型的定义实现如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">typedef NS_ENUM(NSInteger, SDImageFormat) &#123;</span><br><span class="line">    SDImageFormatUndefined = -1,        // 未知类型</span><br><span class="line">    SDImageFormatJPEG = 0,              // JPG</span><br><span class="line">    SDImageFormatPNG,                   // PNG</span><br><span class="line">    SDImageFormatGIF,                   // GIF</span><br><span class="line">    SDImageFormatTIFF,                  // TIFF</span><br><span class="line">    SDImageFormatWebP,                  // WEBP</span><br><span class="line">    SDImageFormatHEIC                   // HEIC</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">/// 根据图片NSData获取图片的类型</span><br><span class="line">+ (SDImageFormat)sd_imageFormatForImageData:(nullable NSData *)data &#123;</span><br><span class="line">    if (!data) &#123;</span><br><span class="line">        return SDImageFormatUndefined;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    // File signatures table: http://www.garykessler.net/library/file_sigs.html</span><br><span class="line">    uint8_t c;</span><br><span class="line">    // 获取图片data数据的第一个字节数据</span><br><span class="line">    [data getBytes:&amp;c length:1];</span><br><span class="line">    // 根据字母的ASCII码比较，返回对应的图片类型枚举</span><br><span class="line">    switch (c) &#123;</span><br><span class="line">        case 0xFF:</span><br><span class="line">            return SDImageFormatJPEG;</span><br><span class="line">        case 0x89:</span><br><span class="line">            return SDImageFormatPNG;</span><br><span class="line">        case 0x47:</span><br><span class="line">            return SDImageFormatGIF;</span><br><span class="line">        case 0x49:</span><br><span class="line">        case 0x4D:</span><br><span class="line">            return SDImageFormatTIFF;</span><br><span class="line">        case 0x52: &#123;</span><br><span class="line">            if (data.length &gt;= 12) &#123;</span><br><span class="line">                // RIFF....WEBP</span><br><span class="line">                NSString *testString = [[NSString alloc] initWithData:[data subdataWithRange:NSMakeRange(0, 12)] encoding:NSASCIIStringEncoding];</span><br><span class="line">                if ([testString hasPrefix:@&quot;RIFF&quot;] &amp;&amp; [testString hasSuffix:@&quot;WEBP&quot;]) &#123;</span><br><span class="line">                    return SDImageFormatWebP;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            break;</span><br><span class="line">        &#125;</span><br><span class="line">        case 0x00: &#123;</span><br><span class="line">            if (data.length &gt;= 12) &#123;</span><br><span class="line">                // ....ftypheic ....ftypheix ....ftyphevc ....ftyphevx</span><br><span class="line">                NSString *testString = [[NSString alloc] initWithData:[data subdataWithRange:NSMakeRange(4, 8)] encoding:NSASCIIStringEncoding];</span><br><span class="line">                if ([testString isEqualToString:@&quot;ftypheic&quot;]</span><br><span class="line">                    || [testString isEqualToString:@&quot;ftypheix&quot;]</span><br><span class="line">                    || [testString isEqualToString:@&quot;ftyphevc&quot;]</span><br><span class="line">                    || [testString isEqualToString:@&quot;ftyphevx&quot;]) &#123;</span><br><span class="line">                    return SDImageFormatHEIC;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            break;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return SDImageFormatUndefined;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="SDWebImage缓存图片的名称如何避免重名"><a href="#SDWebImage缓存图片的名称如何避免重名" class="headerlink" title="SDWebImage缓存图片的名称如何避免重名"></a>SDWebImage缓存图片的名称如何避免重名</h1><p>&emsp;&emsp;如果单纯使用文件名保存，重名的几率非常高。因此，使用MD5的散列函数，对完整的图片url进行MD5，结果是一个32个字符长度的字符串。</p>
+<h1 id="SDWebImage如何保证UI操作放在主线程中执行？"><a href="#SDWebImage如何保证UI操作放在主线程中执行？" class="headerlink" title="SDWebImage如何保证UI操作放在主线程中执行？"></a>SDWebImage如何保证UI操作放在主线程中执行？</h1><p>&emsp;&emsp;在SDWebImage的<code>SDWebImageCompat.h</code>中，有如下的宏定义，用来保证主线程操作，可为什么要这么写？<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">#ifndef dispatch_queue_async_safe</span><br><span class="line">#define dispatch_queue_async_safe(queue, block)\</span><br><span class="line">    if (dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL) == dispatch_queue_get_label(queue)) &#123;\</span><br><span class="line">        block();\</span><br><span class="line">    &#125; else &#123;\</span><br><span class="line">        dispatch_async(queue, block);\</span><br><span class="line">    &#125;</span><br><span class="line">#endif</span><br><span class="line"></span><br><span class="line">#ifndef dispatch_main_async_safe</span><br><span class="line">#define dispatch_main_async_safe(block) dispatch_queue_async_safe(dispatch_get_main_queue(), block)</span><br><span class="line">#endif</span><br></pre></td></tr></table></figure></p>
+<p>之前比较常见的写法如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#define dispatch_main_async_safe(block)\</span><br><span class="line">    if ([NSThread isMainThread]) &#123;\</span><br><span class="line">        block();\</span><br><span class="line">    &#125; else &#123;\</span><br><span class="line">        dispatch_async(dispatch_get_main_queue(), block);\</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;对比两个宏定义可以发现前者两个地方改变了，一是多了<code>#ifndef</code>，二是判断条件改变了。增加<code>ifndef</code>是为了提高代码的严谨，防止重复定义<code>dispatch_main_async_safe</code>，而关于判断条件改变的的原因则可以参考以下两篇文档：1.<a href="http://blog.benjamin-encz.de/post/main-queue-vs-main-thread/" target="_blank" rel="noopener">GCD’s Main Queue vs. Main Thread</a>、2.<a href="https://blog.krzyzanowskim.com/2016/06/03/queues-are-not-bound-to-any-specific-thread/" target="_blank" rel="noopener">Queues are not bound to any specific thread</a></p>
+<h2 id="分析：如何判断当前是否在主线程？"><a href="#分析：如何判断当前是否在主线程？" class="headerlink" title="分析：如何判断当前是否在主线程？"></a>分析：如何判断当前是否在主线程？</h2><h3 id="最简单的方法"><a href="#最简单的方法" class="headerlink" title="最简单的方法"></a>最简单的方法</h3><p>&emsp;&emsp;判断当前是否在主线程最简单的方法是使用<code>[NSThread isMainThread]</code>，GCD缺少一个类似的方便的API来判断当前是否在主队列上运行，因此一般是使用NSThread的API，如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">if ([NSThread isMainThread]) &#123;</span><br><span class="line">    block();</span><br><span class="line">&#125; else &#123;</span><br><span class="line">    dispatch_async(dispatch_get_main_queue(), block);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;这在大多数情况下是有效的，直到它出现了异常。下面是关于ReactiveCocoa repo问题的摘录：<a href="https://github.com/ReactiveCocoa/ReactiveCocoa/issues/2635#issuecomment-170215083" target="_blank" rel="noopener">ReactiveCocoa issue</a><br><img src="http://pic.cloverkim.com/006tKfTcgy1g0e7ys9bihj317m0eagpe.jpg" alt=""><br>&emsp;&emsp;潜在的问题是VektorKit API正在检查是否在主队列上调用它，而不是检查它是否在主线程上运行。虽然每个应用程序都只有一个主线程，但是在这个主线程上执行许多不同的队列是可能的。<br>&emsp;&emsp;如果库（如VektorKit）依赖于在主队列上检查执行，那么从主线程上执行的非主队列调用API将导致问题。也就是说，如果主线程执行非主队列调度的API，而这个API需要检查是否由主队列上调度，那么将会出现问题。</p>
+<h3 id="更安全的方法一"><a href="#更安全的方法一" class="headerlink" title="更安全的方法一"></a>更安全的方法一</h3><p>&emsp;&emsp;从技术上讲，我认为这是一个<code>MapKit/VektorKit</code>漏洞，苹果的UI框架通常保证在从主线程调用时正确工作，没有任何文档提到需要在主队列上执行代码。<br>&emsp;&emsp;但是，现在我们知道某些api不仅依赖于主线程上的运行，而且还依赖于主队列，因此检查当前队列而不是检查当前线程更安全。<br>&emsp;&emsp;检查当前队列还可以更好地利用GCD为线程提供的抽象。从技术上讲，我们不应该知道/关心主队列是一种总是绑定到主线程的特殊队列。<br>&emsp;&emsp;我们需要使用<code>dispatch_queue_set_specific</code>函数来将键值与主队列相关联，稍后，我们可以使用<code>dispatch_queue_get_specific</code>来检查键和值的存在。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">- (void)function &#123;</span><br><span class="line">    static void *mainQueueKey = &quot;mainQueueKey&quot;;</span><br><span class="line">    dispatch_queue_set_specific(dispatch_get_main_queue(), mainQueueKey, &amp;mainQueueKey, NULL);</span><br><span class="line">    if (dispatch_get_specific(mainQueueKey)) &#123;</span><br><span class="line">        // do something in main queue</span><br><span class="line">        //通过这样判断，就可以真正保证(我们在不主动搞事的情况下)，任务一定是放在主队列中的</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        // do something in other queue</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="更安全的方法二（SDWEbImage使用的方法）"><a href="#更安全的方法二（SDWEbImage使用的方法）" class="headerlink" title="更安全的方法二（SDWEbImage使用的方法）"></a>更安全的方法二（SDWEbImage使用的方法）</h3><p>&emsp;&emsp;我们知道在使用GCD创建一个queeu的时候回指定queue_label，可以理解为队列名，就像下面：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dispatch_queue_t myQueue = dispatch_queue_create(&quot;com.apple.threadQueue&quot;, DISPATCH_QUEUE_SERIAL);</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;而第一个参数就是queue_label，根据官方文档解释，这个queue_label是唯一的，所以SDWebImage就采用了这个方式：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">//取得当前队列的队列名</span><br><span class="line">dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL)</span><br><span class="line">   </span><br><span class="line">//取得主队列的队列名</span><br><span class="line">dispatch_queue_get_label(dispatch_get_main_queue())</span><br><span class="line"></span><br><span class="line">然后通过 strcmp 函数进行比较，如果为0 则证明当前队列就是主队列。</span><br></pre></td></tr></table></figure></p>
+<p>SDWebImage中的实例：判断当前是否是IOQueue<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">- (void)checkIfQueueIsIOQueue &#123;</span><br><span class="line">    const char *currentQueueLabel = dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL);</span><br><span class="line">    const char *ioQueueLabel = dispatch_queue_get_label(self.ioQueue);</span><br><span class="line">    if (strcmp(currentQueueLabel, ioQueueLabel) != 0) &#123;</span><br><span class="line">        NSLog(@&quot;This method should be called from the ioQueue&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p>&emsp;&emsp;SDWebImage就是从判断是否在主线程执行改为判断是否由主队列上调度。而由于主队列是一个穿行队列，无论任务是异步同步都不会开辟新线程，所以当前队列是主队列等价于当前在主线程上执行。可以这样说，在主队列调度的任务肯定在主线程执行，而在主线程执行的任务不一定是由主队列调度的。</p>
+<h1 id="SDWebImage的最大并发数和超时时长"><a href="#SDWebImage的最大并发数和超时时长" class="headerlink" title="SDWebImage的最大并发数和超时时长"></a>SDWebImage的最大并发数和超时时长</h1><p>&emsp;&emsp;在SDWebImageDownloader类的初始化方法中，对SDWebImage图片下载的最大并发数和超时时长进行了赋值，分别为6和15.0，具体如下所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 最大并发数</span><br><span class="line">_downloadQueue.maxConcurrentOperationCount = 6;</span><br><span class="line">// 超时时长</span><br><span class="line">_downloadTimeout = 15.0;</span><br></pre></td></tr></table></figure></p>
+<h1 id="SDWebImage的内存缓存和磁盘缓存是用什么实现的？"><a href="#SDWebImage的内存缓存和磁盘缓存是用什么实现的？" class="headerlink" title="SDWebImage的内存缓存和磁盘缓存是用什么实现的？"></a>SDWebImage的内存缓存和磁盘缓存是用什么实现的？</h1><h2 id="内存缓存实现——SDMemoryCache"><a href="#内存缓存实现——SDMemoryCache" class="headerlink" title="内存缓存实现——SDMemoryCache"></a>内存缓存实现——SDMemoryCache</h2><p>&emsp;&emsp;SDWebImage使用SDMemoryCache（继承自NSCache）来实现内存缓存。NSCache可以设置totalCostLimit来限制缓存的总成本消耗，所以我们再添加缓存的时候需要通过以下代码来指定缓存对象消耗的成本<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (void)setObject:(ObjectType)obj forKey:(KeyType)key cost:(NSUInteger)g;</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;SDMemoryCache在初始化时，会初始化一个弱引用表，当收到内存警告时，会移除内存中缓存的图片，同时保留weakCache，维持对被强引用着的图片的访问。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">- (instancetype)initWithConfig:(SDImageCacheConfig *)config &#123;</span><br><span class="line">    self = [super init];</span><br><span class="line">    if (self) &#123;</span><br><span class="line">        // 初始化弱引用表，当收到内存警告，内存缓存虽然被清理，但是有些图片已经被其他对象强引用着，.</span><br><span class="line">        // 这时weakCache维持这些图片的弱引用。如果需要获取这些图片就不用去硬盘获取了</span><br><span class="line">        // NSPointerFunctionsStrongMemory 对值进行弱引用，不会对引用计数+1</span><br><span class="line">        self.weakCache = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsWeakMemory capacity:0];</span><br><span class="line">        self.weakCacheLock = dispatch_semaphore_create(1);</span><br><span class="line">        self.config = config;</span><br><span class="line">        // 监听内存警告通知</span><br><span class="line">        [[NSNotificationCenter defaultCenter] addObserver:self</span><br><span class="line">                                                 selector:@selector(didReceiveMemoryWarning:)</span><br><span class="line">                                                     name:UIApplicationDidReceiveMemoryWarningNotification</span><br><span class="line">                                                   object:nil];</span><br><span class="line">    &#125;</span><br><span class="line">    return self;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (void)didReceiveMemoryWarning:(NSNotification *)notification &#123;</span><br><span class="line">    // 当收到内存警告通知，移除内存中缓存的图片，同时保留weakCache，维持对被强引用着的图片的访问</span><br><span class="line">    [super removeAllObjects];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="磁盘缓存实现——NSFileManager"><a href="#磁盘缓存实现——NSFileManager" class="headerlink" title="磁盘缓存实现——NSFileManager"></a>磁盘缓存实现——NSFileManager</h2><p>&emsp;&emsp;SDImageCache的磁盘缓存是通过异步操作NSFileManager存储缓存文件到沙盒来实现的。</p>
+<h1 id="读取内存缓存和磁盘缓存的时候如何保证线程安全？"><a href="#读取内存缓存和磁盘缓存的时候如何保证线程安全？" class="headerlink" title="读取内存缓存和磁盘缓存的时候如何保证线程安全？"></a>读取内存缓存和磁盘缓存的时候如何保证线程安全？</h1><h2 id="读取内存缓存"><a href="#读取内存缓存" class="headerlink" title="读取内存缓存"></a>读取内存缓存</h2><p>&emsp;&emsp;NSCache是线程安全的，在多线程操作中，不需要对Cache加锁。读取缓存的时候是在主线程中进行，由于使用NSCache进行存储，所以不需要担心单个value对象的线程安全。</p>
+<h2 id="读取磁盘缓存"><a href="#读取磁盘缓存" class="headerlink" title="读取磁盘缓存"></a>读取磁盘缓存</h2><ul>
+<li><p>创建了一个名为IO的串行队列，所有磁盘操作都在此队列中，逐个执行</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@property (strong, nonatomic, nullable) dispatch_queue_t ioQueue;</span><br><span class="line"></span><br><span class="line">// Create IO serial queue</span><br><span class="line">_ioQueue = dispatch_queue_create(&quot;com.hackemist.SDWebImageCache&quot;, DISPATCH_QUEUE_SERIAL);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li><p>主要存储函数中<code>dispatch_async(self.ioQueue, ^{})</code></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">- (void)storeImage:(nullable UIImage *)image</span><br><span class="line">         imageData:(nullable NSData *)imageData</span><br><span class="line">            forKey:(nullable NSString *)key</span><br><span class="line">            toDisk:(BOOL)toDisk</span><br><span class="line">        completion:(nullable SDWebImageNoParamsBlock)completionBlock &#123;</span><br><span class="line">    // .....</span><br><span class="line">    </span><br><span class="line">    if (toDisk) &#123;</span><br><span class="line">        dispatch_async(self.ioQueue, ^&#123;</span><br><span class="line">            @autoreleasepool &#123;</span><br><span class="line">                NSData *data = imageData;</span><br><span class="line">                if (!data &amp;&amp; image) &#123;</span><br><span class="line">                    // If we do not have any data to detect image format, check whether it contains alpha channel to use PNG or JPEG format</span><br><span class="line">                    SDImageFormat format;</span><br><span class="line">                    if (SDCGImageRefContainsAlpha(image.CGImage)) &#123;</span><br><span class="line">                        format = SDImageFormatPNG;</span><br><span class="line">                    &#125; else &#123;</span><br><span class="line">                        format = SDImageFormatJPEG;</span><br><span class="line">                    &#125;</span><br><span class="line">                    data = [[SDWebImageCodersManager sharedInstance] encodedDataWithImage:image format:format];</span><br><span class="line">                &#125;</span><br><span class="line">                [self _storeImageDataToDisk:data forKey:key];</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            if (completionBlock) &#123;</span><br><span class="line">                dispatch_async(dispatch_get_main_queue(), ^&#123;</span><br><span class="line">                    completionBlock();</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        if (completionBlock) &#123;</span><br><span class="line">            completionBlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="结论-1"><a href="#结论-1" class="headerlink" title="结论"></a>结论</h2><ul>
+<li>真正的磁盘缓存是在另一个IO专属线程中的一个串行队列下进行的。</li>
+<li>包括删除、写入等所有磁盘内容都是在这个IO线程中进行，以保证线程安全。</li>
+<li><p>但计算大小、获取文件总数等操作，则在主线程中进行，如下代码所示：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">- (NSUInteger)getSize &#123;</span><br><span class="line">    __block NSUInteger size = 0;</span><br><span class="line">    dispatch_sync(self.ioQueue, ^&#123;</span><br><span class="line">        NSDirectoryEnumerator *fileEnumerator = [self.fileManager enumeratorAtPath:self.diskCachePath];</span><br><span class="line">        for (NSString *fileName in fileEnumerator) &#123;</span><br><span class="line">            NSString *filePath = [self.diskCachePath stringByAppendingPathComponent:fileName];</span><br><span class="line">            NSDictionary&lt;NSString *, id&gt; *attrs = [self.fileManager attributesOfItemAtPath:filePath error:nil];</span><br><span class="line">            size += [attrs fileSize];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    return size;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="SDWebImage的内存警告是如何处理的？"><a href="#SDWebImage的内存警告是如何处理的？" class="headerlink" title="SDWebImage的内存警告是如何处理的？"></a>SDWebImage的内存警告是如何处理的？</h1><p>&emsp;&emsp;利用通知的方式，当收到内存警告的通知（<code>UIApplicationDidReceiveMemoryWarningNotification</code>）时，会执行<code>didReceiveMemoryWarning:</code>方法，清理内存缓存。</p>
+<h1 id="SDWebImage磁盘缓存的时长是多少？清理操作时间点和清理原则是什么？"><a href="#SDWebImage磁盘缓存的时长是多少？清理操作时间点和清理原则是什么？" class="headerlink" title="SDWebImage磁盘缓存的时长是多少？清理操作时间点和清理原则是什么？"></a>SDWebImage磁盘缓存的时长是多少？清理操作时间点和清理原则是什么？</h1><h2 id="磁盘缓存的时长默认为一周"><a href="#磁盘缓存的时长默认为一周" class="headerlink" title="磁盘缓存的时长默认为一周"></a>磁盘缓存的时长默认为一周</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// SDImageCacheConfig.m</span><br><span class="line">static const NSInteger kDefaultCacheMaxCacheAge = 60 * 60 * 24 * 7; // 1 week</span><br></pre></td></tr></table></figure>
+<h2 id="磁盘清理时间点"><a href="#磁盘清理时间点" class="headerlink" title="磁盘清理时间点"></a>磁盘清理时间点</h2><p>分别在『应用被杀死时』和『应用进入后台时』进行清理操作，分别会收到<code>UIApplicationWillTerminateNotification</code> 和 <code>UIApplicationDidEnterBackgroundNotification</code>两个通知，添加通知的方法如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[[NSNotificationCenter defaultCenter] addObserver:self</span><br><span class="line">                                         selector:@selector(deleteOldFiles)</span><br><span class="line">                                             name:UIApplicationWillTerminateNotification</span><br><span class="line">                                           object:nil];</span><br><span class="line"></span><br><span class="line">[[NSNotificationCenter defaultCenter] addObserver:self</span><br><span class="line">                                         selector:@selector(backgroundDeleteOldFiles)</span><br><span class="line">                                             name:UIApplicationDidEnterBackgroundNotification</span><br><span class="line">                                           object:nil];</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;当应用程序进入后台时，会涉及到『Long-Running Task』，正常情况下，程序进入后台时，虽然可以继续执行任务，但是在短时间内就会被挂起待机。Long-Running可以让系统为App再多分配一些时间来处理一些耗时任务。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">- (void)backgroundDeleteOldFiles &#123;</span><br><span class="line">    Class UIApplicationClass = NSClassFromString(@&quot;UIApplication&quot;);</span><br><span class="line">    if(!UIApplicationClass || ![UIApplicationClass respondsToSelector:@selector(sharedApplication)]) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    UIApplication *application = [UIApplication performSelector:@selector(sharedApplication)];</span><br><span class="line">    // 后台任务标识——注册一个</span><br><span class="line">    __block UIBackgroundTaskIdentifier bgTask = [application beginBackgroundTaskWithExpirationHandler:^&#123;</span><br><span class="line">        // Clean up any unfinished task business by marking where you</span><br><span class="line">        // stopped or ending the task outright.</span><br><span class="line">        [application endBackgroundTask:bgTask];</span><br><span class="line">        bgTask = UIBackgroundTaskInvalid;</span><br><span class="line">    &#125;];</span><br><span class="line"></span><br><span class="line">    // 启动long-running任务并立即返回.</span><br><span class="line">    [self deleteOldFilesWithCompletionBlock:^&#123;</span><br><span class="line">        [application endBackgroundTask:bgTask];</span><br><span class="line">        bgTask = UIBackgroundTaskInvalid;</span><br><span class="line">    &#125;];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="磁盘清理原则"><a href="#磁盘清理原则" class="headerlink" title="磁盘清理原则"></a>磁盘清理原则</h2><p>&emsp;&esmp;清理缓存的规则分两步进行：第一步先清除过期的缓存文件，如果清除掉过期的缓存之后，空间还不够。那么久继续按文件时间从早到晚的排序，先清除最早的缓存文件，直到剩余的空间达到要求。具体的说，SDWebImage是通过以下两个属性控制缓存过期以及剩余空间：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// 在缓存中保存图片的最长时间，以秒为单位</span><br><span class="line">@property (assign, nonatomic) NSInteger maxCacheAge;</span><br><span class="line"></span><br><span class="line">// 缓存最大大小，以字节为单位</span><br><span class="line">@property (assign, nonatomic) NSUInteger maxCacheSize;</span><br></pre></td></tr></table></figure></p>
+<p>对于maxCacheAge和maxCacheSize相关说明：</p>
+<ul>
+<li>maxCacheAge：默认值为1周，单位是秒</li>
+<li><p>maxCacheSize：没有默认值，意味着默认情况下不会对缓存空间设限制。我们可以通过以下代码进行设置：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[SDImageCache sharedImageCache].maxCacheSize = 1024 * 1024 * 50;    // 50M</span><br></pre></td></tr></table></figure>
+<p>  maxCacheSize是以字节来表示的，上面的代码中，设置的是50M的最大缓存空间，把maxCacheSize的设置代码写在App启动的时候，这样SDWebImage在清理缓存的时候，就会清理多余的缓存文件了。</p>
+</li>
+</ul>
+<h1 id="SDWebImage-磁盘目录位于哪里？"><a href="#SDWebImage-磁盘目录位于哪里？" class="headerlink" title="SDWebImage 磁盘目录位于哪里？"></a>SDWebImage 磁盘目录位于哪里？</h1><ul>
+<li>缓存在沙盒目录下<code>Library/Caches</code>，默认情况下，二级目录为<code>~/Library/Caches/default/com.hackemist.SDWebImageCache.default</code></li>
+<li><p>也可以自定义缓存文件名，相关代码（SDImageCache）如下： </p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">- (instancetype)init &#123;</span><br><span class="line">    return [self initWithNamespace:@&quot;default&quot;];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (nonnull instancetype)initWithNamespace:(nonnull NSString *)ns &#123;</span><br><span class="line">    NSString *path = [self makeDiskCachePath:ns];</span><br><span class="line">    return [self initWithNamespace:ns diskCacheDirectory:path];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (nonnull instancetype)initWithNamespace:(nonnull NSString *)ns</span><br><span class="line">                       diskCacheDirectory:(nonnull NSString *)directory &#123;</span><br><span class="line">    if ((self = [super init])) &#123;</span><br><span class="line">        NSString *fullNamespace = [@&quot;com.hackemist.SDWebImageCache.&quot; stringByAppendingString:ns];</span><br><span class="line">        </span><br><span class="line">        // Create IO serial queue</span><br><span class="line">        _ioQueue = dispatch_queue_create(&quot;com.hackemist.SDWebImageCache&quot;, DISPATCH_QUEUE_SERIAL);</span><br><span class="line">        </span><br><span class="line">        _config = [[SDImageCacheConfig alloc] init];</span><br><span class="line">        </span><br><span class="line">        // Init the memory cache</span><br><span class="line">        _memCache = [[SDMemoryCache alloc] initWithConfig:_config];</span><br><span class="line">        _memCache.name = fullNamespace;</span><br><span class="line"></span><br><span class="line">        // .....</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="下载图片的URL必须是NSURL吗？"><a href="#下载图片的URL必须是NSURL吗？" class="headerlink" title="下载图片的URL必须是NSURL吗？"></a>下载图片的URL必须是NSURL吗？</h1><p>&emsp;&emsp;不是必须传NSURL，在SDWebImageManager中有容错处理。所以即使传入一个字符串依旧可以正确的下载图片，相关代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">if ([url isKindOfClass:NSString.class]) &#123;</span><br><span class="line">    url = [NSURL URLWithString:(NSString *)url];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// Prevents app crashing on argument type error like sending NSNull instead of NSURL</span><br><span class="line">if (![url isKindOfClass:NSURL.class]) &#123;</span><br><span class="line">    url = nil;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://www.jianshu.com/p/b8517dc833c7" target="_blank" rel="noopener">简书 - lionsom_lin - SDWebImage4.0源码探究（一）面试题</a></li>
+<li><a href="http://www.cocoachina.com/ios/20180413/23006.html" target="_blank" rel="noopener">cocoachina - yyuuzhu - iOS源码补完计划–SDWebImage4.0+源码参阅(附面试题/流程图)</a></li>
+<li><a href="http://swiftcafe.io/2017/02/19/sdimage-cache/" target="_blank" rel="noopener">Swift Cafe - swift - 天天都在用的 SDWebImage， 你了解它的缓存策略吗？</a></li>
+<li><a href="https://www.jianshu.com/p/06f0265c22eb#" target="_blank" rel="noopener">简书 - ShannonChenCHN - SDWebImage 源码阅读笔记</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    <div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/SDWebImage-interview-question.html">SDWebImage相关面试题</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 kim逸云 的个人博客">kim逸云</a></p>
+  <p><span>发布时间:</span>2022年10月26日 - 19:10</p>
+  <p><span>最后更新:</span>2022年10月26日 - 19:10</p>
+  <p><span>原始链接:</span><a href="/SDWebImage-interview-question.html" title="SDWebImage相关面试题">http://cloverkim.com/SDWebImage-interview-question.html</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://cloverkim.com/SDWebImage-interview-question.html"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+	});
+    });  
+</script>
+
+
+      
+    </div>
+
+    <div>
+      
+        <div>
+    <br>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">------本文结束<i class="fa fa-paw"></i>感谢阅读------</div>
+    
+</div>
+
+      
+    </div>
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag"><i class="fa fa-tag"></i> iOS</a>
+          
+            <a href="/tags/面试题/" rel="tag"><i class="fa fa-tag"></i> 面试题</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/SDWebImage-source-code-analysis-1.html" rel="next" title="SDWebImage源码解析（一）">
+                <i class="fa fa-chevron-left"></i> SDWebImage源码解析（一）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/block-weak-difference.html" rel="prev" title="iOS开发 - __weak和__block的理解">
+                iOS开发 - __weak和__block的理解 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/uploads/avatar.png"
+                alt="kim逸云" />
+            
+              <p class="site-author-name" itemprop="name">kim逸云</p>
+              <p class="site-description motion-element" itemprop="description">笑而不语是一种豁达，痛而不言是一种修养。</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">47</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/CloverKim" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:jiang.shunjin@icloud.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SDWebImage支持GIF图吗？"><span class="nav-number">2.</span> <span class="nav-text">SDWebImage支持GIF图吗？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#FLAnimatedImage"><span class="nav-number">2.1.</span> <span class="nav-text">FLAnimatedImage</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SDWebImage-4-4-2版本的sd-animatedGIFWithData方法"><span class="nav-number">2.2.</span> <span class="nav-text">SDWebImage 4.4.2版本的sd_animatedGIFWithData方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SDWebImage如何区分图片格式？"><span class="nav-number">3.</span> <span class="nav-text">SDWebImage如何区分图片格式？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SDWebImage缓存图片的名称如何避免重名"><span class="nav-number">4.</span> <span class="nav-text">SDWebImage缓存图片的名称如何避免重名</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SDWebImage如何保证UI操作放在主线程中执行？"><span class="nav-number">5.</span> <span class="nav-text">SDWebImage如何保证UI操作放在主线程中执行？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#分析：如何判断当前是否在主线程？"><span class="nav-number">5.1.</span> <span class="nav-text">分析：如何判断当前是否在主线程？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#最简单的方法"><span class="nav-number">5.1.1.</span> <span class="nav-text">最简单的方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#更安全的方法一"><span class="nav-number">5.1.2.</span> <span class="nav-text">更安全的方法一</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#更安全的方法二（SDWEbImage使用的方法）"><span class="nav-number">5.1.3.</span> <span class="nav-text">更安全的方法二（SDWEbImage使用的方法）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结论"><span class="nav-number">5.1.4.</span> <span class="nav-text">结论</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SDWebImage的最大并发数和超时时长"><span class="nav-number">6.</span> <span class="nav-text">SDWebImage的最大并发数和超时时长</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SDWebImage的内存缓存和磁盘缓存是用什么实现的？"><span class="nav-number">7.</span> <span class="nav-text">SDWebImage的内存缓存和磁盘缓存是用什么实现的？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#内存缓存实现——SDMemoryCache"><span class="nav-number">7.1.</span> <span class="nav-text">内存缓存实现——SDMemoryCache</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#磁盘缓存实现——NSFileManager"><span class="nav-number">7.2.</span> <span class="nav-text">磁盘缓存实现——NSFileManager</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#读取内存缓存和磁盘缓存的时候如何保证线程安全？"><span class="nav-number">8.</span> <span class="nav-text">读取内存缓存和磁盘缓存的时候如何保证线程安全？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#读取内存缓存"><span class="nav-number">8.1.</span> <span class="nav-text">读取内存缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#读取磁盘缓存"><span class="nav-number">8.2.</span> <span class="nav-text">读取磁盘缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结论-1"><span class="nav-number">8.3.</span> <span class="nav-text">结论</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SDWebImage的内存警告是如何处理的？"><span class="nav-number">9.</span> <span class="nav-text">SDWebImage的内存警告是如何处理的？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SDWebImage磁盘缓存的时长是多少？清理操作时间点和清理原则是什么？"><span class="nav-number">10.</span> <span class="nav-text">SDWebImage磁盘缓存的时长是多少？清理操作时间点和清理原则是什么？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#磁盘缓存的时长默认为一周"><span class="nav-number">10.1.</span> <span class="nav-text">磁盘缓存的时长默认为一周</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#磁盘清理时间点"><span class="nav-number">10.2.</span> <span class="nav-text">磁盘清理时间点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#磁盘清理原则"><span class="nav-number">10.3.</span> <span class="nav-text">磁盘清理原则</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SDWebImage-磁盘目录位于哪里？"><span class="nav-number">11.</span> <span class="nav-text">SDWebImage 磁盘目录位于哪里？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#下载图片的URL必须是NSURL吗？"><span class="nav-number">12.</span> <span class="nav-text">下载图片的URL必须是NSURL吗？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">13.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart" aria-hidden="true"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kim逸云</span>
+
+<!--
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">77.8k</span>
+  
+-->
+</div>
+
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数：<span id="busuanzi_value_site_uv"></span>
+</span>
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共77.8k字</span>
+</div>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("G2qCMJW5Y7Vdp7p7AjogwjJp-gzGzoHsz", "khenv4NT1LkNeUV3t853rJJU");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  <!-- 背景动画 -->
+  <script type="text/javascript" src="/js/src/particle.js"></script>
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/love.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/z16.model.json"},"display":{"position":"right","width":100,"height":200},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

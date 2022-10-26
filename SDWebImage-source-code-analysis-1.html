@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/uploads/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="iOS,源码解析," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="&amp;emsp;&amp;emsp;SDWebImage是我们常用的图片缓存加载库，基本是iOS项目中标配的第三方库。SDWebImage提供了图片从加载、解析、处理、缓存、清理等一系列功能。对于一个我们常用的库，就很有必要对源码进行仔细阅读与学习，以便了解更多SDWebImage支持的功能与实现原理，当然学习和分析优秀的源码，也能为我们在调试解决问题时提供一定帮助。">
+<meta name="keywords" content="iOS,源码解析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SDWebImage源码解析（一）">
+<meta property="og:url" content="http://cloverkim.com/SDWebImage-source-code-analysis-1.html">
+<meta property="og:site_name" content="幸运四叶草">
+<meta property="og:description" content="&amp;emsp;&amp;emsp;SDWebImage是我们常用的图片缓存加载库，基本是iOS项目中标配的第三方库。SDWebImage提供了图片从加载、解析、处理、缓存、清理等一系列功能。对于一个我们常用的库，就很有必要对源码进行仔细阅读与学习，以便了解更多SDWebImage支持的功能与实现原理，当然学习和分析优秀的源码，也能为我们在调试解决问题时提供一定帮助。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://pic.cloverkim.com/006tKfTcgy1g05syshw7tj30ct0360so.jpg">
+<meta property="og:image" content="http://pic.cloverkim.com/006tKfTcgy1g05wka6jb7j314q0u0dox.jpg">
+<meta property="og:image" content="http://pic.cloverkim.com/006tKfTcgy1g05xvrthcvj321m0r4q68.jpg">
+<meta property="og:image" content="http://pic.cloverkim.com/006tKfTcgy1g063b1fc81j321e0lrdms.jpg">
+<meta property="og:updated_time" content="2022-10-26T11:24:45.523Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SDWebImage源码解析（一）">
+<meta name="twitter:description" content="&amp;emsp;&amp;emsp;SDWebImage是我们常用的图片缓存加载库，基本是iOS项目中标配的第三方库。SDWebImage提供了图片从加载、解析、处理、缓存、清理等一系列功能。对于一个我们常用的库，就很有必要对源码进行仔细阅读与学习，以便了解更多SDWebImage支持的功能与实现原理，当然学习和分析优秀的源码，也能为我们在调试解决问题时提供一定帮助。">
+<meta name="twitter:image" content="http://pic.cloverkim.com/006tKfTcgy1g05syshw7tj30ct0360so.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://cloverkim.com/SDWebImage-source-code-analysis-1.html"/>
+
+
+
+
+
+  <title>SDWebImage源码解析（一） | 幸运四叶草</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">幸运四叶草</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">相思形色露，欲掩不从心。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav" id="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-首页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-标签">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-分类">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-关于">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cloverkim.com/SDWebImage-source-code-analysis-1.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kim逸云">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="幸运四叶草">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">SDWebImage源码解析（一）</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-10-26T19:24:45+08:00">
+                2022-10-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOSDevelopment/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS开发</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/SDWebImage-source-code-analysis-1.html" class="leancloud_visitors" data-flag-title="SDWebImage源码解析（一）">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.8k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  12
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>&emsp;&emsp;<a href="https://github.com/SDWebImage/SDWebImage" target="_blank" rel="noopener">SDWebImage</a>是我们常用的图片缓存加载库，基本是iOS项目中标配的第三方库。SDWebImage提供了图片从加载、解析、处理、缓存、清理等一系列功能。对于一个我们常用的库，就很有必要对源码进行仔细阅读与学习，以便了解更多SDWebImage支持的功能与实现原理，当然学习和分析优秀的源码，也能为我们在调试解决问题时提供一定帮助。<a id="more"></a><br><img src="http://pic.cloverkim.com/006tKfTcgy1g05syshw7tj30ct0360so.jpg" alt="" title="SDWebImage"></p>
+<h1 id="基本架构图"><a href="#基本架构图" class="headerlink" title="基本架构图"></a>基本架构图</h1><p>下图为作者给出的SDWebImage基本架构图：<br><img src="http://pic.cloverkim.com/006tKfTcgy1g05wka6jb7j314q0u0dox.jpg" alt="" title="基本架构图"><br>由上图架构图，我们将SDWebImage的相关类分为以下三种：</p>
+<ul>
+<li>各种分类：<ul>
+<li>UIButton+WebCache：为UIButton类添加加载图片的方法。</li>
+<li>MKAnnotationView+WebCache：为MKAnnotationView类添加各种加载图片的方法。</li>
+<li>UIImageView+WebCache：为UIImageView类添加加载图片的方法。</li>
+<li>UIImageView+HighlightedWebCache：为UIImageView类添加高亮状态下加载图片的方法。</li>
+</ul>
+</li>
+<li><p>工具类：</p>
+<ul>
+<li>NSData+ImageContentType：根据图片数据获取图片的类型，比如GIF、PNG等。</li>
+<li>UIImage+MultiFormat：根据UIImage的data生成指定格式的UIImage。</li>
+<li>UIImage+GIF：判断一张图是否为GIF。</li>
+<li>SDWebImageCompat：根据屏幕的分辨倍数成倍放大或者缩小图片的大小。</li>
+<li>SDImageCacheConfig：图片缓存策略记录。比如是否解压缩、是否允许iCloud、是否允许内存缓存、缓存时间等。</li>
+<li>SDWebImageCodersManager：编码解码管理器，处理多个图片编码解码任务，编码器是一个优先队列，这意味着后面添加的编码器将具有最高优先级。</li>
+</ul>
+</li>
+<li><p>核心类：</p>
+<ul>
+<li>UIView+WebCache：所有的UIView及其子类都会调用这个分类的方法来完成图片加载的处理，同时通过UIView+WebCacheOperation分类来管理请求的取消和记录工作。</li>
+<li>SDImageCache：负责SDWebImage的整个缓存工作，是一个单例对象。缓存路径处理、缓存名字处理、管理内存缓存和磁盘缓存的创建和删除、根据指定key获取图片、存入图片的处理、根据缓存的创建和修改日期来删除缓存等。</li>
+<li>SDWebImageManager：拥有一个SDImageCache和SDWebImageDownloader属性，分别用于图片的缓存和加载处理。为UIView及其子类提供了加载图片的统一接口。</li>
+<li>SDWebImageDownloader：图片下载中心，管理下载队列。</li>
+<li>SDWebImageDownloaderOperation：用于下载图片，管理NSURLRequest对象请求头的封装、缓存、cookie的设置、加载选项的处理等。</li>
+</ul>
+</li>
+</ul>
+<p>当然，SDWebImage框架所包含的类不仅仅是上面罗列的，具体的相关类可以阅读源码。</p>
+<h1 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h1><p>下图为SDWebImage图片加载的时序图，实现了图片加载、数据处理、图片缓存等一系列工作。<br><img src="http://pic.cloverkim.com/006tKfTcgy1g05xvrthcvj321m0r4q68.jpg" alt="" title="SDWebImage图片加载时序图"><br>由上图时序图，SDWebImage加载图片的流程大致如下：</p>
+<ol>
+<li>对象调用暴露的接口方法<code>sd_setImageWithURL()</code>时，会再调用<code>setImageWithURL:placeholderImage:options:</code>方法，先把占位图placeholderImage显示，然后SDWebImageManager根据URL开始处理图片。</li>
+<li>SDImageCache类先从内存缓存查找是否有图片缓存，如果内存中已经有图片缓存，则直接回调到前端进行图片的显示。</li>
+<li>如果内存缓存中没有，则生成NSInvocationOperation添加到队列开始从硬盘中查找图片是否已经缓存。根据url为key在硬盘缓存目录下尝试读取图片文件，这一步是在NSOperation下进行的操作，所以需要回到主线程进行查找结果的回调。如果从硬盘读取到了图片，则将图片添加到内存缓存中，然后再回调到前端进行图片的显示。如果从硬盘缓存目录读取不到图片，说明所有缓存都不存在该图片，则需要下载图片。</li>
+<li>共享或重新生成一个下载器SDWebImageDownloader开始下载图片。图片的下载由NSURLConnection来处理，实现相关delegate来判断的下载状态：下载中、下载完成和下载失败。</li>
+<li>图片数据下载完成之后，交给SDWebImageDecoder类做图片解码处理，图片的解码处理在NSOperationQueue完成，不会阻塞主线程。在图片解码完成后，会回调给SDWebImageDownloader，然后回调给SDWebImageManager告知图片下载完成，通知所有的downloadDelegates下载完成，回调给需要的地方显示图片。</li>
+<li>最后将图片通过SDImageCache类，同时保存到内存缓存和硬盘缓存中。写文件到硬盘的过程也在以单独NSInvocationOperation完成，避免阻塞主线程。</li>
+</ol>
+<p>这里借用一下在网上看到的一张非常详细的流程图：<br><img src="http://pic.cloverkim.com/006tKfTcgy1g063b1fc81j321e0lrdms.jpg" alt=""></p>
+<h1 id="详细分析"><a href="#详细分析" class="headerlink" title="详细分析"></a>详细分析</h1><h2 id="相关工具类分析"><a href="#相关工具类分析" class="headerlink" title="相关工具类分析"></a>相关工具类分析</h2><h3 id="NSData-ImageContentType"><a href="#NSData-ImageContentType" class="headerlink" title="NSData + ImageContentType"></a>NSData + ImageContentType</h3><p>&emsp;&emsp;这个分类提供了一个类方法<code>sd_contentTypeForImageData:</code>。通过这个方法传入图片的NSData数据，然后返回图片类型。图片类型通过SDImageFormat的枚举来定义。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">typedef NS_ENUM(NSInteger, SDImageFormat) &#123;</span><br><span class="line">    SDImageFormatUndefined = -1,        // 未知类型</span><br><span class="line">    SDImageFormatJPEG = 0,              // JPG</span><br><span class="line">    SDImageFormatPNG,                   // PNG</span><br><span class="line">    SDImageFormatGIF,                   // GIF</span><br><span class="line">    SDImageFormatTIFF,                  // TIFF</span><br><span class="line">    SDImageFormatWebP,                  // WEBP</span><br><span class="line">    SDImageFormatHEIC                   // HEIC</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">/// 根据图片NSData获取图片的类型</span><br><span class="line">+ (SDImageFormat)sd_imageFormatForImageData:(nullable NSData *)data &#123;</span><br><span class="line">    if (!data) &#123;</span><br><span class="line">        return SDImageFormatUndefined;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    // File signatures table: http://www.garykessler.net/library/file_sigs.html</span><br><span class="line">    uint8_t c;</span><br><span class="line">    // 获取图片data数据的第一个字节数据</span><br><span class="line">    [data getBytes:&amp;c length:1];</span><br><span class="line">    // 根据字母的ASCII码比较，返回对应的图片枚举类型</span><br><span class="line">    switch (c) &#123;</span><br><span class="line">        case 0xFF:</span><br><span class="line">            return SDImageFormatJPEG;</span><br><span class="line">        case 0x89:</span><br><span class="line">            return SDImageFormatPNG;</span><br><span class="line">        case 0x47:</span><br><span class="line">            return SDImageFormatGIF;</span><br><span class="line">        case 0x49:</span><br><span class="line">        case 0x4D:</span><br><span class="line">            return SDImageFormatTIFF;</span><br><span class="line">        case 0x52: &#123;</span><br><span class="line">            if (data.length &gt;= 12) &#123;</span><br><span class="line">                // RIFF....WEBP</span><br><span class="line">                NSString *testString = [[NSString alloc] initWithData:[data subdataWithRange:NSMakeRange(0, 12)] encoding:NSASCIIStringEncoding];</span><br><span class="line">                if ([testString hasPrefix:@&quot;RIFF&quot;] &amp;&amp; [testString hasSuffix:@&quot;WEBP&quot;]) &#123;</span><br><span class="line">                    return SDImageFormatWebP;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            break;</span><br><span class="line">        &#125;</span><br><span class="line">        case 0x00: &#123;</span><br><span class="line">            if (data.length &gt;= 12) &#123;</span><br><span class="line">                // ....ftypheic ....ftypheix ....ftyphevc ....ftyphevx</span><br><span class="line">                NSString *testString = [[NSString alloc] initWithData:[data subdataWithRange:NSMakeRange(4, 8)] encoding:NSASCIIStringEncoding];</span><br><span class="line">                if ([testString isEqualToString:@&quot;ftypheic&quot;]</span><br><span class="line">                    || [testString isEqualToString:@&quot;ftypheix&quot;]</span><br><span class="line">                    || [testString isEqualToString:@&quot;ftyphevc&quot;]</span><br><span class="line">                    || [testString isEqualToString:@&quot;ftyphevx&quot;]) &#123;</span><br><span class="line">                    return SDImageFormatHEIC;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            break;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return SDImageFormatUndefined;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="SDWebImageCodersManager"><a href="#SDWebImageCodersManager" class="headerlink" title="SDWebImageCodersManager"></a>SDWebImageCodersManager</h3><p>&emsp;&emsp;编码解码管理器，处理多个图片编码解码任务，编码器是一个优先队列，这意味着后面添加的编码器将具有最高优先级。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">@interface SDWebImageCodersManager : NSObject&lt;SDWebImageCoder&gt;</span><br><span class="line"></span><br><span class="line">/// 管理器管理</span><br><span class="line">+ (nonnull instancetype)sharedInstance;</span><br><span class="line"></span><br><span class="line">/// 编码管理器中的所有编码器。编码器数组是一个优先级队列，这意味着后面添加的编码器将具有最高优先级</span><br><span class="line">@property (nonatomic, strong, readwrite, nullable) NSArray&lt;SDWebImageCoder&gt;* coders;</span><br><span class="line"></span><br><span class="line">/// 在编码器数组的末尾添加一个新的编码器，并且该编码器拥有最高的优先级</span><br><span class="line">- (void)addCoder:(nonnull id&lt;SDWebImageCoder&gt;)coder;</span><br><span class="line"></span><br><span class="line">/// 从编码器数组中删除一个编码器</span><br><span class="line">- (void)removeCoder:(nonnull id&lt;SDWebImageCoder&gt;)coder;</span><br><span class="line"></span><br><span class="line">@end</span><br></pre></td></tr></table></figure></p>
+<p>相关方法如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line">/// 添加编码器</span><br><span class="line">- (void)addCoder:(nonnull id&lt;SDWebImageCoder&gt;)coder &#123;</span><br><span class="line">    /// 判断该编码器是否实现了SDWebImageCode协议</span><br><span class="line">    if ([coder conformsToProtocol:@protocol(SDWebImageCoder)]) &#123;</span><br><span class="line">        dispatch_barrier_sync(self.mutableCodersAccessQueue, ^&#123;</span><br><span class="line">            [self.mutableCoders addObject:coder];</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 删除编码器</span><br><span class="line">- (void)removeCoder:(nonnull id&lt;SDWebImageCoder&gt;)coder &#123;</span><br><span class="line">    /// 同步删除编码器</span><br><span class="line">    dispatch_barrier_sync(self.mutableCodersAccessQueue, ^&#123;</span><br><span class="line">        [self.mutableCoders removeObject:coder];</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 判断该图片是否可用编码</span><br><span class="line">- (BOOL)canEncodeToFormat:(SDImageFormat)format &#123;</span><br><span class="line">    for (id&lt;SDWebImageCoder&gt; coder in self.coders) &#123;</span><br><span class="line">        if ([coder canEncodeToFormat:format]) &#123;</span><br><span class="line">            return YES;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return NO;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 图像解码方法</span><br><span class="line">- (UIImage *)decodedImageWithData:(NSData *)data &#123;</span><br><span class="line">    if (!data) &#123;</span><br><span class="line">        return nil;</span><br><span class="line">    &#125;</span><br><span class="line">    for (id&lt;SDWebImageCoder&gt; coder in self.coders) &#123;</span><br><span class="line">        if ([coder canDecodeFromData:data]) &#123;</span><br><span class="line">            return [coder decodedImageWithData:data];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return nil;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 压缩图像</span><br><span class="line">- (UIImage *)decompressedImageWithImage:(UIImage *)image</span><br><span class="line">                                   data:(NSData *__autoreleasing  _Nullable *)data</span><br><span class="line">                                options:(nullable NSDictionary&lt;NSString*, NSObject*&gt;*)optionsDict &#123;</span><br><span class="line">    if (!image) &#123;</span><br><span class="line">        return nil;</span><br><span class="line">    &#125;</span><br><span class="line">    for (id&lt;SDWebImageCoder&gt; coder in self.coders) &#123;</span><br><span class="line">        if ([coder canDecodeFromData:*data]) &#123;</span><br><span class="line">            return [coder decompressedImageWithImage:image data:data options:optionsDict];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return nil;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 根据image和format（类型）编码图像</span><br><span class="line">- (NSData *)encodedDataWithImage:(UIImage *)image format:(SDImageFormat)format &#123;</span><br><span class="line">    if (!image) &#123;</span><br><span class="line">        return nil;</span><br><span class="line">    &#125;</span><br><span class="line">    for (id&lt;SDWebImageCoder&gt; coder in self.coders) &#123;</span><br><span class="line">        if ([coder canEncodeToFormat:format]) &#123;</span><br><span class="line">            return [coder encodedDataWithImage:image format:format];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return nil;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="SDWebImageImageIOCoder"><a href="#SDWebImageImageIOCoder" class="headerlink" title="SDWebImageImageIOCoder"></a>SDWebImageImageIOCoder</h3><p>&emsp;&emsp;通过该类可以实现图片的解压缩操作，对于太大的图片，先按照一定比例缩小图片，然后再进行解压缩。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br></pre></td><td class="code"><pre><span class="line">#if SD_UIKIT || SD_WATCH</span><br><span class="line">// 每个像素占用的字节数</span><br><span class="line">static const size_t kBytesPerPixel = 4;</span><br><span class="line">// 色彩空间占用的字节数</span><br><span class="line">static const size_t kBitsPerComponent = 8;</span><br><span class="line">// 定义一张图片可以占用的最大空间</span><br><span class="line">static const CGFloat kDestImageSizeMB = 60.0f;</span><br><span class="line"></span><br><span class="line">static const CGFloat kSourceImageTileSizeMB = 20.0f;</span><br><span class="line"></span><br><span class="line">static const CGFloat kBytesPerMB = 1024.0f * 1024.0f;</span><br><span class="line">// 1MB可以存储多少像素</span><br><span class="line">static const CGFloat kPixelsPerMB = kBytesPerMB / kBytesPerPixel;</span><br><span class="line">// 如果像素小于这个值，则不解压缩</span><br><span class="line">static const CGFloat kDestTotalPixels = kDestImageSizeMB * kPixelsPerMB;</span><br><span class="line">static const CGFloat kTileTotalPixels = kSourceImageTileSizeMB * kPixelsPerMB;</span><br><span class="line"></span><br><span class="line">static const CGFloat kDestSeemOverlap = 2.0f;</span><br><span class="line">#endif</span><br><span class="line"></span><br><span class="line">/// 判断是否可以解码</span><br><span class="line">- (BOOL)canDecodeFromData:(nullable NSData *)data &#123;</span><br><span class="line">    switch ([NSData sd_imageFormatForImageData:data]) &#123;</span><br><span class="line">        case SDImageFormatWebP:</span><br><span class="line">            // WebP类型不支持解码</span><br><span class="line">            return NO;</span><br><span class="line">        case SDImageFormatHEIC:</span><br><span class="line">            // 检查HEIC解码的兼容性</span><br><span class="line">            return [[self class] canDecodeFromHEICFormat];</span><br><span class="line">        default:</span><br><span class="line">            return YES;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 判断是否可以解码，并且实现逐渐显示效果</span><br><span class="line">- (BOOL)canIncrementallyDecodeFromData:(NSData *)data &#123;</span><br><span class="line">    switch ([NSData sd_imageFormatForImageData:data]) &#123;</span><br><span class="line">        case SDImageFormatWebP:</span><br><span class="line">            // 不支持WebP渐进解码</span><br><span class="line">            return NO;</span><br><span class="line">        case SDImageFormatHEIC:</span><br><span class="line">            // Check HEIC decoding compatibility</span><br><span class="line">            return [[self class] canDecodeFromHEICFormat];</span><br><span class="line">        default:</span><br><span class="line">            return YES;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 解压缩图片</span><br><span class="line">- (nullable UIImage *)sd_decompressedImageWithImage:(nullable UIImage *)image &#123;</span><br><span class="line">    // 判断图片是否能解压缩</span><br><span class="line">    if (![[self class] shouldDecodeImage:image]) &#123;</span><br><span class="line">        return image;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    // autorelease the bitmap context and all vars to help system to free memory when there are memory warning.</span><br><span class="line">    // on iOS7, do not forget to call [[SDImageCache sharedImageCache] clearMemory];</span><br><span class="line">    // 解压缩操作放入一个自动释放池里面，以便自动释放所有的变量</span><br><span class="line">    @autoreleasepool&#123;</span><br><span class="line">        </span><br><span class="line">        CGImageRef imageRef = image.CGImage;</span><br><span class="line">        // 获取图片的色彩空间</span><br><span class="line">        CGColorSpaceRef colorspaceRef = [[self class] colorSpaceForImageRef:imageRef];</span><br><span class="line">        </span><br><span class="line">        size_t width = CGImageGetWidth(imageRef);</span><br><span class="line">        size_t height = CGImageGetHeight(imageRef);</span><br><span class="line">        </span><br><span class="line">        // kCGImageAlphaNone is not supported in CGBitmapContextCreate.</span><br><span class="line">        // Since the original image here has no alpha info, use kCGImageAlphaNoneSkipLast</span><br><span class="line">        // to create bitmap graphics contexts without alpha info.</span><br><span class="line">        CGContextRef context = CGBitmapContextCreate(NULL,</span><br><span class="line">                                                     width,</span><br><span class="line">                                                     height,</span><br><span class="line">                                                     kBitsPerComponent,</span><br><span class="line">                                                     0,</span><br><span class="line">                                                     colorspaceRef,</span><br><span class="line">                                                     kCGBitmapByteOrderDefault|kCGImageAlphaNoneSkipLast);</span><br><span class="line">        if (context == NULL) &#123;</span><br><span class="line">            return image;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        // Draw the image into the context and retrieve the new bitmap image without alpha</span><br><span class="line">        // 绘制一个和图片大小一样的图片</span><br><span class="line">        CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef);</span><br><span class="line">        // 创建一个没有alpha通道的图片</span><br><span class="line">        CGImageRef imageRefWithoutAlpha = CGBitmapContextCreateImage(context);</span><br><span class="line">        // 得到解压缩以后的图片</span><br><span class="line">        UIImage *imageWithoutAlpha = [[UIImage alloc] initWithCGImage:imageRefWithoutAlpha scale:image.scale orientation:image.imageOrientation];</span><br><span class="line">        CGContextRelease(context);</span><br><span class="line">        CGImageRelease(imageRefWithoutAlpha);</span><br><span class="line">        </span><br><span class="line">        return imageWithoutAlpha;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 是否需要减少原始图片的大小</span><br><span class="line">+ (BOOL)shouldScaleDownImage:(nonnull UIImage *)image &#123;</span><br><span class="line">    BOOL shouldScaleDown = YES;</span><br><span class="line">    </span><br><span class="line">    CGImageRef sourceImageRef = image.CGImage;</span><br><span class="line">    CGSize sourceResolution = CGSizeZero;</span><br><span class="line">    sourceResolution.width = CGImageGetWidth(sourceImageRef);</span><br><span class="line">    sourceResolution.height = CGImageGetHeight(sourceImageRef);</span><br><span class="line">    // 图片总共像素</span><br><span class="line">    float sourceTotalPixels = sourceResolution.width * sourceResolution.height;</span><br><span class="line">    // 如果图片的总像素大于一定比例，则需要做简化处理</span><br><span class="line">    float imageScale = kDestTotalPixels / sourceTotalPixels;</span><br><span class="line">    if (imageScale &lt; 1) &#123;</span><br><span class="line">        shouldScaleDown = YES;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        shouldScaleDown = NO;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    return shouldScaleDown;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 获取图片的色彩空间</span><br><span class="line">+ (CGColorSpaceRef)colorSpaceForImageRef:(CGImageRef)imageRef &#123;</span><br><span class="line">    // current</span><br><span class="line">    CGColorSpaceModel imageColorSpaceModel = CGColorSpaceGetModel(CGImageGetColorSpace(imageRef));</span><br><span class="line">    CGColorSpaceRef colorspaceRef = CGImageGetColorSpace(imageRef);</span><br><span class="line">    </span><br><span class="line">    BOOL unsupportedColorSpace = (imageColorSpaceModel == kCGColorSpaceModelUnknown ||</span><br><span class="line">                                  imageColorSpaceModel == kCGColorSpaceModelMonochrome ||</span><br><span class="line">                                  imageColorSpaceModel == kCGColorSpaceModelCMYK ||</span><br><span class="line">                                  imageColorSpaceModel == kCGColorSpaceModelIndexed);</span><br><span class="line">    if (unsupportedColorSpace) &#123;</span><br><span class="line">        colorspaceRef = SDCGColorSpaceGetDeviceRGB();</span><br><span class="line">    &#125;</span><br><span class="line">    return colorspaceRef;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="SDWebImageCompat"><a href="#SDWebImageCompat" class="headerlink" title="SDWebImageCompat"></a>SDWebImageCompat</h3><p>&emsp;&emsp;该类就提供了一个全局方法<code>SDScaledImageForKey</code>，这个方法根据原始图片绘制一张放大或者缩小的图片。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">/// 给定一张图片，通过scale属性返回一个放大的图片</span><br><span class="line">inline UIImage *SDScaledImageForKey(NSString * _Nullable key, UIImage * _Nullable image) &#123;</span><br><span class="line">    if (!image) &#123;</span><br><span class="line">        return nil;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">#if SD_MAC</span><br><span class="line">    return image;</span><br><span class="line">#elif SD_UIKIT || SD_WATCH</span><br><span class="line">    // 如果是动图，则迭代处理</span><br><span class="line">    if ((image.images).count &gt; 0) &#123;</span><br><span class="line">        NSMutableArray&lt;UIImage *&gt; *scaledImages = [NSMutableArray array];</span><br><span class="line"></span><br><span class="line">        for (UIImage *tempImage in image.images) &#123;</span><br><span class="line">            [scaledImages addObject:SDScaledImageForKey(key, tempImage)];</span><br><span class="line">        &#125;</span><br><span class="line">        // 把处理结束的图片再合成一张动态图片</span><br><span class="line">        UIImage *animatedImage = [UIImage animatedImageWithImages:scaledImages duration:image.duration];</span><br><span class="line">        if (animatedImage) &#123;</span><br><span class="line">            animatedImage.sd_imageLoopCount = image.sd_imageLoopCount;</span><br><span class="line">        &#125;</span><br><span class="line">        return animatedImage;</span><br><span class="line">    &#125; else &#123;        // 非动图的情况</span><br><span class="line">#if SD_WATCH</span><br><span class="line">        if ([[WKInterfaceDevice currentDevice] respondsToSelector:@selector(screenScale)]) &#123;</span><br><span class="line">#elif SD_UIKIT</span><br><span class="line">        if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)]) &#123;</span><br><span class="line">#endif</span><br><span class="line">            CGFloat scale = 1;</span><br><span class="line">            if (key.length &gt;= 8) &#123;</span><br><span class="line">                NSRange range = [key rangeOfString:@&quot;@2x.&quot;];</span><br><span class="line">                if (range.location != NSNotFound) &#123;</span><br><span class="line">                    scale = 2.0;</span><br><span class="line">                &#125;</span><br><span class="line">                </span><br><span class="line">                range = [key rangeOfString:@&quot;@3x.&quot;];</span><br><span class="line">                if (range.location != NSNotFound) &#123;</span><br><span class="line">                    scale = 3.0;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">           </span><br><span class="line">            // 返回对应分辨率下的图片</span><br><span class="line">            UIImage *scaledImage = [[UIImage alloc] initWithCGImage:image.CGImage scale:scale orientation:image.imageOrientation];</span><br><span class="line">            image = scaledImage;</span><br><span class="line">        &#125;</span><br><span class="line">        return image;</span><br><span class="line">    &#125;</span><br><span class="line">#endif</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>&emsp;&emsp;本文中，主要介绍了SDWebImage的基本架构、各种类的作用、相关工具类（NSData+ImageContentType、SDWebImageCodersManager、SDWebImageImageIOCoder以及SDWebImageCompat）的详细分析。在下文中<a href="http://cloverkim.com/SDWebImage-source-code-analysis-2.html">SDWebImage源码解析（二）</a>，将会继续分析SDWebImage的相关核心类。</p>
+
+      
+    </div>
+    
+    
+    
+
+    <div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/SDWebImage-source-code-analysis-1.html">SDWebImage源码解析（一）</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 kim逸云 的个人博客">kim逸云</a></p>
+  <p><span>发布时间:</span>2022年10月26日 - 19:10</p>
+  <p><span>最后更新:</span>2022年10月26日 - 19:10</p>
+  <p><span>原始链接:</span><a href="/SDWebImage-source-code-analysis-1.html" title="SDWebImage源码解析（一）">http://cloverkim.com/SDWebImage-source-code-analysis-1.html</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://cloverkim.com/SDWebImage-source-code-analysis-1.html"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+	});
+    });  
+</script>
+
+
+      
+    </div>
+
+    <div>
+      
+        <div>
+    <br>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">------本文结束<i class="fa fa-paw"></i>感谢阅读------</div>
+    
+</div>
+
+      
+    </div>
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag"><i class="fa fa-tag"></i> iOS</a>
+          
+            <a href="/tags/源码解析/" rel="tag"><i class="fa fa-tag"></i> 源码解析</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/SDWebImage-source-code-analysis-2.html" rel="next" title="SDWebImage源码解析（二）">
+                <i class="fa fa-chevron-left"></i> SDWebImage源码解析（二）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/SDWebImage-interview-question.html" rel="prev" title="SDWebImage相关面试题">
+                SDWebImage相关面试题 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/uploads/avatar.png"
+                alt="kim逸云" />
+            
+              <p class="site-author-name" itemprop="name">kim逸云</p>
+              <p class="site-description motion-element" itemprop="description">笑而不语是一种豁达，痛而不言是一种修养。</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">47</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/CloverKim" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:jiang.shunjin@icloud.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#基本架构图"><span class="nav-number">1.</span> <span class="nav-text">基本架构图</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#流程"><span class="nav-number">2.</span> <span class="nav-text">流程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#详细分析"><span class="nav-number">3.</span> <span class="nav-text">详细分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#相关工具类分析"><span class="nav-number">3.1.</span> <span class="nav-text">相关工具类分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#NSData-ImageContentType"><span class="nav-number">3.1.1.</span> <span class="nav-text">NSData + ImageContentType</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SDWebImageCodersManager"><span class="nav-number">3.1.2.</span> <span class="nav-text">SDWebImageCodersManager</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SDWebImageImageIOCoder"><span class="nav-number">3.1.3.</span> <span class="nav-text">SDWebImageImageIOCoder</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SDWebImageCompat"><span class="nav-number">3.1.4.</span> <span class="nav-text">SDWebImageCompat</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart" aria-hidden="true"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kim逸云</span>
+
+<!--
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">77.8k</span>
+  
+-->
+</div>
+
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数：<span id="busuanzi_value_site_uv"></span>
+</span>
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共77.8k字</span>
+</div>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("G2qCMJW5Y7Vdp7p7AjogwjJp-gzGzoHsz", "khenv4NT1LkNeUV3t853rJJU");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  <!-- 背景动画 -->
+  <script type="text/javascript" src="/js/src/particle.js"></script>
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/love.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/z16.model.json"},"display":{"position":"right","width":100,"height":200},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

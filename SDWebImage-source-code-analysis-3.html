@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/uploads/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="iOS,源码解析," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="概述&amp;emsp;&amp;emsp;在上一篇文章SDWebImage源码解析（二）中，主要详细分析了SDWebImage的UIView+WebCache、UIWebImageManager两个核心类。在本文中，将会继续分析SDWebImage的SDImageCache、SDWebImageDownloader和SDWebImageDownloaderOperation核心类。">
+<meta name="keywords" content="iOS,源码解析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SDWebImage源码解析（三）">
+<meta property="og:url" content="http://cloverkim.com/SDWebImage-source-code-analysis-3.html">
+<meta property="og:site_name" content="幸运四叶草">
+<meta property="og:description" content="概述&amp;emsp;&amp;emsp;在上一篇文章SDWebImage源码解析（二）中，主要详细分析了SDWebImage的UIView+WebCache、UIWebImageManager两个核心类。在本文中，将会继续分析SDWebImage的SDImageCache、SDWebImageDownloader和SDWebImageDownloaderOperation核心类。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2022-10-26T11:24:45.525Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SDWebImage源码解析（三）">
+<meta name="twitter:description" content="概述&amp;emsp;&amp;emsp;在上一篇文章SDWebImage源码解析（二）中，主要详细分析了SDWebImage的UIView+WebCache、UIWebImageManager两个核心类。在本文中，将会继续分析SDWebImage的SDImageCache、SDWebImageDownloader和SDWebImageDownloaderOperation核心类。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://cloverkim.com/SDWebImage-source-code-analysis-3.html"/>
+
+
+
+
+
+  <title>SDWebImage源码解析（三） | 幸运四叶草</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">幸运四叶草</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">相思形色露，欲掩不从心。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav" id="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-首页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-标签">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-分类">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-关于">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cloverkim.com/SDWebImage-source-code-analysis-3.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kim逸云">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="幸运四叶草">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">SDWebImage源码解析（三）</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-10-26T19:24:45+08:00">
+                2022-10-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOSDevelopment/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS开发</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/SDWebImage-source-code-analysis-3.html" class="leancloud_visitors" data-flag-title="SDWebImage源码解析（三）">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  6k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  30
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>&emsp;&emsp;在上一篇文章<a href="http://cloverkim.com/SDWebImage-source-code-analysis-2.html">SDWebImage源码解析（二）</a>中，主要详细分析了SDWebImage的UIView+WebCache、UIWebImageManager两个核心类。在本文中，将会继续分析SDWebImage的SDImageCache、SDWebImageDownloader和SDWebImageDownloaderOperation核心类。<a id="more"></a></p>
+<h1 id="详细分析"><a href="#详细分析" class="headerlink" title="详细分析"></a>详细分析</h1><h2 id="核心类分析"><a href="#核心类分析" class="headerlink" title="核心类分析"></a>核心类分析</h2><h3 id="SDImageCache"><a href="#SDImageCache" class="headerlink" title="SDImageCache"></a>SDImageCache</h3><p>&emsp;&emsp;SDImageCache是SDWebImage的缓存中心，分为三部分组成：memory内存缓存、disk硬盘缓存和无缓存组成。具体实现可以总结为以下几点：</p>
+<ul>
+<li>当接收到<code>UIApplicationDidReceiveMemoryWarningNotification</code>通知时，会删除内存中缓存的图片</li>
+<li>当接收到<code>UIApplicationWillTerminateNotification</code>通知时，会通过<code>deleteOldFiles</code>方法删除老的图片。具体删除规则如下：<ul>
+<li>缓存大小、过期日期、是否解压缩缓存、是否允许内存缓存都是通过SDImageCacheConfig这个对象类配置的</li>
+<li>首先会迭代缓存目录下的所有文件，对于大于一周的图片数据全部删除</li>
+<li>记录缓存目录的所有大小，如果当前缓存大于默认缓存，则按照创建日期开始删除图片缓存，直接缓存大小小于默认的缓存大小。</li>
+</ul>
+</li>
+<li>当接收到<code>UIApplicationDidEnterBackgroundNotification</code>通知时，会调用<code>backgroundDeleteOldFiles</code>方法来清理缓存数据</li>
+<li>定义了一系列方法来处理图片的获取、缓存、移除操作。主要有以下几个方法：<ul>
+<li><code>queryCacheOperationForKey</code>：查询指定key对应的缓存图片，先从内存查找，然后从磁盘查找</li>
+<li><code>removeImageForKey</code>：移除指定的缓存图片</li>
+<li><code>diskImageDataBySearchingAllPathsForKey</code>：在磁盘上查找指定key对应的图片</li>
+<li><code>storeImageDataToDisk</code>：把指定的图片数据出入磁盘</li>
+</ul>
+</li>
+<li>通过<code>cachedFileNameForKey</code>方法获取一张图片对应的MD5加密的缓存名字</li>
+</ul>
+<p>下面来看下SDImageCache的具体实现：<br>SDImageCache.h：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">typedef NS_ENUM(NSInteger, SDImageCacheType) &#123;</span><br><span class="line">    SDImageCacheTypeNone,       // 无缓存</span><br><span class="line">    SDImageCacheTypeDisk,       // 磁盘缓存</span><br><span class="line">    SDImageCacheTypeMemory      // 内存缓存</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">@interface SDImageCache : NSObject</span><br><span class="line">#pragma mark - Properties</span><br><span class="line"></span><br><span class="line">// 缓存配置对象，包含所有配置项</span><br><span class="line">@property (nonatomic, nonnull, readonly) SDImageCacheConfig *config;</span><br><span class="line"></span><br><span class="line">// 设置内存容量大小</span><br><span class="line">@property (assign, nonatomic) NSUInteger maxMemoryCost;</span><br><span class="line"></span><br><span class="line">// 设置内存缓存最大值限制</span><br><span class="line">@property (assign, nonatomic) NSUInteger maxMemoryCountLimit;</span><br></pre></td></tr></table></figure></p>
+<p>SDImageCache.m：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br><span class="line">344</span><br><span class="line">345</span><br><span class="line">346</span><br><span class="line">347</span><br><span class="line">348</span><br><span class="line">349</span><br><span class="line">350</span><br><span class="line">351</span><br><span class="line">352</span><br><span class="line">353</span><br><span class="line">354</span><br><span class="line">355</span><br><span class="line">356</span><br><span class="line">357</span><br><span class="line">358</span><br><span class="line">359</span><br><span class="line">360</span><br><span class="line">361</span><br><span class="line">362</span><br><span class="line">363</span><br><span class="line">364</span><br><span class="line">365</span><br><span class="line">366</span><br><span class="line">367</span><br><span class="line">368</span><br><span class="line">369</span><br><span class="line">370</span><br><span class="line">371</span><br><span class="line">372</span><br><span class="line">373</span><br><span class="line">374</span><br><span class="line">375</span><br><span class="line">376</span><br><span class="line">377</span><br><span class="line">378</span><br><span class="line">379</span><br><span class="line">380</span><br><span class="line">381</span><br><span class="line">382</span><br><span class="line">383</span><br><span class="line">384</span><br><span class="line">385</span><br><span class="line">386</span><br><span class="line">387</span><br><span class="line">388</span><br><span class="line">389</span><br><span class="line">390</span><br><span class="line">391</span><br><span class="line">392</span><br><span class="line">393</span><br><span class="line">394</span><br><span class="line">395</span><br><span class="line">396</span><br><span class="line">397</span><br><span class="line">398</span><br><span class="line">399</span><br><span class="line">400</span><br><span class="line">401</span><br><span class="line">402</span><br><span class="line">403</span><br><span class="line">404</span><br><span class="line">405</span><br><span class="line">406</span><br><span class="line">407</span><br><span class="line">408</span><br><span class="line">409</span><br><span class="line">410</span><br><span class="line">411</span><br><span class="line">412</span><br><span class="line">413</span><br><span class="line">414</span><br><span class="line">415</span><br><span class="line">416</span><br><span class="line">417</span><br><span class="line">418</span><br><span class="line">419</span><br><span class="line">420</span><br><span class="line">421</span><br><span class="line">422</span><br><span class="line">423</span><br><span class="line">424</span><br><span class="line">425</span><br><span class="line">426</span><br><span class="line">427</span><br><span class="line">428</span><br><span class="line">429</span><br><span class="line">430</span><br><span class="line">431</span><br><span class="line">432</span><br><span class="line">433</span><br><span class="line">434</span><br><span class="line">435</span><br><span class="line">436</span><br><span class="line">437</span><br><span class="line">438</span><br><span class="line">439</span><br><span class="line">440</span><br><span class="line">441</span><br><span class="line">442</span><br><span class="line">443</span><br><span class="line">444</span><br><span class="line">445</span><br><span class="line">446</span><br><span class="line">447</span><br><span class="line">448</span><br><span class="line">449</span><br><span class="line">450</span><br><span class="line">451</span><br><span class="line">452</span><br><span class="line">453</span><br><span class="line">454</span><br><span class="line">455</span><br><span class="line">456</span><br><span class="line">457</span><br><span class="line">458</span><br><span class="line">459</span><br><span class="line">460</span><br><span class="line">461</span><br><span class="line">462</span><br><span class="line">463</span><br><span class="line">464</span><br><span class="line">465</span><br><span class="line">466</span><br><span class="line">467</span><br><span class="line">468</span><br><span class="line">469</span><br><span class="line">470</span><br><span class="line">471</span><br><span class="line">472</span><br><span class="line">473</span><br><span class="line">474</span><br><span class="line">475</span><br><span class="line">476</span><br><span class="line">477</span><br><span class="line">478</span><br><span class="line">479</span><br><span class="line">480</span><br><span class="line">481</span><br><span class="line">482</span><br><span class="line">483</span><br><span class="line">484</span><br><span class="line">485</span><br><span class="line">486</span><br><span class="line">487</span><br><span class="line">488</span><br><span class="line">489</span><br><span class="line">490</span><br><span class="line">491</span><br><span class="line">492</span><br><span class="line">493</span><br><span class="line">494</span><br><span class="line">495</span><br><span class="line">496</span><br><span class="line">497</span><br><span class="line">498</span><br><span class="line">499</span><br><span class="line">500</span><br><span class="line">501</span><br><span class="line">502</span><br><span class="line">503</span><br><span class="line">504</span><br><span class="line">505</span><br><span class="line">506</span><br><span class="line">507</span><br><span class="line">508</span><br><span class="line">509</span><br><span class="line">510</span><br><span class="line">511</span><br><span class="line">512</span><br><span class="line">513</span><br><span class="line">514</span><br><span class="line">515</span><br><span class="line">516</span><br><span class="line">517</span><br><span class="line">518</span><br><span class="line">519</span><br><span class="line">520</span><br><span class="line">521</span><br><span class="line">522</span><br><span class="line">523</span><br><span class="line">524</span><br><span class="line">525</span><br><span class="line">526</span><br><span class="line">527</span><br><span class="line">528</span><br><span class="line">529</span><br><span class="line">530</span><br><span class="line">531</span><br><span class="line">532</span><br><span class="line">533</span><br><span class="line">534</span><br></pre></td><td class="code"><pre><span class="line">/// 添加一个只读的缓存路径</span><br><span class="line">- (void)addReadOnlyCachePath:(nonnull NSString *)path &#123;</span><br><span class="line">    if (!self.customPaths) &#123;</span><br><span class="line">        self.customPaths = [NSMutableArray new];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (![self.customPaths containsObject:path]) &#123;</span><br><span class="line">        [self.customPaths addObject:path];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 获取给定key的缓存路径，需要一个根缓存路径</span><br><span class="line">- (nullable NSString *)cachePathForKey:(nullable NSString *)key inPath:(nonnull NSString *)path &#123;</span><br><span class="line">    NSString *filename = [self cachedFileNameForKey:key];</span><br><span class="line">    return [path stringByAppendingPathComponent:filename];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 获取给定key的默认缓存路径</span><br><span class="line">- (nullable NSString *)defaultCachePathForKey:(nullable NSString *)key &#123;</span><br><span class="line">    return [self cachePathForKey:key inPath:self.diskCachePath];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 根据key值生成文件名：采用MD5加密的方式</span><br><span class="line">- (nullable NSString *)cachedFileNameForKey:(nullable NSString *)key &#123;</span><br><span class="line">    const char *str = key.UTF8String;</span><br><span class="line">    if (str == NULL) &#123;</span><br><span class="line">        str = &quot;&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">    unsigned char r[CC_MD5_DIGEST_LENGTH];</span><br><span class="line">    CC_MD5(str, (CC_LONG)strlen(str), r);</span><br><span class="line">    NSURL *keyURL = [NSURL URLWithString:key];</span><br><span class="line">    NSString *ext = keyURL ? keyURL.pathExtension : key.pathExtension;</span><br><span class="line">    NSString *filename = [NSString stringWithFormat:@&quot;%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%@&quot;,</span><br><span class="line">                          r[0], r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10],</span><br><span class="line">                          r[11], r[12], r[13], r[14], r[15], ext.length == 0 ? @&quot;&quot; : [NSString stringWithFormat:@&quot;.%@&quot;, ext]];</span><br><span class="line">    return filename;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 生成磁盘路径</span><br><span class="line">- (nullable NSString *)makeDiskCachePath:(nonnull NSString*)fullNamespace &#123;</span><br><span class="line">    NSArray&lt;NSString *&gt; *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);</span><br><span class="line">    return [paths[0] stringByAppendingPathComponent:fullNamespace];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 根据key去异步缓存image，toDisk为NO时不存储在磁盘</span><br><span class="line">- (void)storeImage:(nullable UIImage *)image</span><br><span class="line">         imageData:(nullable NSData *)imageData</span><br><span class="line">            forKey:(nullable NSString *)key</span><br><span class="line">            toDisk:(BOOL)toDisk</span><br><span class="line">        completion:(nullable SDWebImageNoParamsBlock)completionBlock &#123;</span><br><span class="line">    if (!image || !key) &#123;</span><br><span class="line">        if (completionBlock) &#123;</span><br><span class="line">            completionBlock();</span><br><span class="line">        &#125;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    // 缓存到内存</span><br><span class="line">    if (self.config.shouldCacheImagesInMemory) &#123;</span><br><span class="line">        NSUInteger cost = SDCacheCostForImage(image);</span><br><span class="line">        [self.memCache setObject:image forKey:key cost:cost];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    // 缓存到磁盘，采用异步操作</span><br><span class="line">    if (toDisk) &#123;</span><br><span class="line">        dispatch_async(self.ioQueue, ^&#123;</span><br><span class="line">            @autoreleasepool &#123;</span><br><span class="line">                NSData *data = imageData;</span><br><span class="line">                if (!data &amp;&amp; image) &#123;</span><br><span class="line">                    // 如果没有data，则采用png的格式进行format</span><br><span class="line">                    SDImageFormat format;</span><br><span class="line">                    if (SDCGImageRefContainsAlpha(image.CGImage)) &#123;</span><br><span class="line">                        format = SDImageFormatPNG;</span><br><span class="line">                    &#125; else &#123;</span><br><span class="line">                        format = SDImageFormatJPEG;</span><br><span class="line">                    &#125;</span><br><span class="line">                    data = [[SDWebImageCodersManager sharedInstance] encodedDataWithImage:image format:format];</span><br><span class="line">                &#125;</span><br><span class="line">                [self _storeImageDataToDisk:data forKey:key];</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            if (completionBlock) &#123;</span><br><span class="line">                dispatch_async(dispatch_get_main_queue(), ^&#123;</span><br><span class="line">                    completionBlock();</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        if (completionBlock) &#123;</span><br><span class="line">            completionBlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 利用key缓存图片的data</span><br><span class="line">- (void)storeImageDataToDisk:(nullable NSData *)imageData forKey:(nullable NSString *)key &#123;</span><br><span class="line">    if (!imageData || !key) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    dispatch_sync(self.ioQueue, ^&#123;</span><br><span class="line">        [self _storeImageDataToDisk:imageData forKey:key];</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (void)_storeImageDataToDisk:(nullable NSData *)imageData forKey:(nullable NSString *)key &#123;</span><br><span class="line">    if (!imageData || !key) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    // 如果文件中不存在磁盘缓存路径，则创建</span><br><span class="line">    if (![self.fileManager fileExistsAtPath:_diskCachePath]) &#123;</span><br><span class="line">        [self.fileManager createDirectoryAtPath:_diskCachePath withIntermediateDirectories:YES attributes:nil error:NULL];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    // 获取该key的缓存路径</span><br><span class="line">    NSString *cachePathForKey = [self defaultCachePathForKey:key];</span><br><span class="line">    // 将缓存路径转化为url</span><br><span class="line">    NSURL *fileURL = [NSURL fileURLWithPath:cachePathForKey];</span><br><span class="line">    </span><br><span class="line">    [imageData writeToURL:fileURL options:self.config.diskCacheWritingOptions error:nil];</span><br><span class="line">    </span><br><span class="line">    // 判断是否关闭了iCloud备份</span><br><span class="line">    if (self.config.shouldDisableiCloud) &#123;</span><br><span class="line">        [fileURL setResourceValue:@YES forKey:NSURLIsExcludedFromBackupKey error:nil];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 异步检查图片是否缓存在磁盘中</span><br><span class="line">- (void)diskImageExistsWithKey:(nullable NSString *)key completion:(nullable SDWebImageCheckCacheCompletionBlock)completionBlock &#123;</span><br><span class="line">    dispatch_async(self.ioQueue, ^&#123;</span><br><span class="line">        BOOL exists = [self _diskImageDataExistsWithKey:key];</span><br><span class="line">        if (completionBlock) &#123;</span><br><span class="line">            dispatch_async(dispatch_get_main_queue(), ^&#123;</span><br><span class="line">                completionBlock(exists);</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (BOOL)diskImageDataExistsWithKey:(nullable NSString *)key &#123;</span><br><span class="line">    if (!key) &#123;</span><br><span class="line">        return NO;</span><br><span class="line">    &#125;</span><br><span class="line">    __block BOOL exists = NO;</span><br><span class="line">    dispatch_sync(self.ioQueue, ^&#123;</span><br><span class="line">        exists = [self _diskImageDataExistsWithKey:key];</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">    return exists;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// Make sure to call form io queue by caller</span><br><span class="line">- (BOOL)_diskImageDataExistsWithKey:(nullable NSString *)key &#123;</span><br><span class="line">    if (!key) &#123;</span><br><span class="line">        return NO;</span><br><span class="line">    &#125;</span><br><span class="line">    BOOL exists = [self.fileManager fileExistsAtPath:[self defaultCachePathForKey:key]];</span><br><span class="line">    </span><br><span class="line">    // fallback because of https://github.com/rs/SDWebImage/pull/976 that added the extension to the disk file name</span><br><span class="line">    // checking the key with and without the extension</span><br><span class="line">    if (!exists) &#123;</span><br><span class="line">        exists = [self.fileManager fileExistsAtPath:[self defaultCachePathForKey:key].stringByDeletingPathExtension];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    return exists;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 在内存缓存中查找对应key的图片</span><br><span class="line">- (nullable UIImage *)imageFromMemoryCacheForKey:(nullable NSString *)key &#123;</span><br><span class="line">    return [self.memCache objectForKey:key];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 在磁盘缓存中查询对应key的图片，并且如果允许内存缓存则在内存中缓存</span><br><span class="line">- (nullable UIImage *)imageFromDiskCacheForKey:(nullable NSString *)key &#123;</span><br><span class="line">    UIImage *diskImage = [self diskImageForKey:key];</span><br><span class="line">    if (diskImage &amp;&amp; self.config.shouldCacheImagesInMemory) &#123;</span><br><span class="line">        NSUInteger cost = SDCacheCostForImage(diskImage);</span><br><span class="line">        [self.memCache setObject:diskImage forKey:key cost:cost];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return diskImage;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 在缓存中查询对应key的图片</span><br><span class="line">- (nullable UIImage *)imageFromCacheForKey:(nullable NSString *)key &#123;</span><br><span class="line">    // First check the in-memory cache...</span><br><span class="line">    UIImage *image = [self imageFromMemoryCacheForKey:key];</span><br><span class="line">    if (image) &#123;</span><br><span class="line">        return image;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    // Second check the disk cache...</span><br><span class="line">    image = [self imageFromDiskCacheForKey:key];</span><br><span class="line">    return image;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 根据key在磁盘缓存中搜索图片data</span><br><span class="line">- (nullable NSData *)diskImageDataBySearchingAllPathsForKey:(nullable NSString *)key &#123;</span><br><span class="line">    NSString *defaultPath = [self defaultCachePathForKey:key];</span><br><span class="line">    NSData *data = [NSData dataWithContentsOfFile:defaultPath options:self.config.diskCacheReadingOptions error:nil];</span><br><span class="line">    if (data) &#123;</span><br><span class="line">        return data;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // fallback because of https://github.com/rs/SDWebImage/pull/976 that added the extension to the disk file name</span><br><span class="line">    // checking the key with and without the extension</span><br><span class="line">    data = [NSData dataWithContentsOfFile:defaultPath.stringByDeletingPathExtension options:self.config.diskCacheReadingOptions error:nil];</span><br><span class="line">    if (data) &#123;</span><br><span class="line">        return data;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    NSArray&lt;NSString *&gt; *customPaths = [self.customPaths copy];</span><br><span class="line">    for (NSString *path in customPaths) &#123;</span><br><span class="line">        NSString *filePath = [self cachePathForKey:key inPath:path];</span><br><span class="line">        NSData *imageData = [NSData dataWithContentsOfFile:filePath options:self.config.diskCacheReadingOptions error:nil];</span><br><span class="line">        if (imageData) &#123;</span><br><span class="line">            return imageData;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        // fallback because of https://github.com/rs/SDWebImage/pull/976 that added the extension to the disk file name</span><br><span class="line">        // checking the key with and without the extension</span><br><span class="line">        imageData = [NSData dataWithContentsOfFile:filePath.stringByDeletingPathExtension options:self.config.diskCacheReadingOptions error:nil];</span><br><span class="line">        if (imageData) &#123;</span><br><span class="line">            return imageData;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return nil;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (nullable UIImage *)diskImageForKey:(nullable NSString *)key &#123;</span><br><span class="line">    NSData *data = [self diskImageDataBySearchingAllPathsForKey:key];</span><br><span class="line">    return [self diskImageForKey:key data:data];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 根据key在磁盘缓存中搜索图片</span><br><span class="line">- (nullable UIImage *)diskImageForKey:(nullable NSString *)key data:(nullable NSData *)data &#123;</span><br><span class="line">    if (data) &#123;</span><br><span class="line">        UIImage *image = [[SDWebImageCodersManager sharedInstance] decodedImageWithData:data];</span><br><span class="line">        // 根据图片的scale或图片中的图片组，重新计算返回一张新图片</span><br><span class="line">        image = [self scaledImageForKey:key image:image];</span><br><span class="line">        if (self.config.shouldDecompressImages) &#123;</span><br><span class="line">            image = [[SDWebImageCodersManager sharedInstance] decompressedImageWithImage:image data:&amp;data options:@&#123;SDWebImageCoderScaleDownLargeImagesKey: @(NO)&#125;];</span><br><span class="line">        &#125;</span><br><span class="line">        return image;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        return nil;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (NSOperation *)queryCacheOperationForKey:(NSString *)key done:(SDCacheQueryCompletedBlock)doneBlock &#123;</span><br><span class="line">    return [self queryCacheOperationForKey:key options:0 done:doneBlock];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 在缓存中查询对应key的图片信息</span><br><span class="line">- (nullable NSOperation *)queryCacheOperationForKey:(nullable NSString *)key options:(SDImageCacheOptions)options done:(nullable SDCacheQueryCompletedBlock)doneBlock &#123;</span><br><span class="line">    if (!key) &#123;</span><br><span class="line">        if (doneBlock) &#123;</span><br><span class="line">            doneBlock(nil, nil, SDImageCacheTypeNone);</span><br><span class="line">        &#125;</span><br><span class="line">        return nil;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    // 首先从内存中进行查找</span><br><span class="line">    UIImage *image = [self imageFromMemoryCacheForKey:key];</span><br><span class="line">    BOOL shouldQueryMemoryOnly = (image &amp;&amp; !(options &amp; SDImageCacheQueryDataWhenInMemory));</span><br><span class="line">    if (shouldQueryMemoryOnly) &#123;</span><br><span class="line">        if (doneBlock) &#123;</span><br><span class="line">            doneBlock(image, nil, SDImageCacheTypeMemory);</span><br><span class="line">        &#125;</span><br><span class="line">        return nil;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    NSOperation *operation = [NSOperation new];</span><br><span class="line">    void(^queryDiskBlock)(void) =  ^&#123;</span><br><span class="line">        if (operation.isCancelled) &#123;</span><br><span class="line">            // do not call the completion if cancelled</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        @autoreleasepool &#123;</span><br><span class="line">            NSData *diskData = [self diskImageDataBySearchingAllPathsForKey:key];</span><br><span class="line">            UIImage *diskImage;</span><br><span class="line">            SDImageCacheType cacheType = SDImageCacheTypeDisk;</span><br><span class="line">            if (image) &#123;</span><br><span class="line">                // the image is from in-memory cache</span><br><span class="line">                diskImage = image;</span><br><span class="line">                cacheType = SDImageCacheTypeMemory;</span><br><span class="line">            &#125; else if (diskData) &#123;</span><br><span class="line">                // decode image data only if in-memory cache missed</span><br><span class="line">                diskImage = [self diskImageForKey:key data:diskData];</span><br><span class="line">                if (diskImage &amp;&amp; self.config.shouldCacheImagesInMemory) &#123;</span><br><span class="line">                    NSUInteger cost = SDCacheCostForImage(diskImage);</span><br><span class="line">                    // 把从磁盘取出来的缓存图片加入到内存缓存中</span><br><span class="line">                    [self.memCache setObject:diskImage forKey:key cost:cost];</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            // 图片处理完毕后回调Block</span><br><span class="line">            if (doneBlock) &#123;</span><br><span class="line">                if (options &amp; SDImageCacheQueryDiskSync) &#123;</span><br><span class="line">                    doneBlock(diskImage, diskData, cacheType);</span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                    dispatch_async(dispatch_get_main_queue(), ^&#123;</span><br><span class="line">                        doneBlock(diskImage, diskData, cacheType);</span><br><span class="line">                    &#125;);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    </span><br><span class="line">    if (options &amp; SDImageCacheQueryDiskSync) &#123;</span><br><span class="line">        queryDiskBlock();</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        dispatch_async(self.ioQueue, queryDiskBlock);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    return operation;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 删除缓存中指定key的图片</span><br><span class="line">- (void)removeImageForKey:(nullable NSString *)key withCompletion:(nullable SDWebImageNoParamsBlock)completion &#123;</span><br><span class="line">    [self removeImageForKey:key fromDisk:YES withCompletion:completion];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 删除缓存中指定key的图片，磁盘为可选项</span><br><span class="line">- (void)removeImageForKey:(nullable NSString *)key fromDisk:(BOOL)fromDisk withCompletion:(nullable SDWebImageNoParamsBlock)completion &#123;</span><br><span class="line">    if (key == nil) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 如果内存也缓存了，则删除内存缓存</span><br><span class="line">    if (self.config.shouldCacheImagesInMemory) &#123;</span><br><span class="line">        [self.memCache removeObjectForKey:key];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (fromDisk) &#123;</span><br><span class="line">        dispatch_async(self.ioQueue, ^&#123;</span><br><span class="line">            [self.fileManager removeItemAtPath:[self defaultCachePathForKey:key] error:nil];</span><br><span class="line">            </span><br><span class="line">            if (completion) &#123;</span><br><span class="line">                dispatch_async(dispatch_get_main_queue(), ^&#123;</span><br><span class="line">                    completion();</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125; else if (completion)&#123;</span><br><span class="line">        completion();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 清空所有的内存缓存</span><br><span class="line">- (void)clearMemory &#123;</span><br><span class="line">    [self.memCache removeAllObjects];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 异步清除所有的磁盘缓存</span><br><span class="line">- (void)clearDiskOnCompletion:(nullable SDWebImageNoParamsBlock)completion &#123;</span><br><span class="line">    dispatch_async(self.ioQueue, ^&#123;</span><br><span class="line">        [self.fileManager removeItemAtPath:self.diskCachePath error:nil];</span><br><span class="line">        [self.fileManager createDirectoryAtPath:self.diskCachePath</span><br><span class="line">                withIntermediateDirectories:YES</span><br><span class="line">                                 attributes:nil</span><br><span class="line">                                      error:NULL];</span><br><span class="line"></span><br><span class="line">        if (completion) &#123;</span><br><span class="line">            dispatch_async(dispatch_get_main_queue(), ^&#123;</span><br><span class="line">                completion();</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (void)deleteOldFiles &#123;</span><br><span class="line">    [self deleteOldFilesWithCompletionBlock:nil];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 异步清除所有失效的缓存图片</span><br><span class="line">- (void)deleteOldFilesWithCompletionBlock:(nullable SDWebImageNoParamsBlock)completionBlock &#123;</span><br><span class="line">    dispatch_async(self.ioQueue, ^&#123;</span><br><span class="line">        NSURL *diskCacheURL = [NSURL fileURLWithPath:self.diskCachePath isDirectory:YES];</span><br><span class="line">        NSArray&lt;NSString *&gt; *resourceKeys = @[NSURLIsDirectoryKey, NSURLContentModificationDateKey, NSURLTotalFileAllocatedSizeKey];</span><br><span class="line"></span><br><span class="line">        // 利用目录枚举器遍历指定磁盘缓存路径目录下的文件，从而获得文件大小、缓存时间等信息.</span><br><span class="line">        NSDirectoryEnumerator *fileEnumerator = [self.fileManager enumeratorAtURL:diskCacheURL</span><br><span class="line">                                                   includingPropertiesForKeys:resourceKeys</span><br><span class="line">                                                                      options:NSDirectoryEnumerationSkipsHiddenFiles</span><br><span class="line">                                                                 errorHandler:NULL];</span><br><span class="line"></span><br><span class="line">        // 计算过期时间，默认1周以前的缓存文件是过期失效</span><br><span class="line">        NSDate *expirationDate = [NSDate dateWithTimeIntervalSinceNow:-self.config.maxCacheAge];</span><br><span class="line">        // 用以保存遍历的文件url</span><br><span class="line">        NSMutableDictionary&lt;NSURL *, NSDictionary&lt;NSString *, id&gt; *&gt; *cacheFiles = [NSMutableDictionary dictionary];</span><br><span class="line">        NSUInteger currentCacheSize = 0;</span><br><span class="line"></span><br><span class="line">        // Enumerate all of the files in the cache directory.  This loop has two purposes:</span><br><span class="line">        //</span><br><span class="line">        //  1. Removing files that are older than the expiration date.</span><br><span class="line">        //  2. Storing file attributes for the size-based cleanup pass.</span><br><span class="line">        // 用以保存删除的文件url</span><br><span class="line">        NSMutableArray&lt;NSURL *&gt; *urlsToDelete = [[NSMutableArray alloc] init];</span><br><span class="line">        for (NSURL *fileURL in fileEnumerator) &#123;</span><br><span class="line">            NSError *error;</span><br><span class="line">            // 获取指定url对应文件的指定三种属性的key和value</span><br><span class="line">            NSDictionary&lt;NSString *, id&gt; *resourceValues = [fileURL resourceValuesForKeys:resourceKeys error:&amp;error];</span><br><span class="line"></span><br><span class="line">            // Skip directories and errors.</span><br><span class="line">            if (error || !resourceValues || [resourceValues[NSURLIsDirectoryKey] boolValue]) &#123;</span><br><span class="line">                continue;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            // 获取指定url文件对应的修改日期;</span><br><span class="line">            NSDate *modificationDate = resourceValues[NSURLContentModificationDateKey];</span><br><span class="line">            // 如果修改日期大于指定日期，则加入要移除的数组中</span><br><span class="line">            if ([[modificationDate laterDate:expirationDate] isEqualToDate:expirationDate]) &#123;</span><br><span class="line">                [urlsToDelete addObject:fileURL];</span><br><span class="line">                continue;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            // 获取指定的url对应的文件大小，并把url与对应大小存入一个字典中.</span><br><span class="line">            NSNumber *totalAllocatedSize = resourceValues[NSURLTotalFileAllocatedSizeKey];</span><br><span class="line">            currentCacheSize += totalAllocatedSize.unsignedIntegerValue;</span><br><span class="line">            cacheFiles[fileURL] = resourceValues;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        // 循环遍历删除所有最后修改日期大于指定日期的所有文件</span><br><span class="line">        for (NSURL *fileURL in urlsToDelete) &#123;</span><br><span class="line">            [self.fileManager removeItemAtURL:fileURL error:nil];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        // 如果当前缓存的大小超过了默认大小，则按照日期删除，直到缓存大小小于默认大小的一半.</span><br><span class="line">        if (self.config.maxCacheSize &gt; 0 &amp;&amp; currentCacheSize &gt; self.config.maxCacheSize) &#123;</span><br><span class="line">            // Target half of our maximum cache size for this cleanup pass.</span><br><span class="line">            const NSUInteger desiredCacheSize = self.config.maxCacheSize / 2;</span><br><span class="line"></span><br><span class="line">            // Sort the remaining cache files by their last modification time (oldest first).</span><br><span class="line">            NSArray&lt;NSURL *&gt; *sortedFiles = [cacheFiles keysSortedByValueWithOptions:NSSortConcurrent</span><br><span class="line">                                                                     usingComparator:^NSComparisonResult(id obj1, id obj2) &#123;</span><br><span class="line">                                                                         return [obj1[NSURLContentModificationDateKey] compare:obj2[NSURLContentModificationDateKey]];</span><br><span class="line">                                                                     &#125;];</span><br><span class="line"></span><br><span class="line">            // 循环遍历删除缓存，直到缓存大小是默认缓存大小的一半.</span><br><span class="line">            for (NSURL *fileURL in sortedFiles) &#123;</span><br><span class="line">                if ([self.fileManager removeItemAtURL:fileURL error:nil]) &#123;</span><br><span class="line">                    NSDictionary&lt;NSString *, id&gt; *resourceValues = cacheFiles[fileURL];</span><br><span class="line">                    NSNumber *totalAllocatedSize = resourceValues[NSURLTotalFileAllocatedSizeKey];</span><br><span class="line">                    currentCacheSize -= totalAllocatedSize.unsignedIntegerValue;</span><br><span class="line"></span><br><span class="line">                    if (currentCacheSize &lt; desiredCacheSize) &#123;</span><br><span class="line">                        break;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        // 在主线程中进行回调</span><br><span class="line">        if (completionBlock) &#123;</span><br><span class="line">            dispatch_async(dispatch_get_main_queue(), ^&#123;</span><br><span class="line">                completionBlock();</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 应用进入后台的时候，将会接收到通知，并调用该方法清除过期图片</span><br><span class="line">- (void)backgroundDeleteOldFiles &#123;</span><br><span class="line">    Class UIApplicationClass = NSClassFromString(@&quot;UIApplication&quot;);</span><br><span class="line">    if(!UIApplicationClass || ![UIApplicationClass respondsToSelector:@selector(sharedApplication)]) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    UIApplication *application = [UIApplication performSelector:@selector(sharedApplication)];</span><br><span class="line">    __block UIBackgroundTaskIdentifier bgTask = [application beginBackgroundTaskWithExpirationHandler:^&#123;</span><br><span class="line">        // 当任务非正常终止的时候，做清理工作.</span><br><span class="line">        [application endBackgroundTask:bgTask];</span><br><span class="line">        bgTask = UIBackgroundTaskInvalid;</span><br><span class="line">    &#125;];</span><br><span class="line"></span><br><span class="line">    // Start the long-running task and return immediately.</span><br><span class="line">    [self deleteOldFilesWithCompletionBlock:^&#123;</span><br><span class="line">        [application endBackgroundTask:bgTask];</span><br><span class="line">        bgTask = UIBackgroundTaskInvalid;</span><br><span class="line">    &#125;];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 得到磁盘缓存的大小</span><br><span class="line">- (NSUInteger)getSize &#123;</span><br><span class="line">    __block NSUInteger size = 0;</span><br><span class="line">    dispatch_sync(self.ioQueue, ^&#123;</span><br><span class="line">        NSDirectoryEnumerator *fileEnumerator = [self.fileManager enumeratorAtPath:self.diskCachePath];</span><br><span class="line">        for (NSString *fileName in fileEnumerator) &#123;</span><br><span class="line">            NSString *filePath = [self.diskCachePath stringByAppendingPathComponent:fileName];</span><br><span class="line">            NSDictionary&lt;NSString *, id&gt; *attrs = [self.fileManager attributesOfItemAtPath:filePath error:nil];</span><br><span class="line">            size += [attrs fileSize];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    return size;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 得到在磁盘缓存中图片的数量</span><br><span class="line">- (NSUInteger)getDiskCount &#123;</span><br><span class="line">    __block NSUInteger count = 0;</span><br><span class="line">    dispatch_sync(self.ioQueue, ^&#123;</span><br><span class="line">        NSDirectoryEnumerator *fileEnumerator = [self.fileManager enumeratorAtPath:self.diskCachePath];</span><br><span class="line">        count = fileEnumerator.allObjects.count;</span><br><span class="line">    &#125;);</span><br><span class="line">    return count;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 异步计算磁盘缓存的大小</span><br><span class="line">- (void)calculateSizeWithCompletionBlock:(nullable SDWebImageCalculateSizeBlock)completionBlock &#123;</span><br><span class="line">    NSURL *diskCacheURL = [NSURL fileURLWithPath:self.diskCachePath isDirectory:YES];</span><br><span class="line"></span><br><span class="line">    dispatch_async(self.ioQueue, ^&#123;</span><br><span class="line">        NSUInteger fileCount = 0;</span><br><span class="line">        NSUInteger totalSize = 0;</span><br><span class="line"></span><br><span class="line">        NSDirectoryEnumerator *fileEnumerator = [self.fileManager enumeratorAtURL:diskCacheURL</span><br><span class="line">                                                   includingPropertiesForKeys:@[NSFileSize]</span><br><span class="line">                                                                      options:NSDirectoryEnumerationSkipsHiddenFiles</span><br><span class="line">                                                                 errorHandler:NULL];</span><br><span class="line"></span><br><span class="line">        for (NSURL *fileURL in fileEnumerator) &#123;</span><br><span class="line">            NSNumber *fileSize;</span><br><span class="line">            [fileURL getResourceValue:&amp;fileSize forKey:NSURLFileSizeKey error:NULL];</span><br><span class="line">            totalSize += fileSize.unsignedIntegerValue;</span><br><span class="line">            fileCount += 1;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        if (completionBlock) &#123;</span><br><span class="line">            dispatch_async(dispatch_get_main_queue(), ^&#123;</span><br><span class="line">                completionBlock(fileCount, totalSize);</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="SDWebImageDownloader"><a href="#SDWebImageDownloader" class="headerlink" title="SDWebImageDownloader"></a>SDWebImageDownloader</h3><p>SDWebImageDownloader是一个单例对象，主要功能可以概括为：</p>
+<ul>
+<li>通过SDWebImageDownloaderOptions枚举来设置图片从网络加载的不同情况</li>
+<li>定义并管理了NSURLSession对象，通过这个对象来做网络请求，并且实现对象的代理方法</li>
+<li>定义了一个NSURLRequest对象，并且管理请求头的拼装</li>
+<li>对于每一个网络请求，通过一个SDWebImageDownloaderOperation自定义的NSOperation来操作网络下载</li>
+<li>管理网络加载过程和完成时的回调工作。</li>
+</ul>
+<p>先来看下<code>SDWebImageDownloader.h</code>文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">typedef NS_OPTIONS(NSUInteger, SDWebImageDownloaderOptions) &#123;</span><br><span class="line">    // 将下载放到低队列优先级和任务优先级中</span><br><span class="line">    SDWebImageDownloaderLowPriority = 1 &lt;&lt; 0,</span><br><span class="line">    </span><br><span class="line">    // 支持渐进式下载，在下载过程中会像浏览器那样逐步显示图片</span><br><span class="line">    SDWebImageDownloaderProgressiveDownload = 1 &lt;&lt; 1,</span><br><span class="line"></span><br><span class="line">    // 默认情况下，http请求阻止使用NSURLCache对象，如果设置了该枚举值，则NSURLCache会被http请求使用</span><br><span class="line">    SDWebImageDownloaderUseNSURLCache = 1 &lt;&lt; 2,</span><br><span class="line"></span><br><span class="line">    // 如果image/imageData是从NSURLCache返回的，则completion回调会返回nil</span><br><span class="line">    SDWebImageDownloaderIgnoreCachedResponse = 1 &lt;&lt; 3,</span><br><span class="line">    </span><br><span class="line">    // 如果App进入后台时，是否继续下载。这个是通过在后台申请时间来完成这个操作。如果指定的时间内没有完成，则直接取消下载</span><br><span class="line">    SDWebImageDownloaderContinueInBackground = 1 &lt;&lt; 4,</span><br><span class="line"></span><br><span class="line">    // 处理缓存在 NSHTTPCookieStore 对象里面的cookie</span><br><span class="line">    SDWebImageDownloaderHandleCookies = 1 &lt;&lt; 5,</span><br><span class="line"></span><br><span class="line">    // 允许非信任的SSL证书请求</span><br><span class="line">    SDWebImageDownloaderAllowInvalidSSLCertificates = 1 &lt;&lt; 6,</span><br><span class="line"></span><br><span class="line">    // 把任务添加到队列的最前面</span><br><span class="line">    SDWebImageDownloaderHighPriority = 1 &lt;&lt; 7,</span><br><span class="line">    </span><br><span class="line">    // 根据设备的内存限制调整图片的尺寸到合适的大小</span><br><span class="line">    SDWebImageDownloaderScaleDownLargeImages = 1 &lt;&lt; 8,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">@interface SDWebImageDownloader : NSObject</span><br><span class="line"></span><br><span class="line">// 当图片下载完成，解压缩后再缓存，这样可以提升性能但会占用更多的内存。</span><br><span class="line">// 默认为YES，如果因为过多的内存消耗导致崩溃，则将此设置为NO</span><br><span class="line">@property (assign, nonatomic) BOOL shouldDecompressImages;</span><br><span class="line"></span><br><span class="line">// 最大并行下载的数量</span><br><span class="line">@property (assign, nonatomic) NSInteger maxConcurrentDownloads;</span><br><span class="line"></span><br><span class="line">// 当前并行下载数量</span><br><span class="line">@property (readonly, nonatomic) NSUInteger currentDownloadCount;</span><br><span class="line"></span><br><span class="line">// 下载超时时间设置</span><br><span class="line">@property (assign, nonatomic) NSTimeInterval downloadTimeout;</span><br><span class="line"></span><br><span class="line">// 内部NSURLSession使用的配置</span><br><span class="line">@property (readonly, nonatomic, nonnull) NSURLSessionConfiguration *sessionConfiguration;</span><br><span class="line"></span><br><span class="line">// 改变下载operation的执行顺序，默认是FIFO</span><br><span class="line">@property (assign, nonatomic) SDWebImageDownloaderExecutionOrder executionOrder;</span><br></pre></td></tr></table></figure></p>
+<p>然后是<code>SDWebImageDownloader.m</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br></pre></td><td class="code"><pre><span class="line">/// 该方法是SDWebImageDownloader的核心方法，通过该方法从网络下载图片</span><br><span class="line">- (nullable SDWebImageDownloadToken *)downloadImageWithURL:(nullable NSURL *)url</span><br><span class="line">                                                   options:(SDWebImageDownloaderOptions)options</span><br><span class="line">                                                  progress:(nullable SDWebImageDownloaderProgressBlock)progressBlock</span><br><span class="line">                                                 completed:(nullable SDWebImageDownloaderCompletedBlock)completedBlock &#123;</span><br><span class="line">    __weak SDWebImageDownloader *wself = self;</span><br><span class="line"></span><br><span class="line">    return [self addProgressCallback:progressBlock completedBlock:completedBlock forURL:url createCallback:^SDWebImageDownloaderOperation *&#123;</span><br><span class="line">        __strong __typeof (wself) sself = wself;</span><br><span class="line">        NSTimeInterval timeoutInterval = sself.downloadTimeout;</span><br><span class="line">        if (timeoutInterval == 0.0) &#123;</span><br><span class="line">            timeoutInterval = 15.0;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        // In order to prevent from potential duplicate caching (NSURLCache + SDImageCache) we disable the cache for image requests if told otherwise</span><br><span class="line">        NSURLRequestCachePolicy cachePolicy = options &amp; SDWebImageDownloaderUseNSURLCache ? NSURLRequestUseProtocolCachePolicy : NSURLRequestReloadIgnoringLocalCacheData;</span><br><span class="line">        // 创建request  设置请求缓存策略、下载时间</span><br><span class="line">        NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url</span><br><span class="line">                                                                    cachePolicy:cachePolicy</span><br><span class="line">                                                                timeoutInterval:timeoutInterval];</span><br><span class="line">        </span><br><span class="line">        request.HTTPShouldHandleCookies = (options &amp; SDWebImageDownloaderHandleCookies);</span><br><span class="line">        request.HTTPShouldUsePipelining = YES;</span><br><span class="line">        if (sself.headersFilter) &#123;</span><br><span class="line">            request.allHTTPHeaderFields = sself.headersFilter(url, [sself allHTTPHeaderFields]);</span><br><span class="line">        &#125;</span><br><span class="line">        else &#123;</span><br><span class="line">            request.allHTTPHeaderFields = [sself allHTTPHeaderFields];</span><br><span class="line">        &#125;</span><br><span class="line">        // 初始化一个自定义NSOperation对象</span><br><span class="line">        SDWebImageDownloaderOperation *operation = [[sself.operationClass alloc] initWithRequest:request inSession:sself.session options:options];</span><br><span class="line">        // 是否解压缩返回的图片</span><br><span class="line">        operation.shouldDecompressImages = sself.shouldDecompressImages;</span><br><span class="line">        </span><br><span class="line">        if (sself.urlCredential) &#123;</span><br><span class="line">            // SSL验证</span><br><span class="line">            operation.credential = sself.urlCredential;</span><br><span class="line">        &#125; else if (sself.username &amp;&amp; sself.password) &#123;</span><br><span class="line">            // Basic验证</span><br><span class="line">            operation.credential = [NSURLCredential credentialWithUser:sself.username password:sself.password persistence:NSURLCredentialPersistenceForSession];</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        // 指定优先级</span><br><span class="line">        if (options &amp; SDWebImageDownloaderHighPriority) &#123;</span><br><span class="line">            operation.queuePriority = NSOperationQueuePriorityHigh;</span><br><span class="line">        &#125; else if (options &amp; SDWebImageDownloaderLowPriority) &#123;</span><br><span class="line">            operation.queuePriority = NSOperationQueuePriorityLow;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        if (sself.executionOrder == SDWebImageDownloaderLIFOExecutionOrder) &#123;</span><br><span class="line">            // Emulate LIFO execution order by systematically adding new operations as last operation&apos;s dependency</span><br><span class="line">            [sself.lastAddedOperation addDependency:operation];</span><br><span class="line">            sself.lastAddedOperation = operation;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        return operation;</span><br><span class="line">    &#125;];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 给下载过程添加进度</span><br><span class="line">- (nullable SDWebImageDownloadToken *)addProgressCallback:(SDWebImageDownloaderProgressBlock)progressBlock</span><br><span class="line">                                           completedBlock:(SDWebImageDownloaderCompletedBlock)completedBlock</span><br><span class="line">                                                   forURL:(nullable NSURL *)url</span><br><span class="line">                                           createCallback:(SDWebImageDownloaderOperation *(^)(void))createCallback &#123;</span><br><span class="line">    // The URL will be used as the key to the callbacks dictionary so it cannot be nil. If it is nil immediately call the completed block with no image or data.</span><br><span class="line">    if (url == nil) &#123;</span><br><span class="line">        if (completedBlock != nil) &#123;</span><br><span class="line">            completedBlock(nil, nil, nil, NO);</span><br><span class="line">        &#125;</span><br><span class="line">        return nil;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    LOCK(self.operationsLock);</span><br><span class="line">    // 判断当前url是否有对应的operation图片的加载对象</span><br><span class="line">    SDWebImageDownloaderOperation *operation = [self.URLOperations objectForKey:url];</span><br><span class="line">    // 如果没有，则直接创建一个</span><br><span class="line">    if (!operation) &#123;</span><br><span class="line">        // 创建一个operation，并且添加到URLOperation中</span><br><span class="line">        operation = createCallback();</span><br><span class="line">        __weak typeof(self) wself = self;</span><br><span class="line">        operation.completionBlock = ^&#123;</span><br><span class="line">            __strong typeof(wself) sself = wself;</span><br><span class="line">            if (!sself) &#123;</span><br><span class="line">                return;</span><br><span class="line">            &#125;</span><br><span class="line">            LOCK(sself.operationsLock);</span><br><span class="line">            [sself.URLOperations removeObjectForKey:url];</span><br><span class="line">            UNLOCK(sself.operationsLock);</span><br><span class="line">        &#125;;</span><br><span class="line">        [self.URLOperations setObject:operation forKey:url];</span><br><span class="line">        // Add operation to operation queue only after all configuration done according to Apple&apos;s doc.</span><br><span class="line">        // `addOperation:` does not synchronously execute the `operation.completionBlock` so this will not cause deadlock.</span><br><span class="line">        [self.downloadQueue addOperation:operation];</span><br><span class="line">    &#125;</span><br><span class="line">    UNLOCK(self.operationsLock);</span><br><span class="line"></span><br><span class="line">    id downloadOperationCancelToken = [operation addHandlersForProgress:progressBlock completed:completedBlock];</span><br><span class="line">    </span><br><span class="line">    SDWebImageDownloadToken *token = [SDWebImageDownloadToken new];</span><br><span class="line">    token.downloadOperation = operation;</span><br><span class="line">    token.url = url;</span><br><span class="line">    token.downloadOperationCancelToken = downloadOperationCancelToken;</span><br><span class="line"></span><br><span class="line">    return token;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 移除一个图片下载操作</span><br><span class="line">- (void)cancel:(nullable SDWebImageDownloadToken *)token &#123;</span><br><span class="line">    NSURL *url = token.url;</span><br><span class="line">    if (!url) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    LOCK(self.operationsLock);</span><br><span class="line">    SDWebImageDownloaderOperation *operation = [self.URLOperations objectForKey:url];</span><br><span class="line">    if (operation) &#123;</span><br><span class="line">        BOOL canceled = [operation cancel:token.downloadOperationCancelToken];</span><br><span class="line">        if (canceled) &#123;</span><br><span class="line">            [self.URLOperations removeObjectForKey:url];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    UNLOCK(self.operationsLock);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="SDWebImageDownloaderOperation"><a href="#SDWebImageDownloaderOperation" class="headerlink" title="SDWebImageDownloaderOperation"></a>SDWebImageDownloaderOperation</h3><p>&emsp;&emsp;SDWebImageDownloaderOperation继承自NSOperation，负责生成NSURLSessionTask进行图片请求，支持下载取消和后台下载，在下载时及时反馈下载进度，在下载成功后，对图片进行解码，缩放和压缩等操作。下面具体看下源码：<br><code>SDWebImageDownloaderOperation.h</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">// 开始下载通知</span><br><span class="line">FOUNDATION_EXPORT NSString * _Nonnull const SDWebImageDownloadStartNotification;</span><br><span class="line">// 收到response通知</span><br><span class="line">FOUNDATION_EXPORT NSString * _Nonnull const SDWebImageDownloadReceiveResponseNotification;</span><br><span class="line">// 停止下载通知</span><br><span class="line">FOUNDATION_EXPORT NSString * _Nonnull const SDWebImageDownloadStopNotification;</span><br><span class="line">// 结束下载通知</span><br><span class="line">FOUNDATION_EXPORT NSString * _Nonnull const SDWebImageDownloadFinishNotification;</span><br><span class="line"></span><br><span class="line">@interface SDWebImageDownloaderOperation : NSOperation &lt;SDWebImageDownloaderOperationInterface, SDWebImageOperation, NSURLSessionTaskDelegate, NSURLSessionDataDelegate&gt;</span><br><span class="line"></span><br><span class="line">// operation的请求request</span><br><span class="line">@property (strong, nonatomic, readonly, nullable) NSURLRequest *request;</span><br><span class="line"></span><br><span class="line">@property (strong, nonatomic, readonly, nullable) NSURLSessionTask *dataTask;</span><br><span class="line">// 图片是否可以被压缩</span><br><span class="line">@property (assign, nonatomic) BOOL shouldDecompressImages;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> *  Was used to determine whether the URL connection should consult the credential storage for authenticating the connection.</span><br><span class="line"> *  @deprecated Not used for a couple of versions</span><br><span class="line"> */</span><br><span class="line">@property (nonatomic, assign) BOOL shouldUseCredentialStorage __deprecated_msg(&quot;Property deprecated. Does nothing. Kept only for backwards compatibility&quot;);</span><br><span class="line"></span><br><span class="line">// 身份认证</span><br><span class="line">@property (nonatomic, strong, nullable) NSURLCredential *credential;</span><br><span class="line"></span><br><span class="line">// 下载配置策略</span><br><span class="line">@property (assign, nonatomic, readonly) SDWebImageDownloaderOptions options;</span><br><span class="line"></span><br><span class="line">// 期望data的大小</span><br><span class="line">@property (assign, nonatomic) NSInteger expectedSize;</span><br><span class="line"></span><br><span class="line">@property (strong, nonatomic, nullable) NSURLResponse *response;</span><br><span class="line"></span><br><span class="line">// 初始化一个SDWebImageDownloaderOperation对象</span><br><span class="line">- (nonnull instancetype)initWithRequest:(nullable NSURLRequest *)request</span><br><span class="line">                              inSession:(nullable NSURLSession *)session</span><br><span class="line">                                options:(SDWebImageDownloaderOptions)options NS_DESIGNATED_INITIALIZER;</span><br><span class="line"></span><br><span class="line">// 绑定DownloaderOperation的下载进度block和结束block</span><br><span class="line">- (nullable id)addHandlersForProgress:(nullable SDWebImageDownloaderProgressBlock)progressBlock</span><br><span class="line">                            completed:(nullable SDWebImageDownloaderCompletedBlock)completedBlock;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> *  Cancels a set of callbacks. Once all callbacks are canceled, the operation is cancelled.</span><br><span class="line"> *</span><br><span class="line"> *  @param token the token representing a set of callbacks to cancel</span><br><span class="line"> *</span><br><span class="line"> *  @return YES if the operation was stopped because this was the last token to be canceled. NO otherwise.</span><br><span class="line"> */</span><br><span class="line">- (BOOL)cancel:(nullable id)token;</span><br><span class="line"></span><br><span class="line">@end</span><br></pre></td></tr></table></figure></p>
+<p><code>SDWebImageDownloaderOperation.m</code>：的具体分析如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br></pre></td><td class="code"><pre><span class="line">/// 绑定DownloaderOperation的下载进度block和下载结束block</span><br><span class="line">- (nullable id)addHandlersForProgress:(nullable SDWebImageDownloaderProgressBlock)progressBlock</span><br><span class="line">                            completed:(nullable SDWebImageDownloaderCompletedBlock)completedBlock &#123;</span><br><span class="line">    SDCallbacksDictionary *callbacks = [NSMutableDictionary new];</span><br><span class="line">    if (progressBlock) callbacks[kProgressCallbackKey] = [progressBlock copy];</span><br><span class="line">    if (completedBlock) callbacks[kCompletedCallbackKey] = [completedBlock copy];</span><br><span class="line">    LOCK(self.callbacksLock);</span><br><span class="line">    [self.callbackBlocks addObject:callbacks];</span><br><span class="line">    UNLOCK(self.callbacksLock);</span><br><span class="line">    return callbacks;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 根据key获取回调块数组中所有对应key的回调块</span><br><span class="line">- (nullable NSArray&lt;id&gt; *)callbacksForKey:(NSString *)key &#123;</span><br><span class="line">    LOCK(self.callbacksLock);</span><br><span class="line">    NSMutableArray&lt;id&gt; *callbacks = [[self.callbackBlocks valueForKey:key] mutableCopy];</span><br><span class="line">    UNLOCK(self.callbacksLock);</span><br><span class="line">    // We need to remove [NSNull null] because there might not always be a progress block for each callback</span><br><span class="line">    [callbacks removeObjectIdenticalTo:[NSNull null]];</span><br><span class="line">    return [callbacks copy]; // strip mutability here</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 取消方法</span><br><span class="line">- (BOOL)cancel:(nullable id)token &#123;</span><br><span class="line">    BOOL shouldCancel = NO;</span><br><span class="line">    LOCK(self.callbacksLock);</span><br><span class="line">    // 删除数组中block数组中的token对象，key为token</span><br><span class="line">    [self.callbackBlocks removeObjectIdenticalTo:token];</span><br><span class="line">    // 判断数组count为0时，则取消下载任务</span><br><span class="line">    if (self.callbackBlocks.count == 0) &#123;</span><br><span class="line">        shouldCancel = YES;</span><br><span class="line">    &#125;</span><br><span class="line">    UNLOCK(self.callbacksLock);</span><br><span class="line">    if (shouldCancel) &#123;</span><br><span class="line">        [self cancel];</span><br><span class="line">    &#125;</span><br><span class="line">    return shouldCancel;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 当任务添加到NSOperationQueue后会执行该方法，启动下载任务</span><br><span class="line">- (void)start &#123;</span><br><span class="line">    // 添加同步锁，防止多线程数据竞争</span><br><span class="line">    @synchronized (self) &#123;</span><br><span class="line">        if (self.isCancelled) &#123;</span><br><span class="line">            self.finished = YES;</span><br><span class="line">            [self reset];</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">#if SD_UIKIT</span><br><span class="line">        // 如果设置了在后台可以继续下载图片，则会调用下面的方法，继续下载</span><br><span class="line">        Class UIApplicationClass = NSClassFromString(@&quot;UIApplication&quot;);</span><br><span class="line">        BOOL hasApplication = UIApplicationClass &amp;&amp; [UIApplicationClass respondsToSelector:@selector(sharedApplication)];</span><br><span class="line">        if (hasApplication &amp;&amp; [self shouldContinueWhenAppEntersBackground]) &#123;</span><br><span class="line">            __weak __typeof__ (self) wself = self;</span><br><span class="line">            UIApplication * app = [UIApplicationClass performSelector:@selector(sharedApplication)];</span><br><span class="line">            self.backgroundTaskId = [app beginBackgroundTaskWithExpirationHandler:^&#123;</span><br><span class="line">                __strong __typeof (wself) sself = wself;</span><br><span class="line"></span><br><span class="line">                if (sself) &#123;</span><br><span class="line">                    [sself cancel];</span><br><span class="line"></span><br><span class="line">                    [app endBackgroundTask:sself.backgroundTaskId];</span><br><span class="line">                    sself.backgroundTaskId = UIBackgroundTaskInvalid;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;];</span><br><span class="line">        &#125;</span><br><span class="line">#endif</span><br><span class="line">        NSURLSession *session = self.unownedSession;</span><br><span class="line">        // 判断session是否为nil，如果为nil，则重新创建一个ownedSession</span><br><span class="line">        if (!session) &#123;</span><br><span class="line">            NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];</span><br><span class="line">            sessionConfig.timeoutIntervalForRequest = 15;</span><br><span class="line">            </span><br><span class="line">            /**</span><br><span class="line">             *  Create the session for this task</span><br><span class="line">             *  We send nil as delegate queue so that the session creates a serial operation queue for performing all delegate</span><br><span class="line">             *  method calls and completion handler calls.</span><br><span class="line">             */</span><br><span class="line">            session = [NSURLSession sessionWithConfiguration:sessionConfig</span><br><span class="line">                                                    delegate:self</span><br><span class="line">                                               delegateQueue:nil];</span><br><span class="line">            self.ownedSession = session;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        if (self.options &amp; SDWebImageDownloaderIgnoreCachedResponse) &#123;</span><br><span class="line">            // Grab the cached data for later check</span><br><span class="line">            NSURLCache *URLCache = session.configuration.URLCache;</span><br><span class="line">            if (!URLCache) &#123;</span><br><span class="line">                URLCache = [NSURLCache sharedURLCache];</span><br><span class="line">            &#125;</span><br><span class="line">            NSCachedURLResponse *cachedResponse;</span><br><span class="line">            // NSURLCache&apos;s `cachedResponseForRequest:` is not thread-safe, see https://developer.apple.com/documentation/foundation/nsurlcache#2317483</span><br><span class="line">            @synchronized (URLCache) &#123;</span><br><span class="line">                cachedResponse = [URLCache cachedResponseForRequest:self.request];</span><br><span class="line">            &#125;</span><br><span class="line">            if (cachedResponse) &#123;</span><br><span class="line">                self.cachedData = cachedResponse.data;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        // 使用session创建一个NSURLSessionDataTask类型的下载任务</span><br><span class="line">        self.dataTask = [session dataTaskWithRequest:self.request];</span><br><span class="line">        self.executing = YES;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (self.dataTask) &#123;</span><br><span class="line">#pragma clang diagnostic push</span><br><span class="line">#pragma clang diagnostic ignored &quot;-Wunguarded-availability&quot;</span><br><span class="line">        if ([self.dataTask respondsToSelector:@selector(setPriority:)]) &#123;</span><br><span class="line">            if (self.options &amp; SDWebImageDownloaderHighPriority) &#123;</span><br><span class="line">                self.dataTask.priority = NSURLSessionTaskPriorityHigh;</span><br><span class="line">            &#125; else if (self.options &amp; SDWebImageDownloaderLowPriority) &#123;</span><br><span class="line">                self.dataTask.priority = NSURLSessionTaskPriorityLow;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">#pragma clang diagnostic pop</span><br><span class="line">        [self.dataTask resume];</span><br><span class="line">        // 任务开始，遍历进度block数组，执行第一个下载进度</span><br><span class="line">        for (SDWebImageDownloaderProgressBlock progressBlock in [self callbacksForKey:kProgressCallbackKey]) &#123;</span><br><span class="line">            progressBlock(0, NSURLResponseUnknownLength, self.request.URL);</span><br><span class="line">        &#125;</span><br><span class="line">        __weak typeof(self) weakSelf = self;</span><br><span class="line">        dispatch_async(dispatch_get_main_queue(), ^&#123;</span><br><span class="line">            [[NSNotificationCenter defaultCenter] postNotificationName:SDWebImageDownloadStartNotification object:weakSelf];</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        // 如果创建dataTask失败就回调失败block</span><br><span class="line">        [self callCompletionBlocksWithError:[NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorUnknown userInfo:@&#123;NSLocalizedDescriptionKey : @&quot;Task can&apos;t be initialized&quot;&#125;]];</span><br><span class="line">        [self done];</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">#if SD_UIKIT</span><br><span class="line">    // 后台继续下载</span><br><span class="line">    Class UIApplicationClass = NSClassFromString(@&quot;UIApplication&quot;);</span><br><span class="line">    if(!UIApplicationClass || ![UIApplicationClass respondsToSelector:@selector(sharedApplication)]) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    if (self.backgroundTaskId != UIBackgroundTaskInvalid) &#123;</span><br><span class="line">        UIApplication * app = [UIApplication performSelector:@selector(sharedApplication)];</span><br><span class="line">        [app endBackgroundTask:self.backgroundTaskId];</span><br><span class="line">        self.backgroundTaskId = UIBackgroundTaskInvalid;</span><br><span class="line">    &#125;</span><br><span class="line">#endif</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 取消下载方法</span><br><span class="line">- (void)cancelInternal &#123;</span><br><span class="line">    if (self.isFinished) return;</span><br><span class="line">    [super cancel];</span><br><span class="line">    // 如果下载图片的任务还在执行时，则立即取消cancel并且在主线程发送结束下载的通知</span><br><span class="line">    if (self.dataTask) &#123;</span><br><span class="line">        [self.dataTask cancel];</span><br><span class="line">        __weak typeof(self) weakSelf = self;</span><br><span class="line">        dispatch_async(dispatch_get_main_queue(), ^&#123;</span><br><span class="line">            [[NSNotificationCenter defaultCenter] postNotificationName:SDWebImageDownloadStopNotification object:weakSelf];</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        // As we cancelled the task, its callback won&apos;t be called and thus won&apos;t</span><br><span class="line">        // maintain the isFinished and isExecuting flags.</span><br><span class="line">        if (self.isExecuting) self.executing = NO;</span><br><span class="line">        if (!self.isFinished) self.finished = YES;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    [self reset];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">#pragma mark NSURLSessionDataDelegate</span><br><span class="line">/// 收到服务端相应，在一次请求中只会执行一次</span><br><span class="line">- (void)URLSession:(NSURLSession *)session</span><br><span class="line">          dataTask:(NSURLSessionDataTask *)dataTask</span><br><span class="line">didReceiveResponse:(NSURLResponse *)response</span><br><span class="line"> completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler &#123;</span><br><span class="line">    NSURLSessionResponseDisposition disposition = NSURLSessionResponseAllow;</span><br><span class="line">    NSInteger expected = (NSInteger)response.expectedContentLength;</span><br><span class="line">    expected = expected &gt; 0 ? expected : 0;</span><br><span class="line">    self.expectedSize = expected;</span><br><span class="line">    self.response = response;</span><br><span class="line">    NSInteger statusCode = [response respondsToSelector:@selector(statusCode)] ? ((NSHTTPURLResponse *)response).statusCode : 200;</span><br><span class="line">    BOOL valid = statusCode &lt; 400;</span><br><span class="line">    //&apos;304 Not Modified&apos; is an exceptional one. It should be treated as cancelled if no cache data</span><br><span class="line">    //URLSession current behavior will return 200 status code when the server respond 304 and URLCache hit. But this is not a standard behavior and we just add a check</span><br><span class="line">    if (statusCode == 304 &amp;&amp; !self.cachedData) &#123;</span><br><span class="line">        valid = NO;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    if (valid) &#123;</span><br><span class="line">        for (SDWebImageDownloaderProgressBlock progressBlock in [self callbacksForKey:kProgressCallbackKey]) &#123;</span><br><span class="line">            progressBlock(0, expected, self.request.URL);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        // Status code invalid and marked as cancelled. Do not call `[self.dataTask cancel]` which may mass up URLSession life cycle</span><br><span class="line">        disposition = NSURLSessionResponseCancel;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    __weak typeof(self) weakSelf = self;</span><br><span class="line">    dispatch_async(dispatch_get_main_queue(), ^&#123;</span><br><span class="line">        [[NSNotificationCenter defaultCenter] postNotificationName:SDWebImageDownloadReceiveResponseNotification object:weakSelf];</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">    if (completionHandler) &#123;</span><br><span class="line">        completionHandler(disposition);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 每次收到数据都会触发，会多次调用</span><br><span class="line">- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data &#123;</span><br><span class="line">    if (!self.imageData) &#123;</span><br><span class="line">        self.imageData = [[NSMutableData alloc] initWithCapacity:self.expectedSize];</span><br><span class="line">    &#125;</span><br><span class="line">    [self.imageData appendData:data];</span><br><span class="line"></span><br><span class="line">    if ((self.options &amp; SDWebImageDownloaderProgressiveDownload) &amp;&amp; self.expectedSize &gt; 0) &#123;</span><br><span class="line">        // Get the image data</span><br><span class="line">        __block NSData *imageData = [self.imageData copy];</span><br><span class="line">        // Get the total bytes downloaded</span><br><span class="line">        const NSInteger totalSize = imageData.length;</span><br><span class="line">        // 获取下载状态标志</span><br><span class="line">        BOOL finished = (totalSize &gt;= self.expectedSize);</span><br><span class="line">        // 判断是否有解压对象，若不存在则创建一个新的解压对象</span><br><span class="line">        if (!self.progressiveCoder) &#123;</span><br><span class="line">            // We need to create a new instance for progressive decoding to avoid conflicts</span><br><span class="line">            for (id&lt;SDWebImageCoder&gt;coder in [SDWebImageCodersManager sharedInstance].coders) &#123;</span><br><span class="line">                if ([coder conformsToProtocol:@protocol(SDWebImageProgressiveCoder)] &amp;&amp;</span><br><span class="line">                    [((id&lt;SDWebImageProgressiveCoder&gt;)coder) canIncrementallyDecodeFromData:imageData]) &#123;</span><br><span class="line">                    self.progressiveCoder = [[[coder class] alloc] init];</span><br><span class="line">                    break;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        // 逐步解码编码器队列中的图片</span><br><span class="line">        dispatch_async(self.coderQueue, ^&#123;</span><br><span class="line">            UIImage *image = [self.progressiveCoder incrementallyDecodedImageWithData:imageData finished:finished];</span><br><span class="line">            if (image) &#123;</span><br><span class="line">                // 通过URL获取缓存的key</span><br><span class="line">                NSString *key = [[SDWebImageManager sharedManager] cacheKeyForURL:self.request.URL];</span><br><span class="line">                image = [self scaledImageForKey:key image:image];</span><br><span class="line">                if (self.shouldDecompressImages) &#123;</span><br><span class="line">                    image = [[SDWebImageCodersManager sharedInstance] decompressedImageWithImage:image data:&amp;imageData options:@&#123;SDWebImageCoderScaleDownLargeImagesKey: @(NO)&#125;];</span><br><span class="line">                &#125;</span><br><span class="line">                </span><br><span class="line">                // We do not keep the progressive decoding image even when `finished`=YES. Because they are for view rendering but not take full function from downloader options. And some coders implementation may not keep consistent between progressive decoding and normal decoding.</span><br><span class="line">                </span><br><span class="line">                [self callCompletionBlocksWithImage:image imageData:nil error:nil finished:NO];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 循环进行下载进度的block回调</span><br><span class="line">    for (SDWebImageDownloaderProgressBlock progressBlock in [self callbacksForKey:kProgressCallbackKey]) &#123;</span><br><span class="line">        progressBlock(self.imageData.length, self.expectedSize, self.request.URL);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (void)URLSession:(NSURLSession *)session</span><br><span class="line">          dataTask:(NSURLSessionDataTask *)dataTask</span><br><span class="line"> willCacheResponse:(NSCachedURLResponse *)proposedResponse</span><br><span class="line"> completionHandler:(void (^)(NSCachedURLResponse *cachedResponse))completionHandler &#123;</span><br><span class="line">    </span><br><span class="line">    NSCachedURLResponse *cachedResponse = proposedResponse;</span><br><span class="line"></span><br><span class="line">    if (!(self.options &amp; SDWebImageDownloaderUseNSURLCache)) &#123;</span><br><span class="line">        // Prevents caching of responses</span><br><span class="line">        cachedResponse = nil;</span><br><span class="line">    &#125;</span><br><span class="line">    if (completionHandler) &#123;</span><br><span class="line">        completionHandler(cachedResponse);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>具体的下载流程可以概括为：</p>
+<ul>
+<li>首先生成继承自NSOperation的SDWebImageDownloaderOperation，配置当前operation，并将operation添加到NSOperationQueue下载队列中，添加到下载队列会出发operation的start方法。</li>
+<li>如果operation的isCancelled为YES时，说明下载已经被取消，则结束下载。</li>
+<li>创建NSURLSessionTask并执行resume方法开始下载。</li>
+<li>当收到服务端的响应式根据code判断请求状态，如果是正常状态则发送正在接收response的通知以及下载进度。如果是304或者其他异常状态则cancel下载操作。</li>
+<li>在didReceiveData每次收到服务器返回的response时，给data数据中追加图片当前下载的data，并回调下载的进度。</li>
+<li>在didCompleteWithError下载结束时，如果下载成功则进行图片data解码，图片的缩放或者压缩操作，发送下载结束通知。若下载失败，则回调失败block。</li>
+</ul>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>&emsp;&emsp;本文中，主要详细分析了SDWebImage的SDImageCache、SDWebImageDownloader和SDWebImageDownloaderOperation核心类。到此，SDWebImage的源码解析也结束了，由于技术水平有限，所以有相关错误和遗漏的，欢迎邮件（<a href="mailto:jiang.shunjin@icloud.com" target="_blank" rel="noopener">jiang.shunjin@icloud.com</a>）给我进行指正和补充。</p>
+
+      
+    </div>
+    
+    
+    
+
+    <div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/SDWebImage-source-code-analysis-3.html">SDWebImage源码解析（三）</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 kim逸云 的个人博客">kim逸云</a></p>
+  <p><span>发布时间:</span>2022年10月26日 - 19:10</p>
+  <p><span>最后更新:</span>2022年10月26日 - 19:10</p>
+  <p><span>原始链接:</span><a href="/SDWebImage-source-code-analysis-3.html" title="SDWebImage源码解析（三）">http://cloverkim.com/SDWebImage-source-code-analysis-3.html</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://cloverkim.com/SDWebImage-source-code-analysis-3.html"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+	});
+    });  
+</script>
+
+
+      
+    </div>
+
+    <div>
+      
+        <div>
+    <br>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">------本文结束<i class="fa fa-paw"></i>感谢阅读------</div>
+    
+</div>
+
+      
+    </div>
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag"><i class="fa fa-tag"></i> iOS</a>
+          
+            <a href="/tags/源码解析/" rel="tag"><i class="fa fa-tag"></i> 源码解析</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/beer_problem.html" rel="next" title="一道有趣的算法题：10元最多可喝多少瓶啤酒？">
+                <i class="fa fa-chevron-left"></i> 一道有趣的算法题：10元最多可喝多少瓶啤酒？
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/hege-07.html" rel="prev" title="遣唐使的望乡之思 —— 阿倍仲麻吕">
+                遣唐使的望乡之思 —— 阿倍仲麻吕 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/uploads/avatar.png"
+                alt="kim逸云" />
+            
+              <p class="site-author-name" itemprop="name">kim逸云</p>
+              <p class="site-description motion-element" itemprop="description">笑而不语是一种豁达，痛而不言是一种修养。</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">47</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/CloverKim" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:jiang.shunjin@icloud.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#详细分析"><span class="nav-number">2.</span> <span class="nav-text">详细分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#核心类分析"><span class="nav-number">2.1.</span> <span class="nav-text">核心类分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SDImageCache"><span class="nav-number">2.1.1.</span> <span class="nav-text">SDImageCache</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SDWebImageDownloader"><span class="nav-number">2.1.2.</span> <span class="nav-text">SDWebImageDownloader</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SDWebImageDownloaderOperation"><span class="nav-number">2.1.3.</span> <span class="nav-text">SDWebImageDownloaderOperation</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart" aria-hidden="true"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kim逸云</span>
+
+<!--
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">77.8k</span>
+  
+-->
+</div>
+
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数：<span id="busuanzi_value_site_uv"></span>
+</span>
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共77.8k字</span>
+</div>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("G2qCMJW5Y7Vdp7p7AjogwjJp-gzGzoHsz", "khenv4NT1LkNeUV3t853rJJU");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  <!-- 背景动画 -->
+  <script type="text/javascript" src="/js/src/particle.js"></script>
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/love.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/z16.model.json"},"display":{"position":"right","width":100,"height":200},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
