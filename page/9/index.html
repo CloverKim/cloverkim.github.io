@@ -262,7 +262,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://cloverkim.com/block-principle.html">
+    <link itemprop="mainEntityOfPage" href="http://cloverkim.com/block-weak-difference.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="kim逸云">
@@ -281,7 +281,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/block-principle.html" itemprop="url">iOS开发 - Block用法和实现原理</a></h1>
+                <a class="post-title-link" href="/block-weak-difference.html" itemprop="url">iOS开发 - __weak和__block的理解</a></h1>
         
 
         <div class="post-meta">
@@ -333,7 +333,7 @@
 
           
           
-             <span id="/block-principle.html" class="leancloud_visitors" data-flag-title="iOS开发 - Block用法和实现原理">
+             <span id="/block-weak-difference.html" class="leancloud_visitors" data-flag-title="iOS开发 - __weak和__block的理解">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -358,7 +358,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  4.2k
+                  438
                 </span>
               
 
@@ -374,7 +374,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  17
+                  1
                 </span>
               
             </div>
@@ -396,10 +396,10 @@
 
       
         
-          <p>&emsp;&emsp;《Objective-C高级编程》是一本有趣又难懂的书，全书就讲了引用计数、Block、GCD三个概念，有趣是因为讲原理、实现的部分是其他iOS专业书籍里少有的。然而每个章节不读个三五遍还是比较难理解贯通。本文针对其中的Block部分做些简单的笔记记录，讲述Block的用法和部分实现原理，详细解说从原书中寻。
+          <h1 id="block"><a href="#block" class="headerlink" title="__block"></a>__block</h1><p>&emsp;&emsp;在block里可以访问局部变量，但不能修改局部变量。这是因为当局部变量在block中使用时，实际上使用的变量是在block中复制的数据，所以在block中修改的变量并不能修改block外面的变量值。这里要注意的是可变数组或者字典在block中添加或删除数据时，并不用<code>__block</code>修饰，因为在block里使用这些数组时，数组的指针并没有发生变化，仅仅是内存的内容发生了变化。
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/block-principle.html#more" rel="contents">
+            <a class="btn" href="/block-weak-difference.html#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -458,7 +458,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://cloverkim.com/bubble_sort.html">
+    <link itemprop="mainEntityOfPage" href="http://cloverkim.com/category-extension-difference.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="kim逸云">
@@ -477,7 +477,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/bubble_sort.html" itemprop="url">算法学习 - 冒泡排序</a></h1>
+                <a class="post-title-link" href="/category-extension-difference.html" itemprop="url">iOS开发 - Category和Extension的区别</a></h1>
         
 
         <div class="post-meta">
@@ -512,8 +512,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/arithmetic/" itemprop="url" rel="index">
-                    <span itemprop="name">算法学习</span>
+                  <a href="/categories/iOSDevelopment/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS开发</span>
                   </a>
                 </span>
 
@@ -529,7 +529,7 @@
 
           
           
-             <span id="/bubble_sort.html" class="leancloud_visitors" data-flag-title="算法学习 - 冒泡排序">
+             <span id="/category-extension-difference.html" class="leancloud_visitors" data-flag-title="iOS开发 - Category和Extension的区别">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -554,7 +554,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  346
+                  358
                 </span>
               
 
@@ -592,12 +592,210 @@
 
       
         
-          <h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><ol>
-<li>比较相邻的元素，如果第一个比第二个大，就交换他们两个。</li>
-<li>对每一组相邻元素做同样的工作，从开始第一对到结尾的最后一对。在这一点，最后的元素应该会是最大的数。
+          <h1 id="区别一"><a href="#区别一" class="headerlink" title="区别一"></a>区别一</h1><ul>
+<li>Category<ul>
+<li>专门用来给类添加新的方法</li>
+<li>不能给类添加成员属性（其实是可以通过runtime给分类添加属性）</li>
+<li>分类中用<code>@property</code>定义变量，只会生成变量的getter、setter方法的声明，不能生成方法实现和带下划线的成员变量。
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/bubble_sort.html#more" rel="contents">
+            <a class="btn" href="/category-extension-difference.html#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cloverkim.com/SDWebImage-source-code-analysis-3.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kim逸云">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="幸运四叶草">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/SDWebImage-source-code-analysis-3.html" itemprop="url">SDWebImage源码解析（三）</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-10-26T19:24:45+08:00">
+                2022-10-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOSDevelopment/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS开发</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/SDWebImage-source-code-analysis-3.html" class="leancloud_visitors" data-flag-title="SDWebImage源码解析（三）">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  6k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  30
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>&emsp;&emsp;在上一篇文章<a href="http://cloverkim.com/SDWebImage-source-code-analysis-2.html">SDWebImage源码解析（二）</a>中，主要详细分析了SDWebImage的UIView+WebCache、UIWebImageManager两个核心类。在本文中，将会继续分析SDWebImage的SDImageCache、SDWebImageDownloader和SDWebImageDownloaderOperation核心类。
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/SDWebImage-source-code-analysis-3.html#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -794,202 +992,6 @@
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/category-principle.html#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://cloverkim.com/block-weak-difference.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="kim逸云">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="幸运四叶草">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/block-weak-difference.html" itemprop="url">iOS开发 - __weak和__block的理解</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-10-26T19:24:45+08:00">
-                2022-10-26
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/iOSDevelopment/" itemprop="url" rel="index">
-                    <span itemprop="name">iOS开发</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/block-weak-difference.html" class="leancloud_visitors" data-flag-title="iOS开发 - __weak和__block的理解">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  438
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  1
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="block"><a href="#block" class="headerlink" title="__block"></a>__block</h1><p>&emsp;&emsp;在block里可以访问局部变量，但不能修改局部变量。这是因为当局部变量在block中使用时，实际上使用的变量是在block中复制的数据，所以在block中修改的变量并不能修改block外面的变量值。这里要注意的是可变数组或者字典在block中添加或删除数据时，并不用<code>__block</code>修饰，因为在block里使用这些数组时，数组的指针并没有发生变化，仅仅是内存的内容发生了变化。
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/block-weak-difference.html#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
