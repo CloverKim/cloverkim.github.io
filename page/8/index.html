@@ -1064,7 +1064,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://cloverkim.com/block-weak-difference.html">
+    <link itemprop="mainEntityOfPage" href="http://cloverkim.com/SDWebImage-source-code-analysis-3.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="kim逸云">
@@ -1083,7 +1083,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/block-weak-difference.html" itemprop="url">iOS开发 - __weak和__block的理解</a></h1>
+                <a class="post-title-link" href="/SDWebImage-source-code-analysis-3.html" itemprop="url">SDWebImage源码解析（三）</a></h1>
         
 
         <div class="post-meta">
@@ -1135,7 +1135,7 @@
 
           
           
-             <span id="/block-weak-difference.html" class="leancloud_visitors" data-flag-title="iOS开发 - __weak和__block的理解">
+             <span id="/SDWebImage-source-code-analysis-3.html" class="leancloud_visitors" data-flag-title="SDWebImage源码解析（三）">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -1160,7 +1160,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  438
+                  6k
                 </span>
               
 
@@ -1176,7 +1176,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  1
+                  30
                 </span>
               
             </div>
@@ -1198,10 +1198,10 @@
 
       
         
-          <h1 id="block"><a href="#block" class="headerlink" title="__block"></a>__block</h1><p>&emsp;&emsp;在block里可以访问局部变量，但不能修改局部变量。这是因为当局部变量在block中使用时，实际上使用的变量是在block中复制的数据，所以在block中修改的变量并不能修改block外面的变量值。这里要注意的是可变数组或者字典在block中添加或删除数据时，并不用<code>__block</code>修饰，因为在block里使用这些数组时，数组的指针并没有发生变化，仅仅是内存的内容发生了变化。
+          <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>&emsp;&emsp;在上一篇文章<a href="http://cloverkim.com/SDWebImage-source-code-analysis-2.html">SDWebImage源码解析（二）</a>中，主要详细分析了SDWebImage的UIView+WebCache、UIWebImageManager两个核心类。在本文中，将会继续分析SDWebImage的SDImageCache、SDWebImageDownloader和SDWebImageDownloaderOperation核心类。
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/block-weak-difference.html#more" rel="contents">
+            <a class="btn" href="/SDWebImage-source-code-analysis-3.html#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
