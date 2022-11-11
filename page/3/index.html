@@ -262,7 +262,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://cloverkim.com/ios_kvo-principle.html">
+    <link itemprop="mainEntityOfPage" href="http://cloverkim.com/ios_notification-principle.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="kim逸云">
@@ -281,7 +281,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/ios_kvo-principle.html" itemprop="url">iOS开发 - KVO原理分析与使用</a></h1>
+                <a class="post-title-link" href="/ios_notification-principle.html" itemprop="url">iOS开发 - NSNotification原理理解</a></h1>
         
 
         <div class="post-meta">
@@ -333,7 +333,7 @@
 
           
           
-             <span id="/ios_kvo-principle.html" class="leancloud_visitors" data-flag-title="iOS开发 - KVO原理分析与使用">
+             <span id="/ios_notification-principle.html" class="leancloud_visitors" data-flag-title="iOS开发 - NSNotification原理理解">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -358,7 +358,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.3k
+                  2.7k
                 </span>
               
 
@@ -374,7 +374,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  4
+                  9
                 </span>
               
             </div>
@@ -396,10 +396,10 @@
 
       
         
-          <h1 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h1><p>&emsp;&emsp;KVO全称KeyValueObserving，是Objective-C对观察者设计模式的一种实现。允许对象监听另一个对象特定属性的改变，并在改变时接收到事件。由于KVO的实现机制，所以对属性才会好发生作用，一般继承自NSObject的对象都默认支持KVO。</p>
+          <h1 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h1><p>&emsp;&emsp;NSNotification是iOS中一个调度消息通知的类，采用单例设计模式，在开发中实现传值、回调等。在iOS中，NSNotification是使用观察者模式来实现用于跨层传递消息。</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/ios_kvo-principle.html#more" rel="contents">
+            <a class="btn" href="/ios_notification-principle.html#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -850,7 +850,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://cloverkim.com/ios_notification-principle.html">
+    <link itemprop="mainEntityOfPage" href="http://cloverkim.com/ios_weak-principle.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="kim逸云">
@@ -869,7 +869,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/ios_notification-principle.html" itemprop="url">iOS开发 - NSNotification原理理解</a></h1>
+                <a class="post-title-link" href="/ios_weak-principle.html" itemprop="url">iOS开发 - 底层解析weak的实现原理</a></h1>
         
 
         <div class="post-meta">
@@ -921,7 +921,7 @@
 
           
           
-             <span id="/ios_notification-principle.html" class="leancloud_visitors" data-flag-title="iOS开发 - NSNotification原理理解">
+             <span id="/ios_weak-principle.html" class="leancloud_visitors" data-flag-title="iOS开发 - 底层解析weak的实现原理">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -946,7 +946,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2.7k
+                  2.6k
                 </span>
               
 
@@ -962,7 +962,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  9
+                  10
                 </span>
               
             </div>
@@ -984,10 +984,10 @@
 
       
         
-          <h1 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h1><p>&emsp;&emsp;NSNotification是iOS中一个调度消息通知的类，采用单例设计模式，在开发中实现传值、回调等。在iOS中，NSNotification是使用观察者模式来实现用于跨层传递消息。</p>
+          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&emsp;&emsp;很少有人知道weak表其实是一个hash（哈希）表，key是所指对象的地址，value是weak指针的地址数组。大多数人只知道weak是弱引用，所引用对象的计数器不会加一，并在引用对象被释放的时候自动被置为nil。通常用于解决循环引用问题。但现在单知道这些已经不足以应对面试了，很多公司都会问weak的原理。weak的原理是什么？下面就分析一下weak的原理。<br>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/ios_notification-principle.html#more" rel="contents">
+            <a class="btn" href="/ios_weak-principle.html#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>

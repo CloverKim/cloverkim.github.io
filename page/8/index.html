@@ -1064,7 +1064,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://cloverkim.com/SDWebImage-source-code-analysis-3.html">
+    <link itemprop="mainEntityOfPage" href="http://cloverkim.com/category-extension-difference.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="kim逸云">
@@ -1083,7 +1083,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/SDWebImage-source-code-analysis-3.html" itemprop="url">SDWebImage源码解析（三）</a></h1>
+                <a class="post-title-link" href="/category-extension-difference.html" itemprop="url">iOS开发 - Category和Extension的区别</a></h1>
         
 
         <div class="post-meta">
@@ -1135,7 +1135,7 @@
 
           
           
-             <span id="/SDWebImage-source-code-analysis-3.html" class="leancloud_visitors" data-flag-title="SDWebImage源码解析（三）">
+             <span id="/category-extension-difference.html" class="leancloud_visitors" data-flag-title="iOS开发 - Category和Extension的区别">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -1160,7 +1160,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  6k
+                  358
                 </span>
               
 
@@ -1176,7 +1176,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  30
+                  1
                 </span>
               
             </div>
@@ -1198,10 +1198,14 @@
 
       
         
-          <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>&emsp;&emsp;在上一篇文章<a href="http://cloverkim.com/SDWebImage-source-code-analysis-2.html">SDWebImage源码解析（二）</a>中，主要详细分析了SDWebImage的UIView+WebCache、UIWebImageManager两个核心类。在本文中，将会继续分析SDWebImage的SDImageCache、SDWebImageDownloader和SDWebImageDownloaderOperation核心类。
+          <h1 id="区别一"><a href="#区别一" class="headerlink" title="区别一"></a>区别一</h1><ul>
+<li>Category<ul>
+<li>专门用来给类添加新的方法</li>
+<li>不能给类添加成员属性（其实是可以通过runtime给分类添加属性）</li>
+<li>分类中用<code>@property</code>定义变量，只会生成变量的getter、setter方法的声明，不能生成方法实现和带下划线的成员变量。
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/SDWebImage-source-code-analysis-3.html#more" rel="contents">
+            <a class="btn" href="/category-extension-difference.html#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
